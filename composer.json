@@ -6,7 +6,10 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
-        "laravel/framework": "5.3.*"
+        "laravel/framework": "5.3.*",
+        "twbs/bootstrap": "^3.3",
+        "components/jquery": "^3.1.1",
+        "components/font-awesome": "^4.7.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -14,7 +17,7 @@
         "phpunit/phpunit": "~5.0",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*",
-	"jameshalsall/licenser":"dev-master"
+        "jameshalsall/licenser":"dev-master"
     },
     "autoload": {
         "classmap": [
@@ -41,6 +44,10 @@
             "php artisan optimize"
         ],
         "post-update-cmd": [
+            "cp -R vendor/twbs/bootstrap/dist/* public",
+            "cp -R vendor/components/font-awesome/css/* public/css",
+            "cp -R vendor/components/font-awesome/fonts/* public/fonts",
+            "cp vendor/components/jquery/*.js public/js",
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan optimize"
         ]

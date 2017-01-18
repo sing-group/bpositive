@@ -1,0 +1,168 @@
+
+/*
+ * B+
+ * Copyright (C) 2017 Jorge Vieira, José Sousa, Miguel Reboiro-Jato,
+ * Noé Vázquez, Bárbara Amorim, Cristina P. Vieira, André Torres, and
+ * Florentino Fdez-Riverola
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+html, body{
+    padding:0;
+    margin:0;
+}
+header{
+    height: 50px;
+    background-color: #000000;
+}
+.banner{
+    height: 270px;
+    background-color: #808080;
+    background-image: url('../images/banner.png');
+    background-repeat: repeat;
+}
+.project-logo{
+    width: 180px;
+    padding-top: 45px;
+    margin-left: 30px;
+}
+.top-icons{
+    display: inline-block;
+    position: absolute;
+}
+.top-icons-link i{
+    color: #00ACEC;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+h1{
+    font-weight: bold;
+    font-size: 25px;
+}
+a{
+    color: #000000;
+    text-decoration: none;
+}
+a:hover{
+    color: #000000;
+    text-decoration: none;
+}
+
+.content{
+    clear: both;
+    /*min-height: 250px;*/
+    /*padding: 20px;*/
+}
+.project-content{
+    /*min-height: 250px;*/
+    padding: 20px;
+}
+.content-text{
+    margin: 30px 0;
+
+}
+.label-teste{
+    text-align: left;
+    /*background-color: red;*/
+}
+.project:nth-child(odd){
+    min-height: 330px;
+    background-color: #F1F1F2;
+
+}
+.project:nth-child(even){
+    min-height: 330px;
+    background-color: #FFFFFF;
+}
+.project_name{
+    padding: 30px;
+    text-align: center;
+
+}
+.project_description{
+    padding: 30px;
+
+}
+.button_more{
+    float: center;
+    margin: 20px;
+
+}
+
+
+footer{
+    clear: both;
+    background-color: #000000;
+    min-height: 330px;
+    margin-bottom: 0px;
+    float: left;
+    width: 100%;
+    font-family: Raleway;
+    color: #ffffff;
+}
+.footer-left{
+    float: left;
+    width: 60%;
+    padding-top: 50px;
+    padding-left: 30px;
+}
+.footer-right{
+    float:right;
+    width: 40%;
+    padding-top: 50px;
+    padding-right: 30px;
+    text-align: right;
+}
+.footer-social-icons{
+    color: #00ACEC;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+.footer-social-icons:hover{
+    color: #ffffff;
+}
+.rodape-info{
+    margin: 30px 0;
+}
+.footer-icons{
+    color: #00ACEC;
+    margin-right: 5px;
+}
+.loader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('../images/default.gif') 50% 50% no-repeat rgb(249,249,249);
+}
+@media screen and (min-width: 800px) {
+    .no-mobile{
+        visibility: visible;
+    }
+    .label-mobile{
+        visibility: hidden;
+    }
+}
+@media screen and (max-width: 800px) {
+    .no-mobile{
+        visibility: hidden;
+    }
+    .label-mobile{
+        visibility: visible;
+    }
+}
