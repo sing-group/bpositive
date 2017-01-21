@@ -36,11 +36,31 @@
 
     <div class="project-content">
         <h1>{{$project->name}}</h1>
-
-        @foreach($transcriptions as $transcription)
-            <li>{{$transcription->name}}</li>
-        @endforeach
-        {{$transcriptions->appends(['id' => $project->id])->links()}}
+        {{ Form::open(['class' => 'form-inline', 'method' => 'get']) }}
+        <div class="form-group">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    {{ Form::label('search', 'Search ') }}
+                </span>
+                {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here']) }}
+                <span class="input-group-btn">
+                    {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                </span>
+            </div>
+        </div>
+        {{ Form::hidden('id', $project->id) }}
+        {{ Form::close() }}
+        @if ($transcriptions->count() > 0)
+            @foreach($transcriptions as $transcription)
+                <li>{{$transcription->name}}</li>
+            @endforeach
+            {{$transcriptions->appends(['id' => $project->id])->links()}}
+            <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
+        @elseif($query)
+            <div class="alert alert-info">There are no results for this query.</div>
+        @else
+            <div class="alert alert-info">There are no transcriptions in this project.</div>
+        @endif
     </div>
 
 

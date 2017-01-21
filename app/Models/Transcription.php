@@ -27,11 +27,12 @@ use Illuminate\Support\Facades\DB;
 
 class Transcription
 {
-    public static function all($id, $query = '', $page = 0){
+    public static function all($id, $query = ''){
 
         $transriptions = DB::table('transcription')
             ->where('projectId', '=', $id)
             ->where('deleted', '=', '0')
+            ->whereRaw('name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\'')
             ->paginate(10);
 
         return $transriptions;

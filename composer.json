@@ -7,6 +7,7 @@
     "require": {
         "php": ">=5.6.4",
         "laravel/framework": "5.3.*",
+        "laravelcollective/html": "^5.3.0",
         "twbs/bootstrap": "^3.3",
         "components/jquery": "^3.1.1",
         "components/font-awesome": "^4.7.0"

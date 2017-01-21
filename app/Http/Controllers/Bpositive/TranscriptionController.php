@@ -52,15 +52,17 @@ class TranscriptionController extends Controller
 
         $this->validate($request, [
             'id' => 'required|numeric',
+            'query' => 'alpha_num',
             'page' => 'numeric'
         ]);
 
         $project = Project::get($request->get('id'));
-        $transcriptions = Transcription::all($request->get('id'), $request->get('page'));
+        $transcriptions = Transcription::all($request->get('id'), $request->get('query', ''));
 
         return view('transcriptions',[
             'project' => $project,
-            'transcriptions' => $transcriptions
+            'transcriptions' => $transcriptions,
+            'query' => $request->get('query', '')
         ]);
     }
 }
