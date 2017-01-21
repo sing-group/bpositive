@@ -51,9 +51,40 @@
         {{ Form::hidden('id', $project->id) }}
         {{ Form::close() }}
         @if ($transcriptions->count() > 0)
-            @foreach($transcriptions as $transcription)
-                <li>{{$transcription->name}}</li>
-            @endforeach
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Result</th>
+                    <th>View</th>
+                    <th>Download</th>
+                </tr>
+                </thead>
+                @foreach($transcriptions as $transcription)
+                    <tr>
+                        <td>{{$transcription->name}}</td>
+                        <td>
+                            @if($transcription->analyzed == 0)
+                                <span>Not Analyzed</span>
+                            @elseif ($transcription->positivelySelected == 0)
+                                <span class="text-danger">Analyzed</span>
+                            @else
+                                <span class="text-success">Positively Selected</span>
+                            @endif
+                        </td>
+                        <td><a href="transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
+                        <td><a href="download?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
+                    </tr>
+                @endforeach
+                <tfoot>
+                <tr>
+                    <th>Name</th>
+                    <th>Result</th>
+                    <th>View</th>
+                    <th>Download</th>
+                </tr>
+                </tfoot>
+            </table>
             {{$transcriptions->appends(['id' => $project->id])->links()}}
             <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
         @elseif($query)
