@@ -20,34 +20,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-?>
+namespace App\Models;
 
-@extends('layouts.bpositive')
 
-@section('title', 'Wellcome')
-{{--
-@section('sidebar')
-    @parent
+use Illuminate\Support\Facades\DB;
 
-    <p>This is appended to the master sidebar.</p>
-@endsection
---}}
-@section('content')
+class Transcription
+{
+    public static function all($id, $query = '', $page = 0){
 
-    @foreach ($projects as $project)
+        $transriptions = DB::table('transcription')
+            ->where('projectId', '=', $id)
+            ->where('deleted', '=', '0')
+            ->paginate(10);
 
-        <div class="project">
-            <div class="project_name col-md-4">
-                <h1>{{$project->name}}</h1>
-                <a href="transcriptions?id={{$project->id}}">
-                    <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-                </a>
-            </div>
-            <div class="project_description col-md-8">
-                {{$project->description}}
-            </div>
-        </div>
-
-    @endforeach
-
-@endsection
+        return $transriptions;
+    }
+}

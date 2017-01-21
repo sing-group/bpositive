@@ -34,20 +34,14 @@
 --}}
 @section('content')
 
-    @foreach ($projects as $project)
+    <div class="project-content">
+        <h1>{{$project->name}}</h1>
 
-        <div class="project">
-            <div class="project_name col-md-4">
-                <h1>{{$project->name}}</h1>
-                <a href="transcriptions?id={{$project->id}}">
-                    <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-                </a>
-            </div>
-            <div class="project_description col-md-8">
-                {{$project->description}}
-            </div>
-        </div>
+        @foreach($transcriptions as $transcription)
+            <li>{{$transcription->name}}</li>
+        @endforeach
+        {{$transcriptions->appends(['id' => $project->id])->links()}}
+    </div>
 
-    @endforeach
 
 @endsection

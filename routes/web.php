@@ -11,4 +11,6 @@
 |
 */
 
-Route::get('/', 'Bpositive\ProjectController@get')->name('projects');
+Route::get('/', 'Bpositive\ProjectController@all')->name('projects');
+
+Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('transcriptions');

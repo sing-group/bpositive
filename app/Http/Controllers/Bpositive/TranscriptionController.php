@@ -24,16 +24,17 @@ namespace App\Http\Controllers\Bpositive;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Transcription;
 use Illuminate\Http\Request;
 
-class ProjectController extends Controller
+class TranscriptionController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | Project Controller
+    | Transcription Controller
     |--------------------------------------------------------------------------
     |
-    | This controller handles requests from pages where projects are managed
+    | This controller handles requests from pages where transcriptions are managed
     |
     */
 
@@ -49,13 +50,17 @@ class ProjectController extends Controller
 
     public function all(Request $request){
 
-        $projects = Project::all();
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'page' => 'numeric'
+        ]);
 
-        return view('index',[
-            'projects' => $projects
+        $project = Project::get($request->get('id'));
+        $transcriptions = Transcription::all($request->get('id'), $request->get('page'));
+
+        return view('transcriptions',[
+            'project' => $project,
+            'transcriptions' => $transcriptions
         ]);
     }
-
-
-
 }

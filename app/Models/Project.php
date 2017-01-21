@@ -20,34 +20,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-?>
+namespace App\Models;
 
-@extends('layouts.bpositive')
 
-@section('title', 'Wellcome')
-{{--
-@section('sidebar')
-    @parent
+use Illuminate\Support\Facades\DB;
 
-    <p>This is appended to the master sidebar.</p>
-@endsection
---}}
-@section('content')
+class Project
+{
 
-    @foreach ($projects as $project)
+    public static function all(){
 
-        <div class="project">
-            <div class="project_name col-md-4">
-                <h1>{{$project->name}}</h1>
-                <a href="transcriptions?id={{$project->id}}">
-                    <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-                </a>
-            </div>
-            <div class="project_description col-md-8">
-                {{$project->description}}
-            </div>
-        </div>
+        $projects = DB::table('project')
+            ->where('deleted', '=', '0')
+            ->get();
 
-    @endforeach
+        return $projects;
+    }
 
-@endsection
+    public static function get($id){
+
+        $project = DB::table('project')
+            ->where('deleted', '=', '0')
+            ->where('id', '=', $id)
+            ->first();
+
+        return $project;
+    }
+}

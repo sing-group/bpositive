@@ -46,11 +46,21 @@
     <div class="banner">
         <img src="{{URL::asset('images/bpositive.png')}}" alt="Project Logo" class="project-logo"/>
     </div>
+    {{--
     @section('sidebar')
         This is the master sidebar.
     @show
-
+    --}}
     <div class="container">
+        @if (count($errors) > 0)
+            <div class="alert alert-warning">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         @yield('content')
     </div>
 
