@@ -65,4 +65,17 @@ class TranscriptionController extends Controller
             'query' => $request->get('query', '')
         ]);
     }
+
+    public function get(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        $transcription = Transcription::get($request->get('id'));
+
+        return view('transcription',[
+            'transcription' => $transcription
+        ]);
+    }
 }

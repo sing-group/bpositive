@@ -20,31 +20,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace App\Models;
+?>
+
+@extends('layouts.bpositive')
+
+@section('title', 'Transcription')
+{{--
+@section('sidebar')
+    @parent
+
+    <p>This is appended to the master sidebar.</p>
+@endsection
+--}}
+@section('content')
+
+    <div class="project-content">
+        <h1>{{$transcription->name}}</h1>
+    </div>
 
 
-use Illuminate\Support\Facades\DB;
-
-class Transcription
-{
-    public static function all($id, $query = ''){
-
-        $transriptions = DB::table('transcription')
-            ->where('projectId', '=', $id)
-            ->where('deleted', '=', '0')
-            ->whereRaw('name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\'')
-            ->paginate(10);
-
-        return $transriptions;
-    }
-
-    public static function get($id){
-
-        $transcription = DB::table('transcription')
-            ->where('deleted', '=', '0')
-            ->where('id', '=', $id)
-            ->first();
-
-        return $transcription;
-    }
-}
+@endsection

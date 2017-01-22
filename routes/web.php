@@ -14,3 +14,4 @@
 Route::get('/', 'Bpositive\ProjectController@all')->name('projects');
 
 Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('transcriptions');
+Route::get('/transcription', 'Bpositive\TranscriptionController@get')->name('transcription');
