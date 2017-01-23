@@ -72,10 +72,11 @@ class TranscriptionController extends Controller
             'id' => 'required|numeric'
         ]);
 
-        $transcription = Transcription::get($request->get('id'));
+        $transcription = new Transcription(Transcription::get($request->get('id')));
 
         return view('transcription',[
-            'transcription' => $transcription
+            'transcription' => $transcription,
+            'newicks' => $transcription->getNewicks()
         ]);
     }
 }

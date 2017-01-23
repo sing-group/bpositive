@@ -35,7 +35,9 @@
 @section('content')
 
     <div class="project-content">
-        <h1>{{$transcription->name}}</h1>
+        <h1>{{var_dump($transcription)}}</h1>
+
+        <h2>{{var_dump($newicks)}}</h2>
     </div>
 
 

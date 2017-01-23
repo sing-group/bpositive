@@ -23,16 +23,44 @@
 namespace App\Models;
 
 
+use App\Utils\FileUtils;
 use Illuminate\Support\Facades\DB;
 
 class Transcription
 {
+
+    public $id;
+    public $name;
+    public $description;
+    public $linkZip;
+    public $linkPdf;
+    public $deleted;
+    public $projectId;
+    public $creationDate;
+    public $analyzed;
+    public $positivelySelected;
+
+    function __construct($src){
+        $this->id = $src->id;
+        $this->name = $src->name;
+        $this->description = $src->description;
+        $this->linkZip = $src->linkZip;
+        $this->linkPdf = $src->linkPdf;
+        $this->deleted = $src->deleted;
+        $this->projectId = $src->projectId;
+        $this->creationDate = $src->creationDate;
+        $this->analyzed = $src->analyzed;
+        $this->positivelySelected = $src->positivelySelected;
+
+    }
+
     public static function all($id, $query = ''){
 
         $transriptions = DB::table('transcription')
             ->where('projectId', '=', $id)
             ->where('deleted', '=', '0')
             ->whereRaw('name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\'')
+            ->orderBy('name')
             ->paginate(10);
 
         return $transriptions;
@@ -46,5 +74,21 @@ class Transcription
             ->first();
 
         return $transcription;
+    }
+
+    public function getNewicks(){
+        $newicks = array();
+
+        $file_contents = FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/tree.con');
+
+        $trees = array();
+        preg_match_all('/(tree con_50_majrule = \(.+\)\;)/', $file_contents, $trees);
+
+        foreach($trees[0] as $tree){
+            preg_match_all('/\(.+\)\;/', $tree, $newick);
+            array_push($newicks, '{ newick: \'' . $newick[0][0]. '\'}');
+        }
+
+        return $newicks;
     }
 }
