@@ -35,9 +35,47 @@
 @section('content')
 
     <div class="project-content">
-        <h1>{{var_dump($transcription)}}</h1>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
+                <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
+            </ul>
 
-        <h2>{{var_dump($newicks)}}</h2>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="treeView">
+                    <div id="svgCanvas">
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="pss">
+                    <div id="pssCanvas" style="font-family: monospace; overflow:scroll">
+                        {{print_r($confidences)}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="{{URL::asset('js/raphael-min.js')}}" ></script>
+        <script type="text/javascript" src="{{URL::asset('js/jsphylosvg-min.js')}}"></script>
+        <script type="text/javascript">
+            //TODO: Refactor
+            $(window).on('load', function () {
+                var dataObjects = {!! $newicks !!};
+
+                for(var i=0; i < dataObjects.length; i++ ){
+
+                    var divName = 'svgCanvas' + i;
+                    $("#svgCanvas").append('<div id="' + divName + '"></div>');
+
+                    phylocanvas = new Smits.PhyloCanvas(
+                        dataObjects[i],		// Newick or XML string
+                        divName,	// Div Id where to render
+                        800, 600		// Height, Width in pixels
+                        //'circular'
+                    );
+                }
+            })
+        </script>
     </div>
 
 
