@@ -76,7 +76,8 @@ class TranscriptionController extends Controller
 
         return view('transcription',[
             'transcription' => $transcription,
-            'newicks' => $transcription->getNewicks()
+            'newicks' => $transcription->getNewicks(),
+            'confidences' => $transcription->getConfidences()
         ]);
     }
 }

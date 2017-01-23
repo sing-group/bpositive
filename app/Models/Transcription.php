@@ -76,6 +76,57 @@ class Transcription
         return $transcription;
     }
 
+    public static function fastaToSequences($source){
+
+        $sequences = array();
+        $result = array();
+        preg_match_all('/^\>(.|\s)[^\>]+/m', $source, $sequences);
+
+        foreach($sequences[0] as $sequence){
+            array_push($result, new Sequence($sequence));
+        }
+
+        return $result;
+    }
+
+    public function getConfidences(){
+
+        $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.prot.fasta'));
+        $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/allfiles/codeml/input.fasta.fasta.out.sum'));
+
+        return $confidences;
+    }
+
+
+    public function formatedSequencesToString($formattedSequences, $blockLength = 10, $blocksPerLine = 9, $labelTab = 3, $newLine = '<br />'){
+        $result = '';
+
+        if($blocksPerLine < 1){
+            $blocksPerLine = 9;
+        }
+
+        if(count($formattedSequences) > 0){
+            $i = 0;
+            do{
+                $numBlocks = 0;
+                foreach($formattedSequences as $formattedSequence) {
+                    if($numBlocks === 0) {
+                        $numBlocks = $formattedSequence->getNumBlocks();
+                    }
+                    $result .= $formattedSequence->name . str_pad('', $labelTab*6, '&nbsp;');
+                    $result .= substr($formattedSequence->value, $i*($blockLength+1)*$blocksPerLine, ($blockLength+1)*$blocksPerLine);
+                    $result .= $newLine;
+                }
+                $result .= $newLine;
+                $i++;
+            }
+            while($i < $numBlocks / $blocksPerLine);
+
+        }
+
+        return $result;
+    }
+
     public function getNewicks(){
         $newicks = array();
 
@@ -89,6 +140,6 @@ class Transcription
             array_push($newicks, '{ newick: \'' . $newick[0][0]. '\'}');
         }
 
-        return $newicks;
+        return json_encode($newicks);
     }
 }
