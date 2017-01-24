@@ -25,18 +25,10 @@ namespace App\Models;
 
 class Confidence
 {
-    private $beb, $neb;
+    public $beb, $neb;
 
     public function __construct($beb, $neb){
         $this->beb = $beb;
         $this->neb = $neb;
-    }
-
-    public function getBeb(){
-        return $this->beb;
-    }
-
-    public function getNeb(){
-        return $this->neb;
     }
 }

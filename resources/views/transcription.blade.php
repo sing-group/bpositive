@@ -48,8 +48,8 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="pss">
-                    <div id="pssCanvas" style="font-family: monospace; overflow:scroll">
-                        {{print_r($confidences)}}
+                    <div id="pssCanvas" style="overflow:scroll">
+
                     </div>
                 </div>
             </div>
@@ -57,6 +57,7 @@
 
         <script type="text/javascript" src="{{URL::asset('js/raphael-min.js')}}" ></script>
         <script type="text/javascript" src="{{URL::asset('js/jsphylosvg-min.js')}}"></script>
+        <script type="text/javascript" src="{{URL::asset('js/bpositive/pss.js')}}"></script>
         <script type="text/javascript">
             //TODO: Refactor
             $(window).on('load', function () {
@@ -74,6 +75,13 @@
                         //'circular'
                     );
                 }
+
+                pss = new PSS(
+                    {!! $confidences->getJSONSequences()!!},
+                    {!!$confidences->getJSONModels()!!},
+                    {!!$confidences->getJSONMovedIndexes()!!},
+                    'pssCanvas');
+                pss.getPSS();
             })
         </script>
     </div>

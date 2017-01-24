@@ -111,7 +111,16 @@ class AlignmentConfidences
         return $result;
     }
 
+    public function getJSONMovedIndexes(){
+        return json_encode($this->movedIndexes);
+    }
+    public function getJSONSequences(){
+        return json_encode($this->sequences);
+    }
 
+    public function getJSONModels(){
+        return json_encode($this->models);
+    }
 
 
 }
