@@ -19,69 +19,115 @@
  */
 
 
-function PSS (sequences, models, movedIndexes, canvas) {
+function PSS (sequences, models, movedIndexes, canvasName) {
     this.sequences = sequences;
     this.models = models;
     this.movedIndexes = movedIndexes;
-    this.canvas = canvas;
 
-    this.getSequences = function() {
-        return this.sequences;
+    this.canvas = canvasName;
+    this.cmbModel;
+    this.divAlignment;
+
+    this.labelLength = 10;
+    this.blockLength = 10;
+    this.blocksPerLine = 9;
+    this.labelTab = 3;
+
+    this.neb95beb95Background = 'yellow';
+    this.neb95beb9095Background = 'red';
+    this.neb9095beb95Background = 'blue';
+    this.neb9095beb9095Background = 'green';
+    this.neb95beb95Foreground = 'black';
+    this.neb95beb9095Foreground = 'white';
+    this.neb9095beb95Foreground = 'white';
+    this.neb9095beb9095Foreground = 'black';
+
+    var parent = this;
+
+    this.changeStyles = function(neb95beb95Background, neb95beb9095Background, neb9095beb95Background, neb9095beb9095Background,
+                                 neb95beb95Foreground, neb95beb9095Foreground, neb9095beb95Foreground, neb9095beb9095Foreground) {
+        parent.neb95beb95Background = neb95beb95Background;
+        parent.neb95beb9095Background = neb95beb9095Background;
+        parent.neb9095beb95Background = neb9095beb95Background;
+        parent.neb9095beb9095Background = neb9095beb9095Background;
+        parent.neb95beb95Foreground = neb95beb95Foreground;
+        parent.neb95beb9095Foreground = neb95beb9095Foreground;
+        parent.neb9095beb95Foreground = neb9095beb95Foreground;
+        parent.neb9095beb9095Foreground = neb9095beb9095Foreground;
+
+        if(parent.cmbModel) {
+            parent.cmbModel.change();
+        }
+    };
+
+    this.changeBlocks = function(labelLength, blockLength, blocksPerLine, labelTab) {
+        parent.labelLength = labelLength;
+        parent.blockLength = blockLength;
+        parent.blocksPerLine = blocksPerLine;
+        parent.labelTab = labelTab;
+
+        if(parent.cmbModel) {
+            parent.cmbModel.change();
+        }
     };
 
     this.getPSS = function (){
 
-        //Create Model combobox
-        var sel = $('<select class="form-control"/>');
-        var model;
+        if(parent.models.length == 0){
+            $('#' + parent.canvas).html('<div class="alert alert-warning">No Possitively Selected Sites</div>');
+        }
+        else{
+            parent.cmbModel = $('<select class="form-control"/>').change(parent.changeModel);
 
-        //TODO: enable combo selection
-        $.each(this.models, function(index, value){
-            $('<option />', {value: index, text: index}).appendTo(sel);
-            model = value;
-        });
-        $('#' + this.canvas).append(sel);
+            $.each(parent.models, function(index, value){
 
+                    $('<option/>', {value: index, text: index}).appendTo(parent.cmbModel);
 
-        var labelLength = 10, blockLength = 10, blocksPerLine = 9, labelTab = 3;
+            });
+            $('#' + parent.canvas).html(parent.cmbModel);
+            parent.divAlignment = $('<div />');
+            $('#' + parent.canvas).append(parent.divAlignment);
+            parent.cmbModel.change();
+        }
+    };
+
+    this.changeModel = function(){
         var html = '';
         var k = 0;
 
-        //TODO refactor
-        if (blocksPerLine < 1) {
-            blocksPerLine = 9;
+        if (parent.blocksPerLine < 1) {
+            parent.blocksPerLine = 9;
         }
 
-        var numBlocks = Math.floor(this.sequences[0].value.length / blockLength);
-        if(this.sequences[0].value.length % blockLength > 0){
+        var numBlocks = Math.floor(parent.sequences[0].value.length / parent.blockLength);
+        if(parent.sequences[0].value.length % parent.blockLength > 0){
             numBlocks++;
         }
 
         do {
-            $.each(this.sequences, function (index, sequence) {
-                html += '<div style="width:' + (labelTab + labelLength) + 'em;float:left">' + sequence.name.substr(0, labelLength) + '</div>';
+            $.each(parent.sequences, function (index, sequence) {
+                html += '<div style="width:' + (parent.labelTab + parent.labelLength) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
 
-                for (var j = k*blocksPerLine*blockLength, currentBlock = 0, currentBlockPos = 1; j < sequence.value.length && currentBlock < blocksPerLine; j++, currentBlockPos++) {
-                    var confidence = model[j + 1];
+                for (var j = k*parent.blocksPerLine*parent.blockLength, currentBlock = 0, currentBlockPos = 1; j < sequence.value.length && currentBlock < parent.blocksPerLine; j++, currentBlockPos++) {
+                    var confidence = parent.models[parent.cmbModel.val()][j + 1];
                     if (confidence) {
                         var style = '';
 
-                        //TODO: parametrization
                         if (confidence.neb > 0.95 && confidence.beb > 0.95) {
-                            style = "background-color:yellow; color:black";
+                            style = "background-color:" + parent.neb95beb95Background + "; color:" + parent.neb95beb95Foreground;
                         } else if (confidence.neb > 0.95 && confidence.beb > 0.90) {
-                            style = "background-color:red; color:white";
+                            style = "background-color:" + parent.neb95beb9095Background + "; color:" + parent.neb95beb9095Foreground;
                         } else if (confidence.neb > 0.90 && confidence.beb > 0.95) {
-                            style = "background-color:blue; color:white";
+                            style = "background-color:" + parent.neb9095beb95Background + "; color:" + parent.neb9095beb95Foreground;
                         } else if (confidence.neb > 0.90 && confidence.beb > 0.90) {
-                            style = "background-color:green; color:black";
+                            style = "background-color:" + parent.neb9095beb9095Background + "; color:" + parent.neb9095beb9095Foreground;
                         }
                         html += '<span style="' + style + '">' + sequence.value[j] + '</span>';
                     }
                     else {
                         html += sequence.value[j];
                     }
-                    if (currentBlockPos >= blockLength) {
+                    if (currentBlockPos >= parent.blockLength) {
                         html += ' ';
                         currentBlockPos = 0;
                         currentBlock++;
@@ -91,14 +137,8 @@ function PSS (sequences, models, movedIndexes, canvas) {
                 html += '<br />';
             });
             k++;
-        }while(k < numBlocks / blocksPerLine);
+        }while(k < numBlocks / parent.blocksPerLine);
 
-        $('#' + this.canvas).append('<div style="font-family:monospace;">' + html +'</div>');
-
-
-    };
-
-    this.chunk_split = function(source, length){
-        source.match(new RegExp('.{0,' + length + '}', 'g')).join(' ');
+        parent.divAlignment.html('<div style="font-family:monospace;">' + html +'</div>');
     };
 }
