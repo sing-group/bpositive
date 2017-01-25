@@ -30,7 +30,7 @@ class Sequence
 
     function __construct($sequence){
         preg_match('/^\>.+\s+/', $sequence, $sequenceName);
-        $this->name = preg_replace('/\s+/', '', $sequenceName[0]);
+        $this->name = preg_replace('/\s+|\>/', '', $sequenceName[0]);
         $this->value = preg_replace('/^\>.+\s+|\s+/', '', $sequence);
     }
 
