@@ -33,7 +33,6 @@
 @endsection
 --}}
 @section('content')
-
     <div class="project-content">
         <div>
             <ul class="nav nav-tabs" role="tablist">
@@ -54,37 +53,37 @@
                 </div>
             </div>
         </div>
-
-        <script type="text/javascript" src="{{URL::asset('js/raphael-min.js')}}" ></script>
-        <script type="text/javascript" src="{{URL::asset('js/jsphylosvg-min.js')}}"></script>
-        <script type="text/javascript" src="{{URL::asset('js/bpositive/pss.js')}}"></script>
-        <script type="text/javascript">
-            //TODO: Refactor
-            $(window).on('load', function () {
-                var dataObjects = {!! $newicks !!};
-
-                for(var i=0; i < dataObjects.length; i++ ){
-
-                    var divName = 'svgCanvas' + i;
-                    $("#svgCanvas").append('<div id="' + divName + '"></div>');
-
-                    phylocanvas = new Smits.PhyloCanvas(
-                        dataObjects[i],		// Newick or XML string
-                        divName,	// Div Id where to render
-                        800, 600		// Height, Width in pixels
-                        //'circular'
-                    );
-                }
-
-                pss = new PSS(
-                    {!! $confidences->getJSONSequences()!!},
-                    {!!$confidences->getJSONModels()!!},
-                    {!!$confidences->getJSONMovedIndexes()!!},
-                    'pssCanvas');
-                pss.getPSS();
-            })
-        </script>
     </div>
-
-
 @endsection
+
+@section('endscripts')
+    <script type="text/javascript" src="{{URL::asset('js/raphael-min.js')}}" ></script>
+    <script type="text/javascript" src="{{URL::asset('js/jsphylosvg-min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::asset('js/bpositive/pss.js')}}"></script>
+    <script type="text/javascript">
+        //TODO: Refactor
+        $(window).on('load', function () {
+            var dataObjects = {!! $newicks !!};
+
+            for(var i=0; i < dataObjects.length; i++ ){
+
+                var divName = 'svgCanvas' + i;
+                $("#svgCanvas").append('<div id="' + divName + '"></div>');
+
+                phylocanvas = new Smits.PhyloCanvas(
+                    dataObjects[i],		// Newick or XML string
+                    divName,	// Div Id where to render
+                    800, 600		// Height, Width in pixels
+                    //'circular'
+                );
+            }
+
+            pss = new PSS(
+                {!! $confidences->getJSONSequences()!!},
+                {!!$confidences->getJSONModels()!!},
+                {!!$confidences->getJSONMovedIndexes()!!},
+                'pssCanvas');
+            pss.getPSS();
+        })
+    </script>
+@endsection('endscripts')
