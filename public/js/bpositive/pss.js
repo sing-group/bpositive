@@ -88,7 +88,7 @@ function PSS (sequences, models, scores, canvasName) {
 
             });
             $('#' + parent.canvas).html(parent.cmbModel);
-            parent.divAlignment = $('<div />');
+            parent.divAlignment = $('<div class="text-nowrap" style="overflow: auto"/>');
             $('#' + parent.canvas).append(parent.divAlignment);
             parent.cmbModel.change();
         }

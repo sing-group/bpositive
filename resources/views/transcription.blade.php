@@ -54,7 +54,7 @@
                 @endif
                 @if(isset($confidences))
                     <div role="tabpanel" class="tab-pane fade" id="pss">
-                        <div id="pssCanvas" style="overflow:scroll">
+                        <div id="pssCanvas">
 
                         </div>
                     </div>
