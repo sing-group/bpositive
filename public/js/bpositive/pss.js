@@ -19,10 +19,10 @@
  */
 
 
-function PSS (sequences, models, movedIndexes, canvasName) {
+function PSS (sequences, models, scores, canvasName) {
     this.sequences = sequences;
     this.models = models;
-    this.movedIndexes = movedIndexes;
+    this.scores = scores;
 
     this.canvas = canvasName;
     this.cmbModel;
@@ -41,6 +41,9 @@ function PSS (sequences, models, movedIndexes, canvasName) {
     this.neb95beb9095Foreground = 'white';
     this.neb9095beb95Foreground = 'white';
     this.neb9095beb9095Foreground = 'black';
+    this.scoresForeground = 'grey';
+
+    this.showScores = true;
 
     var parent = this;
 
@@ -93,6 +96,7 @@ function PSS (sequences, models, movedIndexes, canvasName) {
 
     this.changeModel = function(){
         var html = '';
+        var htmlScores = '';
         var k = 0;
 
         if (parent.blocksPerLine < 1) {
@@ -107,6 +111,9 @@ function PSS (sequences, models, movedIndexes, canvasName) {
         do {
             $.each(parent.sequences, function (index, sequence) {
                 html += '<div style="width:' + (parent.labelTab + parent.labelLength) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
+                if(index === 0) {
+                    htmlScores = '<div style="width:' + (parent.labelTab + parent.labelLength) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
+                }
 
                 for (var j = k*parent.blocksPerLine*parent.blockLength, currentBlock = 0, currentBlockPos = 1; j < sequence.value.length && currentBlock < parent.blocksPerLine; j++, currentBlockPos++) {
                     var confidence = parent.models[parent.cmbModel.val()][j + 1];
@@ -127,8 +134,14 @@ function PSS (sequences, models, movedIndexes, canvasName) {
                     else {
                         html += sequence.value[j];
                     }
+                    if(index === 0) {
+                        htmlScores += parent.scores[j];
+                    }
                     if (currentBlockPos >= parent.blockLength) {
                         html += ' ';
+                        if(index === 0) {
+                            htmlScores += ' ';
+                        }
                         currentBlockPos = 0;
                         currentBlock++;
                     }
@@ -136,6 +149,12 @@ function PSS (sequences, models, movedIndexes, canvasName) {
 
                 html += '<br />';
             });
+
+            if(parent.showScores){
+                html += '<span style="color:' + parent.scoresForeground + '">' + htmlScores + '</span><br />';
+            }
+            html += '<br />';
+
             k++;
         }while(k < numBlocks / parent.blocksPerLine);
 

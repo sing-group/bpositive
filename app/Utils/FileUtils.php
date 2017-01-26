@@ -42,9 +42,8 @@ class FileUtils
             $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
             $phar->extractTo($dir, $pathToFile, true); // extract all files
         } catch (\Exception $e) {
-            // handle errors
             error_log($e->getMessage());
-            return false;
+            throw new \Exception($e->getMessage());
         }
 
         $file_contents = file_get_contents($dir.'/'.$pathToFile);

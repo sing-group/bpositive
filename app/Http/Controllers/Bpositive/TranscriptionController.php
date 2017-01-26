@@ -26,6 +26,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 
 class TranscriptionController extends Controller
 {
@@ -74,10 +75,20 @@ class TranscriptionController extends Controller
 
         $transcription = new Transcription(Transcription::get($request->get('id')));
 
-        return view('transcription',[
-            'transcription' => $transcription,
-            'newicks' => $transcription->getNewicks(),
-            'confidences' => $transcription->getConfidences()
-        ]);
+        try {
+            return view('transcription', [
+                'transcription' => $transcription,
+                'newicks' => $transcription->getNewicks(),
+                'confidences' => $transcription->getConfidences(),
+                'scores' => json_encode($transcription->getScores())
+            ]);
+        }
+        catch(\Exception $e){
+            return view('transcription', [
+                'transcription' => $transcription,
+                'errors' => new MessageBag([$e->getMessage()])
+            ]);
+
+        }
     }
 }

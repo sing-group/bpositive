@@ -36,21 +36,29 @@
     <div class="project-content">
         <div>
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
-                <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
+                @if(isset($newicks))
+                    <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
+                @endif
+                @if(isset($confidences))
+                    <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
+                @endif
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="treeView">
-                    <div id="svgCanvas">
+                @if(isset($newicks))
+                    <div role="tabpanel" class="tab-pane fade in active" id="treeView">
+                        <div id="svgCanvas">
+                        </div>
                     </div>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="pss">
-                    <div id="pssCanvas" style="overflow:scroll">
+                @endif
+                @if(isset($confidences))
+                    <div role="tabpanel" class="tab-pane fade" id="pss">
+                        <div id="pssCanvas" style="overflow:scroll">
 
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -63,6 +71,7 @@
     <script type="text/javascript">
         //TODO: Refactor
         $(window).on('load', function () {
+            @if(isset($newicks))
             var dataObjects = {!! $newicks !!};
 
             for(var i=0; i < dataObjects.length; i++ ){
@@ -70,20 +79,23 @@
                 var divName = 'svgCanvas' + i;
                 $("#svgCanvas").append('<div id="' + divName + '"></div>');
 
-                phylocanvas = new Smits.PhyloCanvas(
+                var phylocanvas = new Smits.PhyloCanvas(
                     dataObjects[i],		// Newick or XML string
                     divName,	// Div Id where to render
                     800, 600		// Height, Width in pixels
                     //'circular'
                 );
             }
+            @endif
 
-            pss = new PSS(
-                {!! $confidences->getJSONSequences()!!},
-                {!!$confidences->getJSONModels()!!},
-                {!!$confidences->getJSONMovedIndexes()!!},
-                'pssCanvas');
-            pss.getPSS();
+            @if(isset($confidences))
+                var pss = new PSS(
+                    {!!$confidences->getJSONSequences()!!},
+                    {!!$confidences->getJSONModels()!!},
+                    {!!$scores!!},
+                    'pssCanvas');
+                pss.getPSS();
+            @endif
         })
     </script>
 @endsection('endscripts')

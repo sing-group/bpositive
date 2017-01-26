@@ -89,6 +89,15 @@ class Transcription
         return $result;
     }
 
+    public function getScores(){
+
+        $scoresFile = FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.score_ascii');
+        preg_match_all('/c[o-]n?\s+([0-9]|-)+/', $scoresFile, $scores);
+        $scores = preg_replace('/c[o-]n?\s+/', '', $scores[0]);
+        $scores = implode($scores);
+        return $scores;
+    }
+
     public function getConfidences(){
 
         $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.prot.fasta'));
