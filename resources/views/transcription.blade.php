@@ -63,6 +63,11 @@
                 </div>
             @endif
         </div>
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <a class="btn btn-default" href="{{URL::previous()}}">Back</a>
+            </div>
+        </div>
     </div>
 @endsection
 

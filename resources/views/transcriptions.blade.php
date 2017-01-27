@@ -41,13 +41,19 @@
                 {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get']) }}
                 <div class="form-group">
                     <div class="input-group">
-                <span class="input-group-addon">
-                    {{ Form::label('search', 'Search ') }}
-                </span>
+                        <span class="input-group-addon">
+                            {{ Form::label('search', 'Search ') }}
+                        </span>
                         {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here']) }}
+
                         <span class="input-group-btn">
-                    {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
-                </span>
+                            <span class="btn-group">
+                                {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'reset', 'class' => 'btn btn-default btn-block']) }}
+                            </span>
+                            <span class="btn-group">
+                                {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                            </span>
+                        </span>
                     </div>
                 </div>
                 {{ Form::hidden('id', $project->id) }}
@@ -99,5 +105,10 @@
         @endif
     </div>
 
+    <div class="panel panel-info">
+        <div class="panel-body">
+            <a class="btn btn-default" href="/">Back</a>
+        </div>
+    </div>
 
 @endsection
