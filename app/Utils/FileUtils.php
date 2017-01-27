@@ -33,7 +33,7 @@ class FileUtils
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
             error_log('File does not exist');
-            return false;
+            throw new \Exception('File does not exist.');
         }
 
         try {

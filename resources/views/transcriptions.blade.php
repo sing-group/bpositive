@@ -84,7 +84,7 @@
                             @endif
                         </td>
                         <td><a href="transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
-                        <td><a href="download?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
+                        <td><a href="download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
                     </tr>
                 @endforeach
                 <tfoot>

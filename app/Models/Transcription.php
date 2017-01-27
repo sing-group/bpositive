@@ -25,6 +25,7 @@ namespace App\Models;
 
 use App\Utils\FileUtils;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Transcription
 {
@@ -74,6 +75,14 @@ class Transcription
             ->first();
 
         return $transcription;
+    }
+
+    public static function getTgzPath($id){
+
+        $transcription = Transcription::get($id);
+
+        return Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().'files/'.$transcription->linkZip.'.tar.gz';
+
     }
 
     public static function fastaToSequences($source){

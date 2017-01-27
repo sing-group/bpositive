@@ -91,4 +91,25 @@ class TranscriptionController extends Controller
 
         }
     }
+
+    public function download(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        try {
+            return response()->download(Transcription::getTgzPath($request->get('id')));
+        }
+        catch(\Exception $e){
+            $transcription = new Transcription(Transcription::get($request->get('id')));
+            return view('transcription', [
+                'transcription' => $transcription,
+                'errors' => new MessageBag([$e->getMessage()])
+            ]);
+
+        }
+    }
+
+
 }
