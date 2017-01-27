@@ -34,32 +34,34 @@
 --}}
 @section('content')
     <div class="project-content">
-        <div>
-            <ul class="nav nav-tabs" role="tablist">
-                @if(isset($newicks))
-                    <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
-                @endif
-                @if(isset($confidences))
-                    <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
-                @endif
-            </ul>
+        <ul class="nav nav-tabs" role="tablist">
+            @if(isset($newicks))
+                <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
+            @endif
+            @if(isset($confidences))
+                <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
+            @endif
+        </ul>
 
-            <!-- Tab panes -->
-            <div class="tab-content">
-                @if(isset($newicks))
-                    <div role="tabpanel" class="tab-pane fade in active" id="treeView">
-                        <div id="svgCanvas">
-                        </div>
-                    </div>
-                @endif
-                @if(isset($confidences))
-                    <div role="tabpanel" class="tab-pane fade" id="pss">
-                        <div id="pssCanvas">
+        <!-- Tab panes -->
+        <div class="tab-content">
+            @if(isset($newicks))
+                <div role="tabpanel" class="tab-pane fade in active" id="treeView">
 
-                        </div>
+                    <ul id="svgMenu" class="nav nav-tabs" role="tablist">
+                    </ul>
+                    <div id="svgCanvas" role="tabpanel" class="tab-content">
+
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
+            @if(isset($confidences))
+                <div role="tabpanel" class="tab-pane fade" id="pss">
+                    <div id="pssCanvas">
+
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 @endsection
@@ -72,20 +74,32 @@
         //TODO: Refactor
         $(window).on('load', function () {
             @if(isset($newicks))
-            var dataObjects = {!! $newicks !!};
+                var dataObjects = {!! $newicks !!};
 
-            for(var i=0; i < dataObjects.length; i++ ){
+                for(var i=0; i < dataObjects.length; i++ ){
 
-                var divName = 'svgCanvas' + i;
-                $("#svgCanvas").append('<div id="' + divName + '"></div>');
+                    var divName = 'svgCanvas' + i;
 
-                var phylocanvas = new Smits.PhyloCanvas(
-                    dataObjects[i],		// Newick or XML string
-                    divName,	// Div Id where to render
-                    800, 600		// Height, Width in pixels
-                    //'circular'
-                );
-            }
+                    if(i == 0){
+                        $("#svgMenu").append('<li role="presentation" class="active"><a href="#' + divName + '" role="tab" data-toggle="tab">Phylogeny ' + i + '</a></li>');
+                        $("#svgCanvas").append('<div id="' + divName + '" class="tab-pane fade in active"></div>');
+                    }
+                    else {
+                        $("#svgMenu").append('<li role="presentation"><a href="#' + divName + '" role="tab" data-toggle="tab">Phylogeny ' + i + '</a></li>');
+                        $("#svgCanvas").append('<div id="' + divName + '" class="tab-pane fade in"></div>');
+                    }
+
+                    var phylocanvas = new Smits.PhyloCanvas(
+                        dataObjects[i],		// Newick or XML string
+                        divName,	// Div Id where to render
+                        800, 800		// Height, Width in pixels
+
+                        //'circular'
+                    );
+                    //TODO: workaround for svg starting with an offset
+                    $('#' + divName + ' svg').height($('#' + divName + ' svg').height() + 200);
+
+                }
             @endif
 
             @if(isset($confidences))
