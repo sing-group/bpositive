@@ -84,19 +84,37 @@ function PSS (sequences, models, scores, canvasName) {
 
             });
 
+            var btnDisplayCfg = $('<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalDisplayCfg">Display configuration</button>');
+            var modalDisplayCfg = $('<div class="modal fade" id="modalDisplayCfg" tabindex="-1" role="dialog" aria-labelledby="modaldisplaycfg"/>');
+            var modalDialog = $('<div class="modal-dialog" role="document" />').appendTo(modalDisplayCfg);
+            var modalContent = $(
+                '<div class="modal-content">' +
+                    '<div class="modal-header">' +
+                        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        '<h4 class="modal-title" id="myModalLabel">Display configuration</h4>' +
+                    '</div>' +
+                '</div>').appendTo(modalDialog);
+            var modalBody = $('<div class="modal-body"><p>Changes will be applied inmediatelly to the PSS view.</p>').appendTo(modalContent);
+            var modalFooter = $(
+                '<div class="modal-footer">' +
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
+                '</div>').appendTo(modalContent);
+
             var groupScores = $('<label class="checkbox-inline">Show scores</label>');
             $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(groupScores);
 
             form.append(groupCmbModel);
-            form.append(parent.createCmbGroup('FontSize', 'Font size:',6, 30, parent.fontSize, parent.updateFontSize));
-            form.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 20, parent.labelLength, parent.updateLabelLength));
-            form.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
-            form.append(parent.createCmbGroup('BlockLength', 'Block length:', 1, 50, parent.blockLength, parent.updateBlockLength));
-            form.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
-            form.append(groupScores);
+            form.append(btnDisplayCfg);
+            modalBody.append(parent.createCmbGroup('FontSize', 'Font size:',6, 30, parent.fontSize, parent.updateFontSize));
+            modalBody.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 20, parent.labelLength, parent.updateLabelLength));
+            modalBody.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
+            modalBody.append(parent.createCmbGroup('BlockLength', 'Block length:', 1, 50, parent.blockLength, parent.updateBlockLength));
+            modalBody.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
+            modalBody.append(groupScores);
             canvas.html(navbar);
             parent.divAlignment = $('<div class="text-nowrap" style="overflow: auto"/>');
             canvas.append(parent.divAlignment);
+            canvas.append(modalDisplayCfg);
             parent.cmbModel.change();
         }
     };
