@@ -97,7 +97,9 @@
                         //'circular'
                     );
                     //TODO: workaround for svg starting with an offset
-                    $('#' + divName + ' svg').height($('#' + divName + ' svg').height() + 200);
+                    var svg = $('#' + divName + ' svg');
+                    svg.height(svg.height() + 200);
+                    svg.addClass('center-block');
 
                 }
             @endif

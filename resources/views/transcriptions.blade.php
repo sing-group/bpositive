@@ -36,20 +36,25 @@
 
     <div class="project-content">
         <h1>{{$project->name}}</h1>
-        {{ Form::open(['class' => 'form-inline', 'method' => 'get']) }}
-        <div class="form-group">
-            <div class="input-group">
+        <div class="navbar navbar-default">
+            <div class="container-fluid">
+                {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get']) }}
+                <div class="form-group">
+                    <div class="input-group">
                 <span class="input-group-addon">
                     {{ Form::label('search', 'Search ') }}
                 </span>
-                {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here']) }}
-                <span class="input-group-btn">
+                        {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here']) }}
+                        <span class="input-group-btn">
                     {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
                 </span>
+                    </div>
+                </div>
+                {{ Form::hidden('id', $project->id) }}
+                {{ Form::close() }}
             </div>
         </div>
-        {{ Form::hidden('id', $project->id) }}
-        {{ Form::close() }}
+
         @if ($transcriptions->count() > 0)
             <table class="table table-striped">
                 <thead>
