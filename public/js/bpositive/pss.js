@@ -43,6 +43,8 @@ function PSS (sequences, models, scores, canvasName) {
     this.neb9095beb9095Foreground = 'black';
     this.scoresForeground = 'grey';
 
+    this.fontSize = '14';
+
     this.showScores = true;
 
     var parent = this;
@@ -63,38 +65,88 @@ function PSS (sequences, models, scores, canvasName) {
         }
     };
 
-    this.changeBlocks = function(labelLength, blockLength, blocksPerLine, labelTab) {
-        parent.labelLength = labelLength;
-        parent.blockLength = blockLength;
-        parent.blocksPerLine = blocksPerLine;
-        parent.labelTab = labelTab;
-
-        if(parent.cmbModel) {
-            parent.cmbModel.change();
-        }
-    };
-
     this.getPSS = function (){
 
+        var canvas = $('#' + parent.canvas);
         if(parent.models.length == 0){
-            $('#' + parent.canvas).html('<div class="alert alert-warning">No Possitively Selected Sites</div>');
+            canvas.html('<div class="alert alert-warning">No Possitively Selected Sites</div>');
         }
         else{
-            parent.cmbModel = $('<select class="form-control"/>').change(parent.changeModel);
+            var form = $('<form class="navbar-form" />');
+            var header = $('<div class="container-fluid" />').append(form);
+            var navbar = $('<div class="navbar navbar-default" />').append(header);
 
+            var groupCmbModel = $('<div class="form-group" />');
+            parent.cmbModel = $('<select class="form-control"/>').appendTo(groupCmbModel).change(parent.updatePSS);
             $.each(parent.models, function(index, value){
 
                     $('<option/>', {value: index, text: index}).appendTo(parent.cmbModel);
 
             });
-            $('#' + parent.canvas).html(parent.cmbModel);
+
+            var groupScores = $('<label class="checkbox-inline">Show scores</label>');
+            $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(groupScores);
+
+            form.append(groupCmbModel);
+            form.append(parent.createCmbGroup('FontSize', 'Font size:',6, 30, parent.fontSize, parent.updateFontSize));
+            form.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 20, parent.labelLength, parent.updateLabelLength));
+            form.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
+            form.append(parent.createCmbGroup('BlockLength', 'Block length:', 1, 50, parent.blockLength, parent.updateBlockLength));
+            form.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
+            form.append(groupScores);
+            canvas.html(navbar);
             parent.divAlignment = $('<div class="text-nowrap" style="overflow: auto"/>');
-            $('#' + parent.canvas).append(parent.divAlignment);
+            canvas.append(parent.divAlignment);
             parent.cmbModel.change();
         }
     };
 
-    this.changeModel = function(){
+    this.createCmbGroup = function(basename, label, from, to, value, changeHandler){
+
+        var group = $('<div class="form-group"><label for="cmb' + basename + '" class="control-label">' + label + '</label></div>');
+        var cmb = $('<select id="cmb' + basename + '" class="form-control"/>').change(changeHandler).appendTo(group);
+        for(var i = from; i <= to; i++){
+            if(i == value){
+                $('<option/>', {selected:'selected', value: i, text: i}).appendTo(cmb);
+            }
+            else {
+                $('<option/>', {value: i, text: i}).appendTo(cmb);
+            }
+        };
+        return group;
+    };
+
+    this.updateLabelLength = function(){
+        parent.labelLength = $( this ).val();
+        parent.updatePSS();
+    };
+
+    this.updateBlockLength = function(){
+        parent.blockLength = $( this ).val();
+        parent.updatePSS();
+    };
+
+    this.updateBlocksPerLine = function(){
+        parent.blocksPerLine = $( this ).val();
+        parent.updatePSS();
+    };
+
+    this.updateLabelTab = function(){
+        parent.labelTab = $( this ).val();
+        parent.updatePSS();
+    };
+
+    this.updateFontSize = function(){
+        parent.fontSize = $( this ).val();
+        parent.updatePSS();
+    };
+
+    this.updateScores = function(){
+        parent.showScores = $( this ).is(':checked');
+        parent.updatePSS();
+    };
+
+    this.updatePSS = function(){
         var html = '';
         var htmlScores = '';
         var k = 0;
@@ -110,9 +162,9 @@ function PSS (sequences, models, scores, canvasName) {
 
         do {
             $.each(parent.sequences, function (index, sequence) {
-                html += '<div style="width:' + (parent.labelTab + parent.labelLength) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
+                html += '<div style="width:' + (+parent.labelTab + +parent.labelLength) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
                 if(index === 0) {
-                    htmlScores = '<div style="width:' + (parent.labelTab + parent.labelLength) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
+                    htmlScores = '<div style="width:' + (+parent.labelTab + +parent.labelLength) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
                 }
 
                 for (var j = k*parent.blocksPerLine*parent.blockLength, currentBlock = 0, currentBlockPos = 1; j < sequence.value.length && currentBlock < parent.blocksPerLine; j++, currentBlockPos++) {
@@ -158,6 +210,6 @@ function PSS (sequences, models, scores, canvasName) {
             k++;
         }while(k < numBlocks / parent.blocksPerLine);
 
-        parent.divAlignment.html('<div style="font-family:monospace;">' + html +'</div>');
+        parent.divAlignment.html('<div style="font-family:monospace;font-size:' + parent.fontSize + 'px;">' + html +'</div>');
     };
 }
