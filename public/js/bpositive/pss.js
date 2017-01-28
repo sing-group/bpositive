@@ -19,10 +19,12 @@
  */
 
 
-function PSS (sequences, models, scores, canvasName) {
+function PSS (transcription, sequences, models, scores, canvasName, logo) {
+    this.transcription = transcription;
     this.sequences = sequences;
     this.models = models;
     this.scores = scores;
+    this.logo = logo;
 
     this.canvas = canvasName;
     this.cmbModel;
@@ -84,7 +86,7 @@ function PSS (sequences, models, scores, canvasName) {
 
             });
 
-            var btnDisplayCfg = $('<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalDisplayCfg">Display configuration</button>');
+            var btnDisplayCfg = $('<button type="button" class="btn btn-default form-control" data-toggle="modal" data-target="#modalDisplayCfg">Display configuration</button>');
             var modalDisplayCfg = $('<div class="modal fade" id="modalDisplayCfg" tabindex="-1" role="dialog" aria-labelledby="modaldisplaycfg"/>');
             var modalDialog = $('<div class="modal-dialog" role="document" />').appendTo(modalDisplayCfg);
             var modalContent = $(
@@ -103,8 +105,11 @@ function PSS (sequences, models, scores, canvasName) {
             var groupScores = $('<label class="checkbox-inline">Show scores</label>');
             $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(groupScores);
 
+            var btnPDF = $('<button type="button" class="btn btn-info form-control">Download as PDF</button>').click(parent.createPDF);
+
             form.append(groupCmbModel);
             form.append(btnDisplayCfg);
+            form.append(btnPDF);
             modalBody.append(parent.createCmbGroup('FontSize', 'Font size:',6, 30, parent.fontSize, parent.updateFontSize));
             modalBody.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 20, parent.labelLength, parent.updateLabelLength));
             modalBody.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
@@ -112,12 +117,57 @@ function PSS (sequences, models, scores, canvasName) {
             modalBody.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
             modalBody.append(groupScores);
             canvas.html(navbar);
-            parent.divAlignment = $('<div class="text-nowrap" style="overflow: auto"/>');
+            parent.divAlignment = $('<div id="alignment" class="text-nowrap" style="overflow: auto;"/>');
             canvas.append(parent.divAlignment);
             canvas.append(modalDisplayCfg);
             parent.cmbModel.change();
         }
     };
+
+    this.createPDF = function(){
+
+        /* Resolution problems when using pagesplit
+        var doc = new jsPDF('l', 'pt', 'a4');
+        var divAlign = $('#alignment');
+        doc.addHTML(divAlign, 10, 10,{
+            pagesplit: true
+        }, function(){
+            doc.save('pss.pdf');
+        });
+        */
+
+        var pdf = new jsPDF('l', 'mm', 'a4');
+
+        var divs = $('div.printAlign');
+
+        var img = new Image();
+        img.onload = function() {
+            parent.addPage(pdf, divs, 0, parent.transcription.name, this);
+        };
+        img.src = parent.logo;
+    };
+
+    this.addPage = function(pdf, items, index, name, logo){
+        var doc = pdf;
+
+        if(items.length == index){
+            doc.addImage(logo, 5, 5, 8, 8);
+            doc.text(15, 11, name + ', page: ' + index);
+            doc.save('pss.pdf');
+            return;
+        }
+        if (index != 0) {
+            doc.addImage(logo, 5, 5, 8, 8);
+            doc.text(15, 11, name + ', page: ' + index);
+            doc.addPage();
+        }
+
+        pdf.addHTML(items[index], 10, 15, {}, function () {
+            parent.addPage(doc, items, index + 1, name, logo);
+        });
+
+    };
+
 
     this.createCmbGroup = function(basename, label, from, to, value, changeHandler){
 
@@ -130,7 +180,7 @@ function PSS (sequences, models, scores, canvasName) {
             else {
                 $('<option/>', {value: i, text: i}).appendTo(cmb);
             }
-        };
+        }
         return group;
     };
 
@@ -179,7 +229,9 @@ function PSS (sequences, models, scores, canvasName) {
         }
 
         do {
+            html += '<div class="printAlign" style="background-color: white">';
             $.each(parent.sequences, function (index, sequence) {
+
                 html += '<div style="width:' + (+parent.labelTab + +parent.labelLength) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
                 if(index === 0) {
                     htmlScores = '<div style="width:' + (+parent.labelTab + +parent.labelLength) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
@@ -224,7 +276,7 @@ function PSS (sequences, models, scores, canvasName) {
                 html += '<span style="color:' + parent.scoresForeground + '">' + htmlScores + '</span><br />';
             }
             html += '<br />';
-
+            html += '</div>';
             k++;
         }while(k < numBlocks / parent.blocksPerLine);
 

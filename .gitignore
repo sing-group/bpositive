@@ -13,6 +13,7 @@ Homestead.yaml
 /public/css/bootstrap-theme.css.map
 /public/css/bootstrap-theme.min.css.map
 /public/css/bootstrap-theme.min.css
+/public/css/bootstrap.min.css
 /public/fonts/glyphicons-halflings-regular.eot
 /public/fonts/glyphicons-halflings-regular.woff2
 /public/fonts/glyphicons-halflings-regular.woff
@@ -23,6 +24,8 @@ Homestead.yaml
 /public/js/jquery.min.js
 /public/js/bootstrap.js
 /public/js/bootstrap.min.js
+/public/js/jspdf.min.js
+/public/js/html2pdf.js
 /public/fonts/fontawesome-webfont.eot
 /public/fonts/fontawesome-webfont.ttf
 /public/fonts/fontawesome-webfont.woff

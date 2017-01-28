@@ -160,4 +160,8 @@ class Transcription
 
         return json_encode($newicks);
     }
+
+    public function getJSON(){
+        return json_encode($this);
+    }
 }

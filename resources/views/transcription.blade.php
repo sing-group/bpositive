@@ -34,6 +34,7 @@
 --}}
 @section('content')
     <div class="project-content">
+        <h1>{{$transcription->name}}</h1>
         <ul class="nav nav-tabs" role="tablist">
             @if(isset($newicks))
                 <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
@@ -74,6 +75,8 @@
 @section('endscripts')
     <script type="text/javascript" src="{{URL::asset('js/raphael-min.js')}}" ></script>
     <script type="text/javascript" src="{{URL::asset('js/jsphylosvg-min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::asset('js/jspdf.min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::asset('js/html2pdf.js')}}"></script>
     <script type="text/javascript" src="{{URL::asset('js/bpositive/pss.js')}}"></script>
     <script type="text/javascript">
         //TODO: Refactor
@@ -111,10 +114,13 @@
 
             @if(isset($confidences))
                 var pss = new PSS(
+                    {!!$transcription->getJSON()!!},
                     {!!$confidences->getJSONSequences()!!},
                     {!!$confidences->getJSONModels()!!},
                     {!!$scores!!},
-                    'pssCanvas');
+                    'pssCanvas',
+                    '{{URL::asset('images/bpositive.png')}}'
+                );
                 pss.getPSS();
             @endif
         })
