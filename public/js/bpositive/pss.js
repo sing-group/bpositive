@@ -140,24 +140,25 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
 
         var divs = $('div.printAlign');
 
-        var img = new Image();
-        img.onload = function() {
-            parent.addPage(pdf, divs, 0, parent.transcription.name, this);
-        };
-        img.src = parent.logo;
+        //TODO: Image makes Acrobat unable to open PDF
+        //var img = new Image();
+        //img.onload = function() {
+        parent.addPage(pdf, divs, 0, parent.transcription.name, this);
+        //};
+        //img.src = parent.logo;
     };
 
     this.addPage = function(pdf, items, index, name, logo){
         var doc = pdf;
 
         if(items.length == index){
-            doc.addImage(logo, 5, 5, 8, 8);
+            //doc.addImage(logo, 5, 5, 8, 8);
             doc.text(15, 11, name + ', page: ' + index);
             doc.save('pss.pdf');
             return;
         }
         if (index != 0) {
-            doc.addImage(logo, 5, 5, 8, 8);
+            //doc.addImage(logo, 5, 5, 8, 8);
             doc.text(15, 11, name + ', page: ' + index);
             doc.addPage();
         }
