@@ -101,17 +101,27 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
                 '<div class="modal-footer">' +
                     '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
                 '</div>').appendTo(modalContent);
+            var modalProgress = $('<div class="modal fade" id="pleaseWaitModal" tabindex="-1" role="dialog" aria-labelledby="pleaseWaitModal">' +
+                '<div class="modal-dialog" role="document">' +
+                    '<div class="modal-content">' +
+                        '<div class="modal-header">' +
+                            '<h4 class="modal-title" id="myModalLabel">Creating PDF, please wait...</h4>' +
+                        '</div>' +
+                        '<div class="modal-body">' +
+                            '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" style="width:100%;"></div>' +
+                        '</div>' +
+                    '</div></div></div>');
 
             var groupScores = $('<label class="checkbox-inline">Show scores</label>');
             $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(groupScores);
 
-            var btnPDF = $('<button type="button" class="btn btn-info form-control">Download as PDF</button>').click(parent.createPDF);
+            var btnPDF = $('<button type="button" class="btn btn-info form-control" data-toggle="modal" data-target="#pleaseWaitModal">Download as PDF</button>').click(parent.createPDF);
 
             form.append(groupCmbModel);
             form.append(btnDisplayCfg);
             form.append(btnPDF);
             modalBody.append(parent.createCmbGroup('FontSize', 'Font size:',6, 30, parent.fontSize, parent.updateFontSize));
-            modalBody.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 20, parent.labelLength, parent.updateLabelLength));
+            modalBody.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 30, parent.labelLength, parent.updateLabelLength));
             modalBody.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
             modalBody.append(parent.createCmbGroup('BlockLength', 'Block length:', 1, 50, parent.blockLength, parent.updateBlockLength));
             modalBody.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
@@ -120,12 +130,14 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             parent.divAlignment = $('<div id="alignment" class="text-nowrap" style="overflow: auto;"/>');
             canvas.append(parent.divAlignment);
             canvas.append(modalDisplayCfg);
+            canvas.append(modalProgress);
             parent.cmbModel.change();
         }
     };
 
     this.createPDF = function(){
 
+        //$('#pleaseWaitModal').modal();
         /* Resolution problems when using pagesplit
         var doc = new jsPDF('l', 'pt', 'a4');
         var divAlign = $('#alignment');
@@ -143,7 +155,7 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
         //TODO: Image makes Acrobat unable to open PDF
         //var img = new Image();
         //img.onload = function() {
-        parent.addPage(pdf, divs, 0, parent.transcription.name, this);
+        parent.addPage(pdf, divs, 0, parent.transcription.name + ' - ' + parent.cmbModel.val(), this);
         //};
         //img.src = parent.logo;
     };
@@ -154,7 +166,8 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
         if(items.length == index){
             //doc.addImage(logo, 5, 5, 8, 8);
             doc.text(15, 11, name + ', page: ' + index);
-            doc.save('pss.pdf');
+            doc.save(name + '.pdf');
+            $('#pleaseWaitModal').modal('hide');
             return;
         }
         if (index != 0) {
@@ -233,9 +246,9 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             html += '<div class="printAlign" style="background-color: white">';
             $.each(parent.sequences, function (index, sequence) {
 
-                html += '<div style="width:' + (+parent.labelTab + +parent.labelLength) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
+                html += '<div style="width:' + (+parent.labelTab + (+parent.labelLength/2+1)) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
                 if(index === 0) {
-                    htmlScores = '<div style="width:' + (+parent.labelTab + +parent.labelLength) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
+                    htmlScores = '<div style="width:' + (+parent.labelTab + (+parent.labelLength/2+1)) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
                 }
 
                 for (var j = k*parent.blocksPerLine*parent.blockLength, currentBlock = 0, currentBlockPos = 1; j < sequence.value.length && currentBlock < parent.blocksPerLine; j++, currentBlockPos++) {
