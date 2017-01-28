@@ -1,8 +1,6 @@
 B+
 ==
 
-![B+ Logo](public/images/bpositive.png "B+ Logo")
-
 [B+](http://bpositive.i3s.up.pt) is a database that has been specifically designed to store and show the information 
 contained in [ADOPS](https://sing.ei.uvigo.es/ADOPS/) (Automatic Detection Of Positively Selected Sites) project files.
 
