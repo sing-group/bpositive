@@ -127,9 +127,9 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             modalBody.append(parent.createCmbGroup('blocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine));
 
             modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 95%', parent.neb95beb95Foreground, parent.neb95beb95Background));
-            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 90-95%', parent.neb95beb9095Foreground, parent.neb95beb9095Background));
-            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 90-95% - BEB 95%', parent.neb9095beb95Foreground, parent.neb9095beb95Background));
-            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 90-95% - BEB 90-95%', parent.neb9095beb9095Foreground, parent.neb9095beb9095Background));
+            modalBody.append(parent.createColorPicker('neb95beb9095', 'NEB 95% - BEB 90-95%', parent.neb95beb9095Foreground, parent.neb95beb9095Background));
+            modalBody.append(parent.createColorPicker('neb9095beb95', 'NEB 90-95% - BEB 95%', parent.neb9095beb95Foreground, parent.neb9095beb95Background));
+            modalBody.append(parent.createColorPicker('neb9095beb9095', 'NEB 90-95% - BEB 90-95%', parent.neb9095beb9095Foreground, parent.neb9095beb9095Background));
 
             modalBody.append(groupScores);
 
