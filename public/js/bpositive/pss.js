@@ -125,7 +125,14 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             modalBody.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
             modalBody.append(parent.createCmbGroup('BlockLength', 'Block length:', 1, 50, parent.blockLength, parent.updateBlockLength));
             modalBody.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
+
+            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 95%', parent.neb95beb95Foreground, parent.neb95beb95Background));
+            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 90-95%', parent.neb95beb9095Foreground, parent.neb95beb9095Background));
+            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 90-95% - BEB 95%', parent.neb9095beb95Foreground, parent.neb9095beb95Background));
+            modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 90-95% - BEB 90-95%', parent.neb9095beb9095Foreground, parent.neb9095beb9095Background));
+
             modalBody.append(groupScores);
+
             canvas.html(navbar);
             parent.divAlignment = $('<div id="alignment" class="text-nowrap" style="overflow: auto;"/>');
             canvas.append(parent.divAlignment);
@@ -182,6 +189,32 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
 
     };
 
+    this.createColorPicker = function(basename, label, foreground, background){
+
+
+        var group = $('<div class="input-group" />');
+        var lbl = $('<span class="input-group-addon width-50" id="lbl' + basename +'" style="color:' + foreground +';background-color:' + background + '">' + label + '</span>').appendTo(group);
+
+        $('<span class="input-group-addon btn">Foreground</span>').appendTo(group)
+            .colorpicker({
+                color: foreground,
+                format: 'rgb'
+            }).on('changeColor', function(e){
+                parent[basename + 'Foreground'] = e.color.toString('rgba');
+                lbl.css("color", e.color.toString('rgba'));
+                parent.updatePSS();
+            });
+        $('<span class="input-group-addon btn">Background</span>').appendTo(group)
+            .colorpicker({
+                color: background,
+                format: 'rgb'
+            }).on('changeColor', function(e){
+                parent[basename + 'Background'] = e.color.toString('rgba');
+                lbl.css("background-color", e.color.toString('rgba'));
+                parent.updatePSS();
+            });
+        return group;
+    };
 
     this.createCmbGroup = function(basename, label, from, to, value, changeHandler){
 

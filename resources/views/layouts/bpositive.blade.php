@@ -31,6 +31,7 @@
     <link href="{{URL::asset('css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/font-awesome.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('css/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
 </head>
 <body>
@@ -91,6 +92,7 @@
 
     <script type="text/javascript" src="{{URL::asset('js/jquery.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::asset('js/bootstrap.min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::asset('js/bootstrap-colorpicker.min.js')}}"></script>
 @yield('endscripts')
 </body>
 </html>
