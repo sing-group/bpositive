@@ -128,13 +128,20 @@
 
                     var divName = 'svgCanvas' + i;
 
+                    var svgCanvas = $("#svgCanvas");
                     if(i == 0){
-                        $("#svgMenu").append('<li role="presentation" class="active"><a href="#' + divName + '" role="tab" data-toggle="tab">Phylogeny ' + i + '</a></li>');
-                        $("#svgCanvas").append('<div id="' + divName + '" class="tab-pane fade in active"></div>');
+                        $("#svgMenu").append('<li role="presentation" class="active"><a href="#tab' + divName + '" role="tab" data-toggle="tab">Phylogeny ' + i + '</a></li>');
+                        svgCanvas.append('<div id="tab' + divName + '" class="tab-pane fade in active">' +
+                            '<div class="navbar navbar-default"><div class="container-fluid"><form class="navbar-form"><a id="btn' + divName + '" type="button" class="btn btn-info form-control" download="Phylogeny'+ i + '.svg">Download as SVG</a></form></div></div>' +
+                            '<div id="' + divName + '"></div>' +
+                            '</div>');
                     }
                     else {
-                        $("#svgMenu").append('<li role="presentation"><a href="#' + divName + '" role="tab" data-toggle="tab">Phylogeny ' + i + '</a></li>');
-                        $("#svgCanvas").append('<div id="' + divName + '" class="tab-pane fade in"></div>');
+                        $("#svgMenu").append('<li role="presentation"><a href="#tab' + divName + '" role="tab" data-toggle="tab">Phylogeny ' + i + '</a></li>');
+                        svgCanvas.append('<div id="tab' + divName + '" class="tab-pane fade in">' +
+                            '<div class="navbar navbar-default"><div class="container-fluid"><form class="navbar-form"><a id="btn' + divName + '" type="button" class="btn btn-info form-control" download="Phylogeny'+ i + '.svg">Download as SVG</a></form></div></div>' +
+                            '<div id="' + divName + '"></div>' +
+                            '</div>');
                     }
 
                     var phylocanvas = new Smits.PhyloCanvas(
@@ -144,6 +151,10 @@
 
                         //'circular'
                     );
+
+                    //Gets SVG data and removes all non ASCII characters, because they are problematic for some viewers
+                    $('#btn' + divName).attr('href', 'data:image/svg+xml;base64,' + btoa(phylocanvas.getSvgSource().replace(/[^\x00-\x7F]/g, "")));
+
                     //TODO: workaround for svg starting with an offset
                     var svg = $('#' + divName + ' svg');
                     svg.height(svg.height() + 200);
