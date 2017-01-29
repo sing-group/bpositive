@@ -80,7 +80,8 @@ class TranscriptionController extends Controller
                 'transcription' => $transcription,
                 'newicks' => $transcription->getNewicks(),
                 'confidences' => $transcription->getConfidences(),
-                'scores' => json_encode($transcription->getScores())
+                'scores' => json_encode($transcription->getScores()),
+                'textFiles' => $transcription->getPlainTextFiles()
             ]);
         }
         catch(\Exception $e){

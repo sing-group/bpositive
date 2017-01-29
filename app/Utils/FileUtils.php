@@ -40,7 +40,7 @@ class FileUtils
             $dir = '/tmp/'.uniqid();
 
             $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
-            $phar->extractTo($dir, $pathToFile, true); // extract all files
+            $phar->extractTo($dir, $pathToFile, true);
         } catch (\Exception $e) {
             error_log($e->getMessage());
             throw new \Exception($e->getMessage());
@@ -51,6 +51,38 @@ class FileUtils
         //Storage::disk('bpositive')->deleteDirectory($dir); //TODO: not working
 
         return $file_contents;
+    }
+
+    public static function readFilesFromTgz($pathToTgz, $mapOfFiles) {
+
+        if (!Storage::disk('bpositive')->exists($pathToTgz)) {
+            error_log('File does not exist');
+            throw new \Exception('File does not exist.');
+        }
+
+        try {
+            $dir = '/tmp/'.uniqid();
+
+            $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
+            $phar->extractTo($dir); // extract all files
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            throw new \Exception($e->getMessage());
+        }
+
+        $result = array();
+        foreach ($mapOfFiles as $name => $path) {
+            $contents = file_get_contents($dir . '/' . $path);
+            if($contents === FALSE){
+                error_log('File does not exist: ' . $dir . '/' . $path);
+                throw new \Exception('File does not exist: ' . $dir . '/' . $path);
+            }
+            $result[$name] = $contents;
+        }
+        FileUtils::deleteDirectory($dir);
+        //Storage::disk('bpositive')->deleteDirectory($dir); //TODO: not working
+
+        return $result;
     }
 
     public static function deleteDirectory($dir) {

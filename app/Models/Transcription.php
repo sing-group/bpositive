@@ -164,4 +164,33 @@ class Transcription
     public function getJSON(){
         return json_encode($this);
     }
+
+    public function getPlainTextFiles(){
+        $files = array();
+        $basePath = $this->name.'/ClustalW2/';
+
+        $files['notes'] = $basePath.'notes.txt';
+        $files['log'] = $basePath.'output.log';
+        $files['alnFile'] = $basePath.'aligned.prot.aln';
+        $files['alnNucl'] = $basePath.'aligned.fasta';
+        $files['alnAmin'] = $basePath.'aligned.prot.fasta';
+        $files['tree'] = $basePath.'tree.con';
+        $files['psrf'] = $basePath.'mrbayes.log.psrf';
+        $files['codemlOutput'] = $basePath.'codeml.out';
+        $files['codemlSummary'] = $basePath.'codeml.sum';
+        $files['experiment'] = $basePath.'experiment.conf';
+
+        $files_contents = FileUtils::readFilesFromTgz('files/'.$this->linkZip.'.tar.gz', $files);
+
+        $files_contents['summary'] = "--- EXPERIMENT NOTES\n\n"
+            .$files_contents['notes']
+            ."\n\n\n --- EXPERIMENT PROPERTIES\n\n"
+            .$files_contents['experiment']
+            . "\n\n\n --- PSRF SUMMARY\n\n"
+            .$files_contents['psrf']
+            . "\n\n\n --- CODEML SUMMARY\n\n"
+            .$files_contents['codemlSummary'];
+
+        return $files_contents;
+    }
 }

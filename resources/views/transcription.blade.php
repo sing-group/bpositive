@@ -36,9 +36,19 @@
     <div class="project-content">
         <h1>{{$transcription->name}}</h1>
         <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
+            <li role="presentation"><a href="#log" aria-controls="log" role="tab" data-toggle="tab">Execution Log</a></li>
+            <li role="presentation"><a href="#alnFile" aria-controls="alnFile" role="tab" data-toggle="tab">ALN File</a></li>
+            <li role="presentation"><a href="#alnNucl" aria-controls="alnNucl" role="tab" data-toggle="tab">Aligned Nucl</a></li>
+            <li role="presentation"><a href="#alnAmin" aria-controls="alnAmin" role="tab" data-toggle="tab">Aligned Amin</a></li>
+            <li role="presentation"><a href="#tree" aria-controls="tree" role="tab" data-toggle="tab">Tree</a></li>
             @if(isset($newicks))
-                <li role="presentation" class="active"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
+                <li role="presentation"><a href="#treeView" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
             @endif
+            <li role="presentation"><a href="#psrf" aria-controls="psrf" role="tab" data-toggle="tab">PSRF</a></li>
+            <li role="presentation"><a href="#codemlOutput" aria-controls="codemlOutput" role="tab" data-toggle="tab">Codeml Output</a></li>
+            <li role="presentation"><a href="#codemlSummary" aria-controls="codemlSummary" role="tab" data-toggle="tab">Codeml Summary</a></li>
+            <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
             @if(isset($confidences))
                 <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
             @endif
@@ -46,8 +56,26 @@
 
         <!-- Tab panes -->
         <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="notes">
+                <pre>{{$textFiles['notes']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="log">
+                <pre>{{$textFiles['log']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="alnFile">
+                <pre>{{$textFiles['alnFile']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="alnNucl">
+                <pre>{{$textFiles['alnNucl']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="alnAmin">
+                <pre>{{$textFiles['alnAmin']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="tree">
+                <pre>{{$textFiles['tree']}}</pre>
+            </div>
             @if(isset($newicks))
-                <div role="tabpanel" class="tab-pane fade in active" id="treeView">
+                <div role="tabpanel" class="tab-pane fade" id="treeView">
 
                     <ul id="svgMenu" class="nav nav-tabs" role="tablist">
                     </ul>
@@ -56,6 +84,18 @@
                     </div>
                 </div>
             @endif
+            <div role="tabpanel" class="tab-pane fade" id="psrf">
+                <pre>{{$textFiles['psrf']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="codemlOutput">
+                <pre>{{$textFiles['codemlOutput']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="codemlSummary">
+                <pre>{{$textFiles['codemlSummary']}}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="summary">
+                <pre>{{$textFiles['summary']}}</pre>
+            </div>
             @if(isset($confidences))
                 <div role="tabpanel" class="tab-pane fade" id="pss">
                     <div id="pssCanvas">
