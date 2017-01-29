@@ -101,7 +101,7 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
                 '<div class="modal-footer">' +
                     '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>' +
                 '</div>').appendTo(modalContent);
-            var modalProgress = $('<div class="modal fade" id="pleaseWaitModal" tabindex="-1" role="dialog" aria-labelledby="pleaseWaitModal">' +
+            var modalProgress = $('<div class="modal fade" id="pleaseWaitModal" tabindex="-1" role="dialog" aria-labelledby="pleaseWaitModal" data-backdrop="static" data-keyboard="false">' +
                 '<div class="modal-dialog" role="document">' +
                     '<div class="modal-content">' +
                         '<div class="modal-header">' +
@@ -115,7 +115,7 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             var groupScores = $('<label class="checkbox-inline">Show scores</label>');
             $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(groupScores);
 
-            var btnPDF = $('<button type="button" class="btn btn-info form-control" data-toggle="modal" data-target="#pleaseWaitModal">Download as PDF</button>').click(parent.createPDF);
+            var btnPDF = $('<button type="button" class="btn btn-info form-control">Download as PDF</button>').click(parent.createPDF);
 
             form.append(groupCmbModel);
             form.append(btnDisplayCfg);
@@ -144,7 +144,7 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
 
     this.createPDF = function(){
 
-        //$('#pleaseWaitModal').modal();
+        $('#pleaseWaitModal').modal();
         /* Resolution problems when using pagesplit
         var doc = new jsPDF('l', 'pt', 'a4');
         var divAlign = $('#alignment');
@@ -216,7 +216,7 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
         return group;
     };
 
-    this.createCmbGroup = function(basename, label, from, to, value, changeHandler){
+    this.createCmbGroup = function(basename, label, from, to, value){
 
         var group = $('<div class="form-group"><label for="cmb' + basename + '" class="control-label">' + label + '</label></div>');
         var cmb = $('<select id="cmb' + basename + '" class="form-control"/>').appendTo(group).change(function(){
