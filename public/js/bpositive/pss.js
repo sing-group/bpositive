@@ -120,11 +120,11 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             form.append(groupCmbModel);
             form.append(btnDisplayCfg);
             form.append(btnPDF);
-            modalBody.append(parent.createCmbGroup('FontSize', 'Font size:',6, 30, parent.fontSize, parent.updateFontSize));
-            modalBody.append(parent.createCmbGroup('LabelLength', 'Label length:', 1, 30, parent.labelLength, parent.updateLabelLength));
-            modalBody.append(parent.createCmbGroup('LabelTab', 'Label tab:', 1, 20, parent.labelTab, parent.updateLabelTab));
-            modalBody.append(parent.createCmbGroup('BlockLength', 'Block length:', 1, 50, parent.blockLength, parent.updateBlockLength));
-            modalBody.append(parent.createCmbGroup('BlocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine, parent.updateBlocksPerLine));
+            modalBody.append(parent.createCmbGroup('fontSize', 'Font size:',6, 30, parent.fontSize));
+            modalBody.append(parent.createCmbGroup('labelLength', 'Label length:', 1, 30, parent.labelLength));
+            modalBody.append(parent.createCmbGroup('labelTab', 'Label tab:', 1, 20, parent.labelTab));
+            modalBody.append(parent.createCmbGroup('blockLength', 'Block length:', 1, 50, parent.blockLength));
+            modalBody.append(parent.createCmbGroup('blocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine));
 
             modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 95%', parent.neb95beb95Foreground, parent.neb95beb95Background));
             modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 90-95%', parent.neb95beb9095Foreground, parent.neb95beb9095Background));
@@ -193,7 +193,7 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
 
 
         var group = $('<div class="input-group" />');
-        var lbl = $('<span class="input-group-addon width-50" id="lbl' + basename +'" style="color:' + foreground +';background-color:' + background + '">' + label + '</span>').appendTo(group);
+        var lbl = $('<span class="input-group-addon width-50" style="color:' + foreground +';background-color:' + background + '">' + label + '</span>').appendTo(group);
 
         $('<span class="input-group-addon btn">Foreground</span>').appendTo(group)
             .colorpicker({
@@ -219,7 +219,10 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
     this.createCmbGroup = function(basename, label, from, to, value, changeHandler){
 
         var group = $('<div class="form-group"><label for="cmb' + basename + '" class="control-label">' + label + '</label></div>');
-        var cmb = $('<select id="cmb' + basename + '" class="form-control"/>').change(changeHandler).appendTo(group);
+        var cmb = $('<select id="cmb' + basename + '" class="form-control"/>').appendTo(group).change(function(){
+            parent[basename] = $( this ).val();
+            parent.updatePSS();
+        });
         for(var i = from; i <= to; i++){
             if(i == value){
                 $('<option/>', {selected:'selected', value: i, text: i}).appendTo(cmb);
@@ -229,31 +232,6 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             }
         }
         return group;
-    };
-
-    this.updateLabelLength = function(){
-        parent.labelLength = $( this ).val();
-        parent.updatePSS();
-    };
-
-    this.updateBlockLength = function(){
-        parent.blockLength = $( this ).val();
-        parent.updatePSS();
-    };
-
-    this.updateBlocksPerLine = function(){
-        parent.blocksPerLine = $( this ).val();
-        parent.updatePSS();
-    };
-
-    this.updateLabelTab = function(){
-        parent.labelTab = $( this ).val();
-        parent.updatePSS();
-    };
-
-    this.updateFontSize = function(){
-        parent.fontSize = $( this ).val();
-        parent.updatePSS();
     };
 
     this.updateScores = function(){
