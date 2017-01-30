@@ -9,12 +9,13 @@ Team
 This project is an idea and is developed by:
 * Jorge Vieira [Molecular Evolution Group](http://evolution.ibmc.up.pt)
 * José Sousa [i3S](http://www.i3s.up.pt/)
-* Miguel Reboiro-Jato [SING Group](http://sing.ei.uvigo.es)
-* Noé Vázquez González [SING Group](http://sing.ei.uvigo.es)
+* Miguel Reboiro-Jato [SING Group](http://www.sing-group.org)
+* Noé Vázquez González [SING Group](http://www.sing-group.org)
 * Bárbara Amorim [i3S](http://www.i3s.up.pt/)
 * Cristina P. Vieira [Molecular Evolution Group](http://evolution.ibmc.up.pt)
 * André Torres [i3S](http://www.i3s.up.pt/)
-* Florentino Fdez-Riverola [SING Group](http://sing.ei.uvigo.es)
+* Hugo López-Fernández [SING Group](http://www.sing-group.org)
+* Florentino Fdez-Riverola [SING Group](http://www.sing-group.org)
 
 ##Downloading and Installing B+
 ### 0. Prerequisites
