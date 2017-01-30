@@ -44,7 +44,10 @@
         </div>
 
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
+            @if(isset($confidences))
+                <li role="presentation" class="active"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
+            @endif
+            <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
             <li role="presentation"><a href="#log" aria-controls="log" role="tab" data-toggle="tab">Execution Log</a></li>
             <li role="presentation"><a href="#alnFile" aria-controls="alnFile" role="tab" data-toggle="tab">ALN File</a></li>
             <li role="presentation"><a href="#alnNucl" aria-controls="alnNucl" role="tab" data-toggle="tab">Aligned Nucl</a></li>
@@ -56,16 +59,20 @@
             <li role="presentation"><a href="#psrf" aria-controls="psrf" role="tab" data-toggle="tab">PSRF</a></li>
             <li role="presentation"><a href="#codemlOutput" aria-controls="codemlOutput" role="tab" data-toggle="tab">Codeml Output</a></li>
             <li role="presentation"><a href="#codemlSummary" aria-controls="codemlSummary" role="tab" data-toggle="tab">Codeml Summary</a></li>
-            <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
-            @if(isset($confidences))
-                <li role="presentation"><a href="#pss" aria-controls="pss" role="tab" data-toggle="tab">PSS</a></li>
-            @endif
+            <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
         </ul>
 
         <!-- Tab panes -->
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane fade in active" id="notes">
-                <pre>{{$textFiles['notes']}}</pre>
+            @if(isset($confidences))
+                <div role="tabpanel" class="tab-pane fade in active" id="pss">
+                    <div id="pssCanvas">
+
+                    </div>
+                </div>
+            @endif
+            <div role="tabpanel" class="tab-pane fade" id="summary">
+                <pre>{{$textFiles['summary']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="log">
                 <pre>{{$textFiles['log']}}</pre>
@@ -84,11 +91,9 @@
             </div>
             @if(isset($newicks))
                 <div role="tabpanel" class="tab-pane fade" id="treeView">
-
                     <ul id="svgMenu" class="nav nav-tabs" role="tablist">
                     </ul>
                     <div id="svgCanvas" role="tabpanel" class="tab-content">
-
                     </div>
                 </div>
             @endif
@@ -101,16 +106,9 @@
             <div role="tabpanel" class="tab-pane fade" id="codemlSummary">
                 <pre>{{$textFiles['codemlSummary']}}</pre>
             </div>
-            <div role="tabpanel" class="tab-pane fade" id="summary">
-                <pre>{{$textFiles['summary']}}</pre>
+            <div role="tabpanel" class="tab-pane fade" id="notes">
+                <pre>{{$textFiles['notes']}}</pre>
             </div>
-            @if(isset($confidences))
-                <div role="tabpanel" class="tab-pane fade" id="pss">
-                    <div id="pssCanvas">
-
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 @endsection
