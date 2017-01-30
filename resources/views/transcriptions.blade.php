@@ -35,7 +35,15 @@
 @section('content')
 
     <div class="project-content">
-        <h1>{{$project->name}}</h1>
+        <div class="page-header">
+          <div class="btn-toolbar pull-right">
+            <div class="btn-group">
+              <a class="btn btn-default" href="/">Back</a>
+            </div>
+          </div>
+          <h1>{{$project->name}}</h1>
+        </div>
+
         <div class="navbar navbar-default">
             <div class="container-fluid">
                 {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get']) }}
@@ -104,11 +112,4 @@
             <div class="alert alert-info">There are no transcriptions in this project.</div>
         @endif
     </div>
-
-    <div class="panel panel-info">
-        <div class="panel-body">
-            <a class="btn btn-default" href="/">Back</a>
-        </div>
-    </div>
-
 @endsection

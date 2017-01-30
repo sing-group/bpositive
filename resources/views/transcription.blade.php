@@ -34,7 +34,15 @@
 --}}
 @section('content')
     <div class="project-content">
-        <h1>{{$transcription->name}}</h1>
+        <div class="page-header">
+          <div class="btn-toolbar pull-right">
+            <div class="btn-group">
+              <a class="btn btn-default" href="{{URL::previous()}}">Back</a>
+            </div>
+          </div>
+          <h1>{{$transcription->name}}</h1>
+        </div>
+
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
             <li role="presentation"><a href="#log" aria-controls="log" role="tab" data-toggle="tab">Execution Log</a></li>
@@ -103,11 +111,6 @@
                     </div>
                 </div>
             @endif
-        </div>
-        <div class="panel panel-info">
-            <div class="panel-body">
-                <a class="btn btn-default" href="{{URL::previous()}}">Back</a>
-            </div>
         </div>
     </div>
 @endsection
