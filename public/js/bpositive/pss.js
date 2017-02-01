@@ -19,10 +19,11 @@
  */
 
 
-function PSS (transcription, sequences, models, scores, canvasName, logo) {
+function PSS (transcription, sequences, models, movedIndexes, scores, canvasName, logo) {
     this.transcription = transcription;
     this.sequences = sequences;
     this.models = models;
+    this.movedIndexes = movedIndexes;
     this.scores = scores;
     this.logo = logo;
 
@@ -47,7 +48,8 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
 
     this.fontSize = '14';
 
-    this.showScores = true;
+    this.showScores = false;
+    this.showIndexes = false;
 
     var parent = this;
 
@@ -112,8 +114,13 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
                         '</div>' +
                     '</div></div></div>');
 
-            var groupScores = $('<label class="checkbox-inline">Show scores</label>');
-            $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(groupScores);
+            var groupScores = $('<div class="form-group" />');
+            var labelScores = $('<label class="checkbox-inline">Show scores</label>').appendTo(groupScores);
+            $('<input type="checkbox" id="checkScores" ' + (parent.showScores ? "checked=\"checked\"":"") + ' />').change(parent.updateScores).prependTo(labelScores);
+
+            var groupIndexes = $('<div class="form-group" />');
+            var labelIndexes = $('<label class="checkbox-inline">Show indexes</label>').appendTo(groupIndexes);
+            $('<input type="checkbox" id="checkIndexes" ' + (parent.showIndexes ? "checked=\"checked\"":"") + ' />').change(parent.updateIndexes).prependTo(labelIndexes);
 
             var btnPDF = $('<button type="button" class="btn btn-info form-control">Download as PDF</button>').click(parent.createPDF);
 
@@ -126,12 +133,13 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
             modalBody.append(parent.createCmbGroup('blockLength', 'Block length:', 1, 50, parent.blockLength));
             modalBody.append(parent.createCmbGroup('blocksPerLine', 'Blocks per line:', 1, 50, parent.blocksPerLine));
 
+            modalBody.append(groupScores);
+            modalBody.append(groupIndexes);
+
             modalBody.append(parent.createColorPicker('neb95beb95', 'NEB 95% - BEB 95%', parent.neb95beb95Foreground, parent.neb95beb95Background));
             modalBody.append(parent.createColorPicker('neb95beb9095', 'NEB 95% - BEB 90-95%', parent.neb95beb9095Foreground, parent.neb95beb9095Background));
             modalBody.append(parent.createColorPicker('neb9095beb95', 'NEB 90-95% - BEB 95%', parent.neb9095beb95Foreground, parent.neb9095beb95Background));
             modalBody.append(parent.createColorPicker('neb9095beb9095', 'NEB 90-95% - BEB 90-95%', parent.neb9095beb9095Foreground, parent.neb9095beb9095Background));
-
-            modalBody.append(groupScores);
 
             canvas.html(navbar);
             parent.divAlignment = $('<div id="alignment" class="text-nowrap" style="overflow: auto;"/>');
@@ -239,9 +247,16 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
         parent.updatePSS();
     };
 
+    this.updateIndexes = function(){
+        parent.showIndexes = $( this ).is(':checked');
+        parent.updatePSS();
+    };
+
     this.updatePSS = function(){
         var html = '';
+        var htmlSequence = '';
         var htmlScores = '';
+        var htmlIndexes = '';
         var k = 0;
 
         if (parent.blocksPerLine < 1) {
@@ -256,10 +271,12 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
         do {
             html += '<div class="printAlign" style="background-color: white">';
             $.each(parent.sequences, function (index, sequence) {
-
-                html += '<div style="width:' + (+parent.labelTab + (+parent.labelLength/2+1)) + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
+                var labelWidth = (+parent.labelTab + (+parent.labelLength/2+1));
+                var firstIndex = true;
+                htmlSequence += '<div style="width:' + labelWidth + 'em;float:left">' + sequence.name.substr(0, parent.labelLength) + '</div>';
                 if(index === 0) {
-                    htmlScores = '<div style="width:' + (+parent.labelTab + (+parent.labelLength/2+1)) + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
+                    htmlScores = '<div style="width:' + labelWidth + 'em;float:left">' + 'Scores'.substr(0, parent.labelLength) + '</div>';
+                    htmlIndexes = '<div style="width:' + labelWidth + 'em;float:left">' + 'Indexes'.substr(0, parent.labelLength) + '</div>';
                 }
 
                 for (var j = k*parent.blocksPerLine*parent.blockLength, currentBlock = 0, currentBlockPos = 1; j < sequence.value.length && currentBlock < parent.blocksPerLine; j++, currentBlockPos++) {
@@ -276,27 +293,58 @@ function PSS (transcription, sequences, models, scores, canvasName, logo) {
                         } else if (confidence.neb > 0.90 && confidence.beb > 0.90) {
                             style = "background-color:" + parent.neb9095beb9095Background + "; color:" + parent.neb9095beb9095Foreground;
                         }
-                        html += '<span style="' + style + '">' + sequence.value[j] + '</span>';
+                        htmlSequence += '<span style="' + style + '">' + sequence.value[j] + '</span>';
                     }
                     else {
-                        html += sequence.value[j];
+                        htmlSequence += sequence.value[j];
                     }
+
+                    if(parent.showIndexes && index === 0 && parent.blockLength > 5) {
+                        $.each(parent.movedIndexes, function (l, movedIndex) {
+                            if (movedIndex-1 == j) {
+                                if (l != 1 && l % 5 != 0) {
+                                    htmlIndexes += '&nbsp;';
+                                }
+                                else if(firstIndex){
+                                    firstIndex = false;
+                                    htmlIndexes += l.toString();
+                                }
+                                else{
+                                    htmlIndexes = htmlIndexes.substr(0, htmlIndexes.length - (Math.abs(l-5).toString().length-1) * 6) + l.toString();
+                                }
+                                return false;
+                            }
+                            else if (movedIndex-1 > j) {
+                                htmlIndexes += '&nbsp;';
+                                return false;
+                            }
+
+                        });
+                    }
+
                     if(index === 0) {
                         htmlScores += parent.scores[j];
                     }
                     if (currentBlockPos >= parent.blockLength) {
-                        html += ' ';
+                        htmlSequence += ' ';
                         if(index === 0) {
                             htmlScores += ' ';
+                            htmlIndexes += '&nbsp;';
                         }
                         currentBlockPos = 0;
                         currentBlock++;
                     }
                 }
 
-                html += '<br />';
+                htmlSequence += '<br />';
             });
 
+            if(parent.showIndexes){
+                html += '<span style="color:' + parent.scoresForeground + '">' + htmlIndexes + '</span><br />';
+            }
+            html += htmlSequence;
+            htmlSequence = '';
+            htmlIndexes = '';
             if(parent.showScores){
                 html += '<span style="color:' + parent.scoresForeground + '">' + htmlScores + '</span><br />';
             }

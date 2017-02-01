@@ -169,6 +169,7 @@
                     {!!$transcription->getJSON()!!},
                     {!!$confidences->getJSONSequences()!!},
                     {!!$confidences->getJSONModels()!!},
+                    {!!$confidences->getJSONMovedIndexes()!!},
                     {!!$scores!!},
                     'pssCanvas',
                     '{{URL::asset('images/bpositive.png')}}'
