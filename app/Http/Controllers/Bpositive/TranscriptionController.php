@@ -53,7 +53,7 @@ class TranscriptionController extends Controller
 
         $this->validate($request, [
             'id' => 'required|numeric',
-            'query' => 'alpha_num',
+            'query' => 'string',
             'page' => 'numeric'
         ]);
 
