@@ -32,6 +32,7 @@
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
+    @yield('startcss')
     <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
 </head>
 <body>
