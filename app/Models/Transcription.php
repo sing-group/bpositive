@@ -153,9 +153,19 @@ class Transcription
         $trees = array();
         preg_match_all('/(tree con_50_majrule = \(.+\)\;)/', $file_contents, $trees);
 
+        $matches = array();
+        preg_match_all('/^\s+(\d+)\s([^,;]+)(\,)?$/m', $file_contents, $matches);
+        $translations = array_combine($matches[1], $matches[2]);
+
+
         foreach($trees[0] as $tree){
             preg_match_all('/\(.+\)\;/', $tree, $newick);
-            array_push($newicks, '{ newick: \'' . $newick[0][0]. '\'}');
+            $newick = $newick[0][0];
+            foreach ($translations as $key => $value){
+                $newick = str_replace('('.$key.':', '('.$value.':', $newick);
+                $newick = str_replace(','.$key.':', ','.$value.':', $newick);
+            }
+            array_push($newicks,  $newick);
         }
 
         return json_encode($newicks);
