@@ -12,7 +12,9 @@
         "itsjavi/bootstrap-colorpicker": "^2.4",
         "laravel/framework": "5.3.*",
         "laravelcollective/html": "^5.3.0",
-        "twbs/bootstrap": "^3.3"
+        "mbostock/d3": "^3.5",
+        "twbs/bootstrap": "^3.3",
+        "vibbits/phyd3": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -53,6 +55,9 @@
             "cp vendor/components/jquery/*.js public/js",
             "cp vendor/MrRio/jsPDF/dist/jspdf.min.js public/js",
             "cp vendor/MrRio/jsPDF/libs/html2pdf.js public/js",
+            "cp vendor/vibbits/phyd3/dist/css/phyd3.min.css public/css",
+            "cp vendor/vibbits/phyd3/dist/js/phyd3.min.js public/js",
+            "cp vendor/mbostock/d3/d3.min.js public/js",
             "cp -R vendor/itsjavi/bootstrap-colorpicker/dist/* public",
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan optimize"
@@ -72,6 +77,18 @@
                     "url": "https://github.com/MrRio/jsPDF",
                     "type": "git",
                     "reference": "v1.3.2"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package":  {
+                "name": "vibbits/phyd3",
+                "version": "1.2",
+                "source": {
+                    "url": "https://github.com/vibbits/phyd3.git",
+                    "type": "git",
+                    "reference": "v1.2"
                 }
             }
         }
