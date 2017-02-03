@@ -140,12 +140,11 @@
 
                     $("#svgMenu").append('<li role="presentation"><a href="#tab' + divName + '" role="tab" data-toggle="tab" data-newick="' + data + '" data-divname="' + divName + '">Phylogeny ' + i + '</a></li>');
                     svgCanvas.append('<div id="tab' + divName + '" class="tab-pane fade in">' +
-                        '<div class="navbar navbar-default"><div class="container-fluid"><form class="navbar-form">' +
-                        '<a class="btn btn-info form-control" download="Phylogeny'+ i + '.svg" id="linkSVG">Download as SVG</a>' +
-                        '<a class="btn btn-info form-control" download="Phylogeny'+ i + '.png" id="linkPNG">Download as PNG</a>' +
-                        '<a class="btn btn-default form-control" download="Phylogeny'+ i + '.png" id="resetZoom">Reset zoom</a>' +
-                        //'<div class="checkbox"><label><input id="lengthValues" type="checkbox"><span class="checkbox-material"><span class="check"></span></span> Show length values</label></div>' +
-                        '</form></div></div>' +
+                        '<div class="navbar navbar-default"><div class="container-fluid" id="container' + divName + '">' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="alert alert-info">Use your mouse to drag and zoom. Tip: CTRL + wheel = scale Y, ALT + wheel = scale X</div>' +
+
                         '<div id="' + divName + '"></div>' +
                         '</div>');
 
@@ -159,7 +158,15 @@
                     }
                 });
                 $('#svgMenu').on('shown.bs.tab', function(event){
-
+                    $('#linkSVG').remove();
+                    $('#linkPNG').remove();
+                    $('#resetZoom').remove();
+                    $('#container' + $(event.target).data('divname')).append('<form class="navbar-form">' +
+                    '<a class="btn btn-info form-control" download="Phylogeny'+ i + '.svg" id="linkSVG">Download as SVG</a>' +
+                    '<a class="btn btn-info form-control" download="Phylogeny'+ i + '.png" id="linkPNG">Download as PNG</a>' +
+                    '<a class="btn btn-default form-control" id="resetZoom">Reset zoom</a>' +
+                    //'<div class="checkbox"><label><input id="lengthValues" type="checkbox"><span class="checkbox-material"><span class="check"></span></span> Show length values</label></div>' +
+                    '</form>');
                     var tree = phyd3.newick.parse($(event.target).data('newick'));
                     phyd3.phylogram.build('#' + $(event.target).data('divname'), tree, {
 
