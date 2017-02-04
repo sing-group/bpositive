@@ -164,9 +164,11 @@ function PSS (transcription, sequences, models, movedIndexes, scores, canvasName
                 a.style = "display: none";
                 var url = window.URL.createObjectURL(blob);
                 a.href = url;
-                a.download = parent.transcription.name + '.png';
+                a.download = parent.transcription.name + ' - ' + parent.cmbModel.val() + '.png';
                 a.click();
-                window.URL.revokeObjectURL(url);
+                setTimeout(function(){
+                    window.URL.revokeObjectURL(url);
+                }, 3000);
                 $('#pleaseWaitModal').modal('hide');
             }
         });
