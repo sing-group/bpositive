@@ -76,21 +76,27 @@
                 </div>
             @endif
             <div role="tabpanel" class="tab-pane fade" id="summary">
+                @include('includes.download', ['name' => 'summary', 'data' => base64_encode($textFiles['summary'])])
                 <pre>{{$textFiles['summary']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="log">
+                @include('includes.download', ['name' => 'ExecutionLog', 'data' => base64_encode($textFiles['log'])])
                 <pre>{{$textFiles['log']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="alnFile">
+                @include('includes.download', ['name' => 'ALNFile', 'data' => base64_encode($textFiles['alnFile'])])
                 <pre>{{$textFiles['alnFile']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="alnNucl">
+                @include('includes.download', ['name' => 'AlignedNucl', 'data' => base64_encode($textFiles['alnNucl'])])
                 <pre>{{$textFiles['alnNucl']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="alnAmin">
+                @include('includes.download', ['name' => 'AlignedAmin', 'data' => base64_encode($textFiles['alnAmin'])])
                 <pre>{{$textFiles['alnAmin']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="tree">
+                @include('includes.download', ['name' => 'Tree', 'data' => base64_encode($textFiles['tree'])])
                 <pre>{{$textFiles['tree']}}</pre>
             </div>
             @if(isset($newicks))
@@ -102,15 +108,19 @@
                 </div>
             @endif
             <div role="tabpanel" class="tab-pane fade" id="psrf">
+                @include('includes.download', ['name' => 'PSRF', 'data' => base64_encode($textFiles['psrf'])])
                 <pre>{{$textFiles['psrf']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="codemlOutput">
+                @include('includes.download', ['name' => 'CodemlOutput', 'data' => base64_encode($textFiles['codemlOutput'])])
                 <pre>{{$textFiles['codemlOutput']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="codemlSummary">
+                @include('includes.download', ['name' => 'CodemlSummary', 'data' => base64_encode($textFiles['codemlSummary'])])
                 <pre>{{$textFiles['codemlSummary']}}</pre>
             </div>
             <div role="tabpanel" class="tab-pane fade" id="notes">
+                @include('includes.download', ['name' => 'Notes', 'data' => base64_encode($textFiles['notes'])])
                 <pre>{{$textFiles['notes']}}</pre>
             </div>
         </div>
