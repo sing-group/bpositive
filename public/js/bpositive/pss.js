@@ -107,7 +107,7 @@ function PSS (transcription, sequences, models, movedIndexes, scores, canvasName
                 '<div class="modal-dialog" role="document">' +
                     '<div class="modal-content">' +
                         '<div class="modal-header">' +
-                            '<h4 class="modal-title" id="myModalLabel">Creating PDF, please wait...</h4>' +
+                            '<h4 class="modal-title" id="myModalLabel">Creating file, please wait...</h4>' +
                         '</div>' +
                         '<div class="modal-body">' +
                             '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" style="width:100%;"></div>' +
@@ -123,10 +123,12 @@ function PSS (transcription, sequences, models, movedIndexes, scores, canvasName
             $('<input type="checkbox" id="checkIndexes" ' + (parent.showIndexes ? "checked=\"checked\"":"") + ' />').change(parent.updateIndexes).prependTo(labelIndexes);
 
             var btnPDF = $('<button type="button" class="btn btn-info form-control">Download as PDF</button>').click(parent.createPDF);
+            var btnPNG = $('<button type="button" class="btn btn-info form-control">Download as PNG</button>').click(parent.createPNG);
 
             form.append(groupCmbModel);
             form.append(btnDisplayCfg);
             form.append(btnPDF);
+            form.append(btnPNG);
             modalBody.append(parent.createCmbGroup('fontSize', 'Font size:',6, 30, parent.fontSize));
             modalBody.append(parent.createCmbGroup('labelLength', 'Label length:', 1, 30, parent.labelLength));
             modalBody.append(parent.createCmbGroup('labelTab', 'Label tab:', 1, 20, parent.labelTab));
@@ -148,6 +150,35 @@ function PSS (transcription, sequences, models, movedIndexes, scores, canvasName
             canvas.append(modalProgress);
             parent.cmbModel.change();
         }
+    };
+
+    this.createPNG = function () {
+        $('#pleaseWaitModal').modal();
+        html2canvas($('#alignment'), {
+            onrendered: function(canvas) {
+                //document.body.appendChild(canvas);
+                var imgData = canvas.toDataURL();
+                var blob = parent.dataURLtoBlob(imgData);
+                var a = document.createElement("a");
+                document.body.appendChild(a);
+                a.style = "display: none";
+                var url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = parent.transcription.name + '.png';
+                a.click();
+                window.URL.revokeObjectURL(url);
+                $('#pleaseWaitModal').modal('hide');
+            }
+        });
+    };
+
+    this.dataURLtoBlob = function(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {type:mime});
     };
 
     this.createPDF = function(){
