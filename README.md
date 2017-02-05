@@ -1,7 +1,7 @@
 B+
 ==
 
-[B+](http://bpositive.i3s.up.pt) is a database that has been specifically designed to store and show the information 
+[B+](http://bpositive.i3s.up.pt) is a database that has been specifically designed to store and show the information
 contained in [ADOPS](https://sing.ei.uvigo.es/ADOPS/) (Automatic Detection Of Positively Selected Sites) project files.
 
 Team
@@ -17,7 +17,7 @@ This project is an idea and is developed by:
 * Hugo López-Fernández [SING Group](http://www.sing-group.org)
 * Florentino Fdez-Riverola [SING Group](http://www.sing-group.org)
 
-##Downloading and Installing B+
+## Downloading and Installing B+
 ### 0. Prerequisites
 
 To install B+, the server must meet the following requirements:
@@ -33,7 +33,7 @@ To install B+, the server must meet the following requirements:
 * [Composer](https://getcomposer.org/).
 
 ### 1. Download
- 
+
 Clone B+ from [GitHub](https://github.com/sing-group/bpositive.git) (`git clone https://github.com/sing-group/bpositive.git`) or download a release version from [here](https://github.com/sing-group/bpositive/releases). Place all files in a directory you can use as document root of your web server.
 
 ### 2. Web Server configuration
@@ -45,9 +45,9 @@ The Web Server's document root must be the *public* directory of the B+ code.
 
 The database and all the tables needed can be created using de SQL script included in [database/sql/bpositive.sql](database/sql/bpositive.sql).
 
-Compressed files for each project must be stored under *storage/app* directory. 
+Compressed files for each project must be stored under *storage/app* directory.
 By default, there is a disk named 'bpositive' configured to load files from *app/bpositive*,
-with this default configuration, files must be stored in *storage/app/bpositive/files*. 
+with this default configuration, files must be stored in *storage/app/bpositive/files*.
 Storage can be customized in [config/filesystems.php](config/filesystems.php).  
 
 ### 3. Install
@@ -73,5 +73,3 @@ Last but not least, directories within the *storage* and *bootstrap/cache* shoul
 
 If you followed all the previous steps, B+ should be accesible from your Web Server root URL using any Web Browser with
 JavaScript enabled.
-
-
