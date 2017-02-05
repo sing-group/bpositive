@@ -34,16 +34,21 @@ To install B+, the server must meet the following requirements:
 
 ### 1. Download
  
-Download B+ from [FIX LINK](). Place all files in a directory you can use as document root for your web server.
+Clone B+ from [GitHub](https://github.com/sing-group/bpositive.git) (`git clone https://github.com/sing-group/bpositive.git`) or download a release version from [here](https://github.com/sing-group/bpositive/releases). Place all files in a directory you can use as document root of your web server.
 
 ### 2. Web Server configuration
 
 The Web Server's document root must be the *public* directory of the B+ code.
 *AllowOverride* must be enabled in this directory.
 
-### 3. Database cofiguration
+### 3. Data cofiguration
 
-All the tables can be created using de SQL script included in [FIX_LINK]().
+The database and all the tables needed can be created using de SQL script included in [database/sql/bpositive.sql](database/sql/bpositive.sql).
+
+Compressed files for each project must be stored under *storage/app* directory. 
+By default, there is a disk named 'bpositive' configured to load files from *app/bpositive*,
+with this default configuration, files must be stored in *storage/app/bpositive/files*. 
+Storage can be customized in [config/filesystems.php](config/filesystems.php).  
 
 ### 3. Install
 
