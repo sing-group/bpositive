@@ -54,16 +54,21 @@ class TranscriptionController extends Controller
         $this->validate($request, [
             'id' => 'required|numeric',
             'query' => 'string',
-            'page' => 'numeric'
+            'page' => 'numeric',
+            'pagesize' => 'numeric'
         ]);
 
+        $query = $request->get('query', '');
+        $pagesize = $request->get('pagesize', '10');
+
         $project = Project::get($request->get('id'));
-        $transcriptions = Transcription::all($request->get('id'), $request->get('query', ''));
+        $transcriptions = Transcription::all($request->get('id'), $query, $pagesize);
 
         return view('transcriptions',[
             'project' => $project,
             'transcriptions' => $transcriptions,
-            'query' => $request->get('query', '')
+            'query' => $query,
+            'pagesize' => $pagesize
         ]);
     }
 

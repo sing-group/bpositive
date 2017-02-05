@@ -50,6 +50,16 @@
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon">
+                            {{ Form::label('pagesize', 'Rows by page ') }}
+                        </span>
+                        <span class="input-group-addon">
+                            <span class="btn-group">
+                                {{ Form::select('pagesize', array('10' => '10', '25' => '25', '50' => '50', '100' => '100'), $pagesize) }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
                             {{ Form::label('search', 'Search ') }}
                         </span>
                         {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here']) }}
@@ -104,7 +114,7 @@
                 </tr>
                 </tfoot>
             </table>
-            {{$transcriptions->appends(['id' => $project->id])->links()}}
+            {{$transcriptions->appends(['id' => $project->id, 'pagesize' => $pagesize])->links()}}
             <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
         @elseif($query)
             <div class="alert alert-info">There are no results for this query.</div>
@@ -113,3 +123,14 @@
         @endif
     </div>
 @endsection
+
+@section('endscripts')
+    <script type="text/javascript">
+        //TODO: Refactor
+        $(window).on('load', function () {
+            $('#pagesize').on('change', function(e) {
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+@endsection('endscripts')
