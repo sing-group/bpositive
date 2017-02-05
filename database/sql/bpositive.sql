@@ -1,6 +1,9 @@
 # noinspection SqlNoDataSourceInspectionForFile
 
-CREATE DATABASE `bpositive` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE IF NOT EXISTS `bpositive` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `bpositive`;
+
+GRANT ALL PRIVILEGES ON `bpositive`.* TO `bpositive`@localhost IDENTIFIED BY 'bpositivepass';
 
 CREATE TABLE `project` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
