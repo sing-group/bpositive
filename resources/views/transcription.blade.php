@@ -177,6 +177,23 @@
                     '<a class="btn btn-default form-control" id="resetZoom">Reset zoom</a>' +
                     //'<div class="checkbox"><label><input id="lengthValues" type="checkbox"><span class="checkbox-material"><span class="check"></span></span> Show length values</label></div>' +
                     '</form>');
+
+                    //Workaround for zoom problem when saving to file
+                    jQuery.fn.d3Click = function () {
+                        this.each(function (i, e) {
+                            var evt = new MouseEvent("click");
+                            e.dispatchEvent(evt);
+                        });
+                    };
+
+
+                    $('#linkSVG').click(function () {
+                        $('#resetZoom').d3Click();
+                    });
+                    $('#linkPNG').click(function () {
+                        $("#resetZoom").d3Click();
+                    });
+
                     var tree = phyd3.newick.parse($(event.target).data('newick'));
                     phyd3.phylogram.build('#' + $(event.target).data('divname'), tree, {
 
