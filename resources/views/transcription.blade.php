@@ -199,7 +199,8 @@
 
                         showSupportValues: true,
                         showNodesType: 'all',
-                        nodeHeight: 10
+                        nodeHeight: 10,
+                        lineupNodes: false
                     });
 
                     /*
