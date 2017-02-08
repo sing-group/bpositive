@@ -46,7 +46,7 @@
 
         <div class="navbar navbar-default">
             <div class="container-fluid">
-                {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get']) }}
+                {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get', 'autocomplete' => 'on']) }}
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon">
@@ -62,7 +62,7 @@
                         <span class="input-group-addon">
                             {{ Form::label('search', 'Search ') }}
                         </span>
-                        {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch']) }}
+                        {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch', 'autocomplete' => 'on']) }}
 
                         <span class="input-group-btn">
                             <span class="btn-group">
