@@ -52,9 +52,9 @@
                         <span class="input-group-addon">
                             {{ Form::label('pagesize', 'Rows by page ') }}
                         </span>
-                        <span class="input-group-addon">
+                        <span class="input-group-btn">
                             <span class="btn-group">
-                                {{ Form::select('pagesize', array('10' => '10', '25' => '25', '50' => '50', '100' => '100'), $pagesize) }}
+                                {{ Form::select('pagesize', array('10' => '10', '25' => '25', '50' => '50', '100' => '100'), $pagesize, ['class' => 'form-control']) }}
                             </span>
                         </span>
                     </div>
