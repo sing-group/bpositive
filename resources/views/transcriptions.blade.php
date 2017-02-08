@@ -62,11 +62,11 @@
                         <span class="input-group-addon">
                             {{ Form::label('search', 'Search ') }}
                         </span>
-                        {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here']) }}
+                        {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch']) }}
 
                         <span class="input-group-btn">
                             <span class="btn-group">
-                                {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'reset', 'class' => 'btn btn-default btn-block']) }}
+                                {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'button', 'class' => 'btn btn-default btn-block', 'id' => 'resetSearch']) }}
                             </span>
                             <span class="btn-group">
                                 {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
@@ -130,6 +130,9 @@
         $(window).on('load', function () {
             $('#pagesize').on('change', function(e) {
                 $(this).closest('form').submit();
+            });
+            $('#resetSearch').on('click', function(e) {
+                $('#querySearch').val('');
             });
         });
     </script>
