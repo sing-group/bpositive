@@ -114,7 +114,7 @@
                 </tr>
                 </tfoot>
             </table>
-            {{$transcriptions->appends(['id' => $project->id, 'pagesize' => $pagesize])->links()}}
+            {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize])->links()}}
             <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
         @elseif($query)
             <div class="alert alert-info">There are no results for this query.</div>
