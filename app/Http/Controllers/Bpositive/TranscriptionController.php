@@ -58,16 +58,18 @@ class TranscriptionController extends Controller
             'page' => 'numeric',
             'pagesize' => 'numeric',
             'orderBy' => Rule::in(['name', 'description', 'analyzed', 'positivelySelected']),
-            'orderType' => Rule::in(['asc', 'desc'])
+            'orderType' => Rule::in(['asc', 'desc']),
+            'filters.*' => Rule::in(['pss', 'analyzed', 'notAnalyzed', 'all']),
         ]);
 
         $query = $request->get('query', '');
         $pagesize = $request->get('pagesize', '10');
         $orderBy = $request->get('orderBy', 'name');
         $orderType = $request->get('orderType', 'asc');
+        $filters = $request->get('filters');
 
         $project = Project::get($request->get('id'));
-        $transcriptions = Transcription::all($request->get('id'), $query, $pagesize, $orderBy, $orderType);
+        $transcriptions = Transcription::all($request->get('id'), $query, $pagesize, $orderBy, $orderType, $filters);
 
         return view('transcriptions',[
             'project' => $project,
@@ -75,7 +77,8 @@ class TranscriptionController extends Controller
             'query' => $query,
             'pagesize' => $pagesize,
             'orderBy' => $orderBy,
-            'orderType' => $orderType
+            'orderType' => $orderType,
+            'filters' => $filters
         ]);
     }
 

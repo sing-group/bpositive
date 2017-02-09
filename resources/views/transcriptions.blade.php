@@ -48,6 +48,35 @@
             <div class="container-fluid">
                 {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get', 'autocomplete' => 'on']) }}
                 <div class="form-group">
+                    <div class="input-group" id="filters">
+                        <span class="input-group-addon">
+                            {{ Form::label('filters', 'Show ') }}
+                        </span>
+                        <span class="input-group-addon">
+                            <span class="btn-group">
+                                {{ Form::radio('filters[]', 'pss', (is_array($filters) ? in_array('pss', $filters): false)) }}
+                                {{ Form::label('filtersPSS', 'Positively Selected') }}
+                            </span>
+                        </span>
+                        <span class="input-group-addon">
+                            <span class="btn-group">
+                                {{ Form::radio('filters[]', 'analyzed', (is_array($filters) ? in_array('analyzed', $filters): false)) }}
+                                {{ Form::label('filtersAnalyzed', 'Analyzed') }}
+                            </span>
+                        </span>
+                        <span class="input-group-addon">
+                            <span class="btn-group">
+                                {{ Form::radio('filters[]', 'notAnalyzed', (is_array($filters) ? in_array('notAnalyzed', $filters): false)) }}
+                                {{ Form::label('filtersNotAnalyzed', 'Not Analyzed') }}
+                            </span>
+                        </span>
+                        <span class="input-group-addon">
+                            <span class="btn-group">
+                                {{ Form::radio('filters[]', 'all', (is_array($filters) ? in_array('all', $filters): true)) }}
+                                {{ Form::label('filtersAll', 'All') }}
+                            </span>
+                        </span>
+                    </div>
                     <div class="input-group">
                         <span class="input-group-addon">
                             {{ Form::label('pagesize', 'Rows by page ') }}
@@ -86,7 +115,7 @@
                 <thead>
                 <tr>
                     <th>Name
-                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
                             @if($orderBy === 'name')
                                 <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
                             @else
@@ -95,7 +124,7 @@
                         </a>
                     </th>
                     <th>Result
-                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
                             @if($orderBy === 'analyzed')
                                 <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'desc' : 'asc')}}" aria-hidden="true"></i>
                             @else
@@ -131,7 +160,7 @@
                 <tfoot>
                 <tr>
                     <th>Name
-                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
                             @if($orderBy === 'name')
                                 <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
                             @else
@@ -140,7 +169,7 @@
                         </a>
                     </th>
                     <th>Result
-                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
                             @if($orderBy === 'analyzed')
                                 <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'desc' : 'asc')}}" aria-hidden="true"></i>
                             @else
@@ -153,7 +182,7 @@
                 </tr>
                 </tfoot>
             </table>
-            {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => $orderBy, 'orderType' => $orderType])->links()}}
+            {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => $orderBy, 'orderType' => $orderType, 'filters' => $filters])->links()}}
             <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
         @elseif($query)
             <div class="alert alert-info">There are no results for this query.</div>
@@ -168,6 +197,9 @@
         //TODO: Refactor
         $(window).on('load', function () {
             $('#pagesize').on('change', function(e) {
+                $(this).closest('form').submit();
+            });
+            $('#filters :radio').on('change', function(e) {
                 $(this).closest('form').submit();
             });
             $('#resetSearch').on('click', function(e) {

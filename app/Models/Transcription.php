@@ -55,12 +55,28 @@ class Transcription
 
     }
 
-    public static function all($id, $query = '', $pagesize = 10, $orderBy = 'name', $orderType = 'asc'){
+    public static function all($id, $query = '', $pagesize = 10, $orderBy = 'name', $orderType = 'asc', $filters){
 
         $transriptions = DB::table('transcription')
             ->where('projectId', '=', $id)
             ->where('deleted', '=', '0')
-            ->whereRaw('name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\'')
+            ->whereRaw('(name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\')')
+            ->when(is_array($filters), function ($query) use ($filters){
+                foreach ($filters as $filter){
+                    switch ($filter) {
+                        case 'pss':
+                            $query->where('positivelySelected', 1);
+                            break;
+                        case 'analyzed':
+                            $query->where('analyzed', 1);
+                            break;
+                        case 'notAnalyzed':
+                            $query->where('analyzed', 0);
+                            break;
+                    }
+                }
+                return $query;
+            })
             ->orderBy($orderBy, $orderType)
             ->paginate($pagesize);
 
