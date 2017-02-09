@@ -75,6 +75,8 @@
                     </div>
                 </div>
                 {{ Form::hidden('id', $project->id) }}
+                {{ Form::hidden('orderBy', $orderBy) }}
+                {{ Form::hidden('orderType', $orderType) }}
                 {{ Form::close() }}
             </div>
         </div>
@@ -83,8 +85,24 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Result</th>
+                    <th>Name
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                            @if($orderBy === 'name')
+                                <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
+                            @else
+                                <i class="fa fa-sort" aria-hidden="true"></i>
+                            @endif
+                        </a>
+                    </th>
+                    <th>Result
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                            @if($orderBy === 'analyzed')
+                                <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'desc' : 'asc')}}" aria-hidden="true"></i>
+                            @else
+                                <i class="fa fa-sort" aria-hidden="true"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th>View</th>
                     <th>Download</th>
                 </tr>
@@ -101,20 +119,41 @@
                                 <span class="text-success">Positively Selected</span>
                             @endif
                         </td>
-                        <td><a href="transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
-                        <td><a href="download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
+                        @if($transcription->analyzed != 0)
+                            <td><a href="transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
+                            <td><a href="download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
+                        @else
+                            <td></td>
+                            <td></td>
+                        @endif
                     </tr>
                 @endforeach
                 <tfoot>
                 <tr>
-                    <th>Name</th>
-                    <th>Result</th>
+                    <th>Name
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                            @if($orderBy === 'name')
+                                <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
+                            @else
+                                <i class="fa fa-sort" aria-hidden="true"></i>
+                            @endif
+                        </a>
+                    </th>
+                    <th>Result
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc')])}}">
+                            @if($orderBy === 'analyzed')
+                                <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'desc' : 'asc')}}" aria-hidden="true"></i>
+                            @else
+                                <i class="fa fa-sort" aria-hidden="true"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th>View</th>
                     <th>Download</th>
                 </tr>
                 </tfoot>
             </table>
-            {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize])->links()}}
+            {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => $orderBy, 'orderType' => $orderType])->links()}}
             <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
         @elseif($query)
             <div class="alert alert-info">There are no results for this query.</div>

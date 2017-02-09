@@ -27,6 +27,7 @@ use App\Models\Project;
 use App\Models\Transcription;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
+use Illuminate\Validation\Rule;
 
 class TranscriptionController extends Controller
 {
@@ -55,20 +56,26 @@ class TranscriptionController extends Controller
             'id' => 'required|numeric',
             'query' => 'string',
             'page' => 'numeric',
-            'pagesize' => 'numeric'
+            'pagesize' => 'numeric',
+            'orderBy' => Rule::in(['name', 'description', 'analyzed', 'positivelySelected']),
+            'orderType' => Rule::in(['asc', 'desc'])
         ]);
 
         $query = $request->get('query', '');
         $pagesize = $request->get('pagesize', '10');
+        $orderBy = $request->get('orderBy', 'name');
+        $orderType = $request->get('orderType', 'asc');
 
         $project = Project::get($request->get('id'));
-        $transcriptions = Transcription::all($request->get('id'), $query, $pagesize);
+        $transcriptions = Transcription::all($request->get('id'), $query, $pagesize, $orderBy, $orderType);
 
         return view('transcriptions',[
             'project' => $project,
             'transcriptions' => $transcriptions,
             'query' => $query,
-            'pagesize' => $pagesize
+            'pagesize' => $pagesize,
+            'orderBy' => $orderBy,
+            'orderType' => $orderType
         ]);
     }
 

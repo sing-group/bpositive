@@ -55,13 +55,13 @@ class Transcription
 
     }
 
-    public static function all($id, $query = '', $pagesize = 10){
+    public static function all($id, $query = '', $pagesize = 10, $orderBy = 'name', $orderType = 'asc'){
 
         $transriptions = DB::table('transcription')
             ->where('projectId', '=', $id)
             ->where('deleted', '=', '0')
             ->whereRaw('name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\'')
-            ->orderBy('name')
+            ->orderBy($orderBy, $orderType)
             ->paginate($pagesize);
 
         return $transriptions;
