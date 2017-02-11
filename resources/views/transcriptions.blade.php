@@ -46,61 +46,68 @@
 
         <div class="navbar navbar-default">
             <div class="container-fluid">
-                {{ Form::open(['class' => 'navbar-form navbar-right', 'method' => 'get', 'autocomplete' => 'on']) }}
-                <div class="form-group">
-                    <div class="input-group" id="filters">
-                        <span class="input-group-addon">
-                            {{ Form::label('filters', 'Show ') }}
-                        </span>
-                        <span class="input-group-addon">
-                            <span class="btn-group">
-                                {{ Form::radio('filters[]', 'pss', (is_array($filters) ? in_array('pss', $filters): false)) }}
-                                {{ Form::label('filtersPSS', 'Positively Selected') }}
+                {{ Form::open(['class' => '', 'method' => 'get', 'autocomplete' => 'on']) }}
+                <div class="">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Filters <span class="caret"></span></a>
+                            <ul class="dropdown-menu dropdown-menu-form" id="filters">
+                                <li>
+                                    <a>
+                                        {{ Form::radio('filters[]', 'pss', (is_array($filters) ? in_array('pss', $filters): false), ['id' => 'filtersPSS']) }}
+                                        {{ Form::label('filtersPSS', 'Positively Selected') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        {{ Form::radio('filters[]', 'analyzed', (is_array($filters) ? in_array('analyzed', $filters): false), ['id' => 'filtersAnalyzed']) }}
+                                        {{ Form::label('filtersAnalyzed', 'Analyzed') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        {{ Form::radio('filters[]', 'notAnalyzed', (is_array($filters) ? in_array('notAnalyzed', $filters): false), ['id' => 'filtersNotAnalyzed']) }}
+                                        {{ Form::label('filtersNotAnalyzed', 'Not Analyzed') }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        {{ Form::radio('filters[]', 'all', (is_array($filters) ? in_array('all', $filters): true), ['id' => 'filtersAll'], ['id' => 'filtersAll']) }}
+                                        {{ Form::label('filtersAll', 'All') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="navbar-form navbar-right">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                {{ Form::label('pagesize', 'Rows by page ') }}
                             </span>
-                        </span>
-                        <span class="input-group-addon">
-                            <span class="btn-group">
-                                {{ Form::radio('filters[]', 'analyzed', (is_array($filters) ? in_array('analyzed', $filters): false)) }}
-                                {{ Form::label('filtersAnalyzed', 'Analyzed') }}
+                            <span class="input-group-btn">
+                                <span class="btn-group">
+                                    {{ Form::select('pagesize', array('10' => '10', '25' => '25', '50' => '50', '100' => '100'), $pagesize, ['class' => 'form-control']) }}
+                                </span>
                             </span>
-                        </span>
-                        <span class="input-group-addon">
-                            <span class="btn-group">
-                                {{ Form::radio('filters[]', 'notAnalyzed', (is_array($filters) ? in_array('notAnalyzed', $filters): false)) }}
-                                {{ Form::label('filtersNotAnalyzed', 'Not Analyzed') }}
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                {{ Form::label('search', 'Search ') }}
                             </span>
-                        </span>
-                        <span class="input-group-addon">
-                            <span class="btn-group">
-                                {{ Form::radio('filters[]', 'all', (is_array($filters) ? in_array('all', $filters): true)) }}
-                                {{ Form::label('filtersAll', 'All') }}
-                            </span>
-                        </span>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            {{ Form::label('pagesize', 'Rows by page ') }}
-                        </span>
-                        <span class="input-group-btn">
-                            <span class="btn-group">
-                                {{ Form::select('pagesize', array('10' => '10', '25' => '25', '50' => '50', '100' => '100'), $pagesize, ['class' => 'form-control']) }}
-                            </span>
-                        </span>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            {{ Form::label('search', 'Search ') }}
-                        </span>
-                        {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch', 'autocomplete' => 'on']) }}
+                            {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch', 'autocomplete' => 'on']) }}
 
-                        <span class="input-group-btn">
-                            <span class="btn-group">
-                                {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'button', 'class' => 'btn btn-default btn-block', 'id' => 'resetSearch']) }}
+                            <span class="input-group-btn">
+                                <span class="btn-group">
+                                    {{ Form::select('searchType', array('contains' => 'contains', 'regexp' => 'regexp', 'exact' => 'exact'), $searchType, ['class' => 'form-control']) }}
+                                </span>
+                                <span class="btn-group">
+                                    {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'button', 'class' => 'btn btn-default btn-block', 'id' => 'resetSearch']) }}
+                                </span>
+                                <span class="btn-group">
+                                    {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                                </span>
                             </span>
-                            <span class="btn-group">
-                                {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
-                            </span>
-                        </span>
+                        </div>
                     </div>
                 </div>
                 {{ Form::hidden('id', $project->id) }}
@@ -204,6 +211,8 @@
             });
             $('#resetSearch').on('click', function(e) {
                 $('#querySearch').val('');
+                $('#filtersAll').prop("checked", true);
+                $(this).closest('form').submit();
             });
         });
     </script>

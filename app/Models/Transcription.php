@@ -55,12 +55,30 @@ class Transcription
 
     }
 
-    public static function all($id, $query = '', $pagesize = 10, $orderBy = 'name', $orderType = 'asc', $filters){
+    public static function all($id, $queryString = '', $pagesize = 10, $orderBy = 'name', $orderType = 'asc', $filters, $searchType){
 
         $transriptions = DB::table('transcription')
             ->where('projectId', '=', $id)
             ->where('deleted', '=', '0')
-            ->whereRaw('(name LIKE \'%'.$query.'%\' OR description LIKE \'%'.$query.'%\')')
+            ->when($searchType, function ($query) use ($queryString, $searchType){
+                switch ($searchType) {
+                    case 'regexp':
+                        if($queryString == ''){
+                            $queryString = '.';
+                        }
+                        $query->whereRaw('(name REGEXP \''.$queryString.'\' OR description REGEXP \''.$queryString.'\')');
+                        break;
+                    case 'exact':
+                        $query->whereRaw('(name = \''.$queryString.'\' OR description = \''.$queryString.'\')');
+                        break;
+                    default:
+                        $query->whereRaw('(name LIKE \'%'.$queryString.'%\' OR description LIKE \'%'.$queryString.'%\')');
+                        break;
+                }
+                return $query;
+            }, function ($query) use ($queryString){
+                return $query->whereRaw('(name LIKE \'%'.$queryString.'%\' OR description LIKE \'%'.$queryString.'%\')');
+            })
             ->when(is_array($filters), function ($query) use ($filters){
                 foreach ($filters as $filter){
                     switch ($filter) {
