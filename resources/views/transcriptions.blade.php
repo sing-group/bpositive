@@ -46,7 +46,7 @@
 
         <div class="navbar navbar-default">
             <div class="container-fluid">
-                {{ Form::open(['class' => '', 'method' => 'get', 'autocomplete' => 'on']) }}
+                {{ Form::open(['class' => '', 'method' => 'get', 'id' => 'queryForm']) }}
                 <div class="">
                     <ul class="nav navbar-nav navbar-left">
                         <li class="dropdown">
@@ -94,11 +94,11 @@
                             <span class="input-group-addon">
                                 {{ Form::label('search', 'Search ') }}
                             </span>
-                            {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch', 'autocomplete' => 'on']) }}
+                            {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch']) }}
 
                             <span class="input-group-btn">
                                 <span class="btn-group">
-                                    {{ Form::select('searchType', array('contains' => 'contains', 'regexp' => 'regexp', 'exact' => 'exact'), $searchType, ['class' => 'form-control']) }}
+                                    {{ Form::select('searchType', array('contains' => 'contains', 'regexp' => 'regexp', 'exact' => 'exact'), $searchType, ['class' => 'form-control', 'id' => 'searchType']) }}
                                 </span>
                                 <span class="btn-group">
                                     {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'button', 'class' => 'btn btn-default btn-block', 'id' => 'resetSearch']) }}
@@ -212,8 +212,28 @@
             $('#resetSearch').on('click', function(e) {
                 $('#querySearch').val('');
                 $('#filtersAll').prop("checked", true);
+                $('#searchType').val('contains');
                 $(this).closest('form').submit();
             });
+
+            $('#querySearch').autocomplete({
+                source: function(request, response) {
+                    var url = '{{URL::route('transcription_name')}}';
+
+                    $.getJSON(url, {
+                        id: {{$project->id}},
+                        query: request.term.split(/,\s*/).pop(),
+                        searchType: $('#searchType option:selected').val(),
+                        'filter[]': $('input[name="filters[]"]:checked').val()
+                    }, response);
+                },
+                minLength: 1,
+                select: function(event, ui) {
+                    $('#querySearch').val(ui.item.value);
+                    $('#searchType').val('exact');
+                    $('#queryForm').submit();
+                }
+            })
         });
     </script>
 @endsection('endscripts')

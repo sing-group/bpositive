@@ -55,7 +55,7 @@ class Transcription
 
     }
 
-    public static function all($id, $queryString = '', $pagesize = 10, $orderBy = 'name', $orderType = 'asc', $filters, $searchType){
+    public static function all($id, $queryString = '', $filters, $searchType, $pagesize = 10, $orderBy = 'name', $orderType = 'asc'){
 
         $transriptions = DB::table('transcription')
             ->where('projectId', '=', $id)

@@ -71,7 +71,7 @@ class TranscriptionController extends Controller
         $searchType = $request->get('searchType');
 
         $project = Project::get($request->get('id'));
-        $transcriptions = Transcription::all($request->get('id'), $query, $pagesize, $orderBy, $orderType, $filters, $searchType);
+        $transcriptions = Transcription::all($request->get('id'), $query, $filters, $searchType, $pagesize, $orderBy, $orderType);
 
         return view('transcriptions',[
             'project' => $project,
@@ -130,5 +130,26 @@ class TranscriptionController extends Controller
         }
     }
 
+    public function findByName(Request $request) {
+        $this->validate($request, [
+            'query' => 'string',
+            'filters.*' => Rule::in(['pss', 'analyzed', 'notAnalyzed', 'all']),
+            'searchType' => Rule::in(['contains', 'regexp', 'exact']),
+            'pagesize' => 'numeric'
+        ]);
 
+        $query = $request->get('query');
+        $filters = $request->get('filters');
+        $searchType = $request->get('searchType');
+        $pagesize = $request->get('pagesize', '20');
+
+        $transcriptions = Transcription::all($request->get('id'), $query, $filters, $searchType, $pagesize);
+
+        $results = array();
+        foreach ($transcriptions as $transcription) {
+            $results[] = [ 'id' => $transcription->id, 'value' => $transcription->name ];
+        }
+
+        return response()->json($results);
+    }
 }

@@ -29,6 +29,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>B+ Project</title>
     <link href="{{URL::asset('css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('css/jquery-ui.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
@@ -92,6 +93,7 @@
     </footer>
 
     <script type="text/javascript" src="{{URL::asset('js/jquery.min.js')}}"></script>
+    <script type="text/javascript" src="{{URL::asset('js/jquery-ui.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::asset('js/bootstrap.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::asset('js/bootstrap-colorpicker.min.js')}}"></script>
 @yield('endscripts')
