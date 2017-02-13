@@ -66,18 +66,18 @@ class Transcription
                         if($queryString == ''){
                             $queryString = '.';
                         }
-                        $query->whereRaw('(name REGEXP \''.$queryString.'\' OR description REGEXP \''.$queryString.'\')');
+                        $query->whereRaw('(name REGEXP \''.$queryString.'\')');
                         break;
                     case 'exact':
-                        $query->whereRaw('(name = \''.$queryString.'\' OR description = \''.$queryString.'\')');
+                        $query->whereRaw('(name = \''.$queryString.'\')');
                         break;
                     default:
-                        $query->whereRaw('(name LIKE \'%'.$queryString.'%\' OR description LIKE \'%'.$queryString.'%\')');
+                        $query->whereRaw('(name LIKE \'%'.$queryString.'%\')');
                         break;
                 }
                 return $query;
             }, function ($query) use ($queryString){
-                return $query->whereRaw('(name LIKE \'%'.$queryString.'%\' OR description LIKE \'%'.$queryString.'%\')');
+                return $query->whereRaw('(name LIKE \'%'.$queryString.'%\')');
             })
             ->when(is_array($filters), function ($query) use ($filters){
                 foreach ($filters as $filter){
