@@ -44,8 +44,9 @@
                 </a>
             </div>
             <div class="project_description col-md-8">
-                {{$project->description}}
+                {!!$project->description!!}
             </div>
+            <div class="clear"></div>
         </div>
 
     @endforeach
