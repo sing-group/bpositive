@@ -186,46 +186,17 @@ function PSS (transcription, sequences, models, movedIndexes, scores, canvasName
     this.createPDF = function(){
 
         $('#pleaseWaitModal').modal();
-        /* Resolution problems when using pagesplit
-        var doc = new jsPDF('l', 'pt', 'a4');
-        var divAlign = $('#alignment');
-        doc.addHTML(divAlign, 10, 10,{
-            pagesplit: true
-        }, function(){
-            doc.save('pss.pdf');
-        });
-        */
 
-        var pdf = new jsPDF('l', 'mm', 'a4');
+        html2canvas($('#alignment'), {
+            onrendered: function(canvas) {
+                var imgData = canvas.toDataURL('image/jpeg');
+                var margin = 10;
+                var doc = new jsPDF('p', 'pt', [(canvas.width+(margin*2))*0.75, (canvas.height+(margin*2))*0.75]);
+                doc.addImage(imgData, 'JPG', margin, margin);
+                doc.save(parent.transcription.name + ' - ' + parent.cmbModel.val() + '.pdf');
 
-        var divs = $('div.printAlign');
-
-        //TODO: Image makes Acrobat unable to open PDF
-        //var img = new Image();
-        //img.onload = function() {
-        parent.addPage(pdf, divs, 0, parent.transcription.name + ' - ' + parent.cmbModel.val(), this);
-        //};
-        //img.src = parent.logo;
-    };
-
-    this.addPage = function(pdf, items, index, name, logo){
-        var doc = pdf;
-
-        if(items.length == index){
-            //doc.addImage(logo, 5, 5, 8, 8);
-            doc.text(15, 11, name + ', page: ' + index);
-            doc.save(name + '.pdf');
-            $('#pleaseWaitModal').modal('hide');
-            return;
-        }
-        if (index != 0) {
-            //doc.addImage(logo, 5, 5, 8, 8);
-            doc.text(15, 11, name + ', page: ' + index);
-            doc.addPage();
-        }
-
-        pdf.addHTML(items[index], 10, 15, {}, function () {
-            parent.addPage(doc, items, index + 1, name, logo);
+                $('#pleaseWaitModal').modal('hide');
+            }
         });
 
     };
