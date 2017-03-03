@@ -46,4 +46,14 @@ class Project
 
         return $project;
     }
+
+    public static function getByCode($code){
+
+        $project = DB::table('project')
+            ->where('deleted', '=', '0')
+            ->where('code', '=', $code)
+            ->first();
+
+        return $project;
+    }
 }

@@ -41,7 +41,7 @@
               <a class="btn btn-default" href="/">Back</a>
             </div>
           </div>
-          <h1>{{$project->name}}</h1>
+          <h1>{{$project->name}} ({{$project->code}})</h1>
         </div>
 
         <div class="navbar navbar-default">

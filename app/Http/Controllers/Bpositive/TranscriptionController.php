@@ -53,7 +53,8 @@ class TranscriptionController extends Controller
     public function all(Request $request){
 
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required_without:code|numeric',
+            'code' => 'required_without:id|string|regex:/^BP\d{10}$/',
             'query' => 'string',
             'page' => 'numeric',
             'pagesize' => 'numeric',
@@ -70,8 +71,15 @@ class TranscriptionController extends Controller
         $filters = $request->get('filters');
         $searchType = $request->get('searchType');
 
-        $project = Project::get($request->get('id'));
-        $transcriptions = Transcription::all($request->get('id'), $query, $filters, $searchType, $pagesize, $orderBy, $orderType);
+        $project = null;
+        if($request->has('id')) {
+            $project = Project::get($request->get('id'));
+        }
+        else{
+            $project = Project::getByCode($request->get('code'));
+        }
+
+        $transcriptions = Transcription::all($project->id, $query, $filters, $searchType, $pagesize, $orderBy, $orderType);
 
         return view('transcriptions',[
             'project' => $project,
