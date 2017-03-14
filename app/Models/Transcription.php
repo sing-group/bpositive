@@ -58,38 +58,42 @@ class Transcription
     public static function all($id, $queryString = '', $filters, $searchType, $pagesize = 10, $orderBy = 'name', $orderType = 'asc'){
 
         $transriptions = DB::table('transcription')
-            ->where('projectId', '=', $id)
-            ->where('deleted', '=', '0')
+            ->select(DB::raw('transcription.*'))
+            ->join('project', 'transcription.projectId', '=', 'project.id')
+            ->where('transcription.projectId', '=', $id)
+            ->where('project.deleted', '=', '0')
+            ->where('project.public', '=', '1')
+            ->where('transcription.deleted', '=', '0')
             ->when($searchType, function ($query) use ($queryString, $searchType){
                 switch ($searchType) {
                     case 'regexp':
                         if($queryString == ''){
                             $queryString = '.';
                         }
-                        $query->whereRaw('(name REGEXP \''.$queryString.'\')');
+                        $query->whereRaw('(transcription.name REGEXP \''.$queryString.'\')');
                         break;
                     case 'exact':
-                        $query->whereRaw('(name = \''.$queryString.'\')');
+                        $query->whereRaw('(transcription.name = \''.$queryString.'\')');
                         break;
                     default:
-                        $query->whereRaw('(name LIKE \'%'.$queryString.'%\')');
+                        $query->whereRaw('(transcription.name LIKE \'%'.$queryString.'%\')');
                         break;
                 }
                 return $query;
             }, function ($query) use ($queryString){
-                return $query->whereRaw('(name LIKE \'%'.$queryString.'%\')');
+                return $query->whereRaw('(transcription.name LIKE \'%'.$queryString.'%\')');
             })
             ->when(is_array($filters), function ($query) use ($filters){
                 foreach ($filters as $filter){
                     switch ($filter) {
                         case 'pss':
-                            $query->where('positivelySelected', 1);
+                            $query->where('transcription.positivelySelected', 1);
                             break;
                         case 'analyzed':
-                            $query->where('analyzed', 1);
+                            $query->where('transcription.analyzed', 1);
                             break;
                         case 'notAnalyzed':
-                            $query->where('analyzed', 0);
+                            $query->where('transcription.analyzed', 0);
                             break;
                     }
                 }
@@ -104,8 +108,12 @@ class Transcription
     public static function get($id){
 
         $transcription = DB::table('transcription')
-            ->where('deleted', '=', '0')
-            ->where('id', '=', $id)
+            ->select(DB::raw('transcription.*'))
+            ->join('project', 'transcription.projectId', '=', 'project.id')
+            ->where('project.deleted', '=', '0')
+            ->where('project.public', '=', '1')
+            ->where('transcription.deleted', '=', '0')
+            ->where('transcription.id', '=', $id)
             ->first();
 
         return $transcription;

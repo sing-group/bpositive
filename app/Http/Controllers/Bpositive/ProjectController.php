@@ -25,6 +25,7 @@ namespace App\Http\Controllers\Bpositive;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 
 class ProjectController extends Controller
 {
@@ -56,6 +57,40 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function getPrivate(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+
+        $project = Project::getPrivate($request->get('id'));
+
+        return view('projectPrivate',[
+            'project' => $project
+        ]);
+    }
+
+    public function makePublic(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'password' => 'required|string',
+        ]);
+
+        $project = Project::getPrivate($request->get('id'));
+        if($project->publicPassword != hash('sha512', $request->get('password')) ){
+            return view('projectPrivate', [
+                'project' => $project,
+                'errors' => new MessageBag(['Wrong password'])
+            ]);
+
+        }
+        else {
+            Project::setPublic($request->get('id'), 1);
+        }
+
+        return redirect()->route('projects');
+    }
 
 
 }

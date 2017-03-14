@@ -42,6 +42,7 @@ class Project
         $project = DB::table('project')
             ->where('deleted', '=', '0')
             ->where('id', '=', $id)
+            ->where('public', '=', '1')
             ->first();
 
         return $project;
@@ -52,6 +53,26 @@ class Project
         $project = DB::table('project')
             ->where('deleted', '=', '0')
             ->where('code', '=', $code)
+            ->where('public', '=', '1')
+            ->first();
+
+        return $project;
+    }
+
+    public static function setPublic($id, $value){
+
+        DB::table('project')
+            ->where('id', '=', $id)
+            ->update(['public' => $value]);
+
+    }
+
+    public static function getPrivate($id){
+
+        $project = DB::table('project')
+            ->where('deleted', '=', '0')
+            ->where('id', '=', $id)
+            ->where('public', '=', '0')
             ->first();
 
         return $project;
