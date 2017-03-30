@@ -73,7 +73,12 @@ class TranscriptionController extends Controller
 
         $project = null;
         if($request->has('id')) {
-            $project = Project::get($request->get('id'));
+            if($request->session()->get('allowPrivateAccessToId') == $request->get('id')){
+                $project = Project::getPrivate($request->get('id'));
+            }
+            else {
+                $project = Project::get($request->get('id'));
+            }
         }
         else{
             $project = Project::getByCode($request->get('code'));
@@ -99,7 +104,17 @@ class TranscriptionController extends Controller
             'id' => 'required|numeric'
         ]);
 
-        $transcription = new Transcription(Transcription::get($request->get('id')));
+        $transcription = null;
+        $project = Project::getByTranscription($request->get('id'), '1');
+        if(!$project){
+            $project = Project::getByTranscription($request->get('id'), '0');
+            if($request->session()->get('allowPrivateAccessToId') == $project->id){
+                $transcription = new Transcription(Transcription::getPrivate($request->get('id')));
+            }
+        }
+        else{
+            $transcription = new Transcription(Transcription::get($request->get('id')));
+        }
 
         try {
             return view('transcription', [
@@ -126,9 +141,17 @@ class TranscriptionController extends Controller
         ]);
 
         try {
-            return response()->download(Transcription::getTgzPath($request->get('id')));
-        }
-        catch(\Exception $e){
+            $project = Project::getByTranscription($request->get('id'), '1');
+            if(!$project){
+                $project = Project::getByTranscription($request->get('id'), '0');
+                if($request->session()->get('allowPrivateAccessToId') == $project->id){
+                    return response()->download(Transcription::getTgzPath($request->get('id'), '0'));
+                }
+            }
+            else {
+                return response()->download(Transcription::getTgzPath($request->get('id'), '1'));
+            }
+        } catch (\Exception $e) {
             $transcription = new Transcription(Transcription::get($request->get('id')));
             return view('transcription', [
                 'transcription' => $transcription,
@@ -140,6 +163,7 @@ class TranscriptionController extends Controller
 
     public function findByName(Request $request) {
         $this->validate($request, [
+            'id' => 'required|numeric',
             'query' => 'string',
             'filters.*' => Rule::in(['pss', 'analyzed', 'notAnalyzed', 'all']),
             'searchType' => Rule::in(['contains', 'regexp', 'exact']),
@@ -151,7 +175,17 @@ class TranscriptionController extends Controller
         $searchType = $request->get('searchType');
         $pagesize = $request->get('pagesize', '20');
 
-        $transcriptions = Transcription::all($request->get('id'), $query, $filters, $searchType, $pagesize);
+        $project = null;
+        if($request->has('id')) {
+            if($request->session()->get('allowPrivateAccessToId') == $request->get('id')){
+                $project = Project::getPrivate($request->get('id'));
+            }
+            else {
+                $project = Project::get($request->get('id'));
+            }
+        }
+
+        $transcriptions = Transcription::all($project->id, $query, $filters, $searchType, $pagesize);
 
         $results = array();
         foreach ($transcriptions as $transcription) {

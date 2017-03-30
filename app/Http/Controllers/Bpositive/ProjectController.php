@@ -50,6 +50,8 @@ class ProjectController extends Controller
 
     public function all(Request $request){
 
+        $request->session()->flush();
+
         $projects = Project::all();
 
         return view('index',[
@@ -61,12 +63,14 @@ class ProjectController extends Controller
 
         $this->validate($request, [
             'id' => 'required|numeric',
+            'state' => 'in:accessPrivate,makePublic'
         ]);
 
         $project = Project::getPrivate($request->get('id'));
 
         return view('projectPrivate',[
-            'project' => $project
+            'project' => $project,
+            'state' => $request->get('state')
         ]);
     }
 
@@ -75,13 +79,15 @@ class ProjectController extends Controller
         $this->validate($request, [
             'id' => 'required|numeric',
             'password' => 'required|string',
+            'state' => 'in:makePublic'
         ]);
 
         $project = Project::getPrivate($request->get('id'));
         if($project->publicPassword != hash('sha512', $request->get('password')) ){
             return view('projectPrivate', [
                 'project' => $project,
-                'errors' => new MessageBag(['Wrong password'])
+                'errors' => new MessageBag(['Wrong password']),
+                'state' => $request->get('state')
             ]);
 
         }
@@ -90,6 +96,30 @@ class ProjectController extends Controller
         }
 
         return redirect()->route('projects');
+    }
+
+    public function accessPrivate(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'password' => 'required|string',
+            'state' => 'in:accessPrivate'
+        ]);
+
+        $project = Project::getPrivate($request->get('id'));
+        if($project->privatePassword != hash('sha512', $request->get('password')) ){
+            return view('projectPrivate', [
+                'project' => $project,
+                'errors' => new MessageBag(['Wrong password']),
+                'state' => $request->get('state')
+            ]);
+
+        }
+        else {
+            $request->session()->put('allowPrivateAccessToId', $project->id);
+        }
+
+        return redirect()->route('transcriptions', ['id' => $project->id]);
     }
 
 

@@ -59,6 +59,19 @@ class Project
         return $project;
     }
 
+    public static function getByTranscription($id, $public){
+
+        $project = DB::table('project')
+            ->select(DB::raw('project.*'))
+            ->join('transcription', 'transcription.projectId', '=', 'project.id')
+            ->where('project.deleted', '=', '0')
+            ->where('transcription.id', '=', $id)
+            ->where('project.public', '=', $public)
+            ->first();
+
+        return $project;
+    }
+
     public static function setPublic($id, $value){
 
         DB::table('project')

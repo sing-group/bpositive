@@ -39,13 +39,17 @@
         <div class="project">
             <div class="project_name col-md-4">
                 <h1>{{$project->name}}</h1>
-                <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
                 @if ($project->public == 1)
+                    <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
                     <a href="transcriptions?id={{$project->id}}">
                         <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Open</button>
                     </a>
                 @else
-                    <a href="project/getPrivate?id={{$project->id}}">
+                    <h4>{{$project->code}}</h4>
+                    <a href="project/getPrivate?id={{$project->id}}&state=accessPrivate">
+                        <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Access</button>
+                    </a>
+                    <a href="project/getPrivate?id={{$project->id}}&state=makePublic">
                         <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon glyphicon-globe" aria-hidden="true"></span> Make public</button>
                     </a>
                 @endif

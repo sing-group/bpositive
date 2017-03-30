@@ -39,23 +39,35 @@
                 <a class="btn btn-default" href="/">Back</a>
             </div>
         </div>
-        <h1>Make public {{$project->name}} ({{$project->code}})</h1>
+        @if ($state == 'makePublic')
+            <h1>Make public {{$project->name}} ({{$project->code}})</h1>
+        @else
+            <h1>Access {{$project->name}} ({{$project->code}})</h1>
+        @endif
     </div>
     <div class="project">
         <div class="project_name col-md-4">
             <h1>{{$project->name}}</h1>
-            <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
             @if ($project->public == 1)
                 <p>Project is already public.</p>
             @else
-                {{ Form::open(['action' => 'Bpositive\ProjectController@makePublic', 'method' => 'post', 'id' => 'publicForm']) }}
+                @if ($state == 'makePublic')
+                    {{ Form::open(['action' => 'Bpositive\ProjectController@makePublic', 'method' => 'post', 'id' => 'publicForm']) }}
+                @else
+                    {{ Form::open(['action' => 'Bpositive\ProjectController@accessPrivate', 'method' => 'post', 'id' => 'publicForm']) }}
+                @endif
 
                 <div class="form-group form-inline">
                     {{ Form::label('password', 'Password: ') }}
                     {{ Form::password('password', ['id' => 'password', 'required' => 'required', 'class' => 'form-control']) }}
                 </div>
                 {{ Form::hidden('id', $project->id) }}
-                {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Make public', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                {{ Form::hidden('state', $state) }}
+                @if ($state == 'makePublic')
+                    {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Make public', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                @else
+                    {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Access', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                @endif
 
                 {{ Form::close() }}
             @endif

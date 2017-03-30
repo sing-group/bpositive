@@ -62,7 +62,6 @@ class Transcription
             ->join('project', 'transcription.projectId', '=', 'project.id')
             ->where('transcription.projectId', '=', $id)
             ->where('project.deleted', '=', '0')
-            ->where('project.public', '=', '1')
             ->where('transcription.deleted', '=', '0')
             ->when($searchType, function ($query) use ($queryString, $searchType){
                 switch ($searchType) {
@@ -119,9 +118,30 @@ class Transcription
         return $transcription;
     }
 
-    public static function getTgzPath($id){
+    public static function getPrivate($id){
 
-        $transcription = Transcription::get($id);
+        $transcription = DB::table('transcription')
+            ->select(DB::raw('transcription.*'))
+            ->join('project', 'transcription.projectId', '=', 'project.id')
+            ->where('project.deleted', '=', '0')
+            ->where('project.public', '=', '0')
+            ->where('transcription.deleted', '=', '0')
+            ->where('transcription.id', '=', $id)
+            ->first();
+
+        return $transcription;
+    }
+
+    public static function getTgzPath($id, $public){
+
+        $transcription = null;
+        if($public == '1') {
+            $transcription = Transcription::get($id);
+        }
+        else{
+            $transcription = Transcription::getPrivate($id);
+        }
+
 
         return Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().'files/'.$transcription->linkZip.'.tar.gz';
 
