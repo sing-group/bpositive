@@ -22,6 +22,7 @@
 
 namespace App\Http\Controllers\Bpositive;
 
+use App\Exceptions\PrivateException;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
@@ -84,6 +85,10 @@ class TranscriptionController extends Controller
             $project = Project::getByCode($request->get('code'));
         }
 
+        if($project == null){
+            throw new PrivateException();
+        }
+
         $transcriptions = Transcription::all($project->id, $query, $filters, $searchType, $pagesize, $orderBy, $orderType);
 
         return view('transcriptions',[
@@ -114,6 +119,10 @@ class TranscriptionController extends Controller
         }
         else{
             $transcription = new Transcription(Transcription::get($request->get('id')));
+        }
+
+        if($project == null || $transcription == null){
+            throw new PrivateException();
         }
 
         try {
@@ -159,6 +168,7 @@ class TranscriptionController extends Controller
             ]);
 
         }
+        throw new PrivateException();
     }
 
     public function findByName(Request $request) {
@@ -183,6 +193,10 @@ class TranscriptionController extends Controller
             else {
                 $project = Project::get($request->get('id'));
             }
+        }
+
+        if($project == null){
+            throw new PrivateException();
         }
 
         $transcriptions = Transcription::all($project->id, $query, $filters, $searchType, $pagesize);
