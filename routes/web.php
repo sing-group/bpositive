@@ -40,3 +40,6 @@ Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('tr
 Route::get('/transcription', 'Bpositive\TranscriptionController@get')->name('transcription');
 Route::get('/transcription/name', 'Bpositive\TranscriptionController@findByName')->name('transcription_name');
 Route::get('/download/transcription', 'Bpositive\TranscriptionController@download')->name('download_transcription');
+
+Auth::routes();
+

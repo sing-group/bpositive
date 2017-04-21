@@ -31,21 +31,71 @@
     <link href="{{URL::asset('css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/jquery-ui.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('css/app.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
     @yield('startcss')
     <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
 </head>
 <body>
-    <header>
-        <div class="top-icons">
-            <span class="top-icons-space">
-                <a class="top-icons-link" href="index.php"><i class="fa fa-home fa-lg iconformat_top" title="Home"></i></a>
-                <a class="top-icons-link" href="mailto:jbvieira@ibmc.up.pt"><i class="fa fa-envelope fa-lg iconformat_top" title="Contact us"></i></a>
-                <a class="top-icons-link" href="howtocite.php"><i class="fa fa-pencil-square fa-lg iconformat-top" title="How to cite?" aria-hidden="true"></i></a>
-            </span>
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+
+                <!-- Collapsed Hamburger -->
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <div class="top-icons">
+                    <span class="top-icons-space">
+                        <a class="top-icons-link" href="index.php"><i class="fa fa-home fa-lg iconformat_top" title="Home"></i></a>
+                        <a class="top-icons-link" href="mailto:jbvieira@ibmc.up.pt"><i class="fa fa-envelope fa-lg iconformat_top" title="Contact us"></i></a>
+                        <a class="top-icons-link" href="howtocite.php"><i class="fa fa-pencil-square fa-lg iconformat-top" title="How to cite?" aria-hidden="true"></i></a>
+                    </span>
+                </div>
+            </div>
+
+            <div class="collapse navbar-collapse" id="app-navbar-collapse">
+                <!-- Left Side Of Navbar -->
+                <ul class="nav navbar-nav">
+                    &nbsp;
+                </ul>
+
+                <!-- Right Side Of Navbar -->
+                <ul class="nav navbar-nav navbar-right">
+                    <!-- Authentication Links -->
+                    @if (Auth::guest())
+                        <li><a href="{{ url('/login') }}">Login</a></li>
+                        <!--li><a href="{{ url('/register') }}">Register</a></li-->
+                    @else
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                {{ Auth::user()->name }} <span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="{{ url('/logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        Logout
+                                    </a>
+
+                                    <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+                                        {{ csrf_field() }}
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+                </ul>
+            </div>
         </div>
-    </header>
+    </nav>
     <div class="banner">
         <img src="{{URL::asset('images/bpositive.png')}}" alt="Project Logo" class="project-logo"/>
     </div>
@@ -67,30 +117,32 @@
         @yield('content')
     </div>
 
-    <footer>
-        <div class="footer-left">
-            <a href="http://www.i3s.up.pt"><img src="{{URL::asset('images/i3s.png')}}" alt="i3S"></a>
+    <div class="nav navbar-inverse navbar-static-bottom">
+        <div class="container">
+            <div class="footer-left">
+                <a href="http://www.i3s.up.pt"><img src="{{URL::asset('images/i3s.png')}}" alt="i3S"></a>
+            </div>
+            <div class="footer-right">
+                <span>
+                    <a class="footer-social-icons" href="https://www.facebook.com/i3s.up.pt/?fref=ts/" target="_new"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a>
+                    <a class="footer-social-icons" href="https://twitter.com/i3si3" target="_new"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a>
+                    <a class="footer-social-icons" href="https://www.linkedin.com/company/10318110?trk=tyah&trkInfo=clickedVertical%3Acompany%2CclickedEntityId%3A10318110%2Cidx%3A1-1-1%2CtarId%3A1479142019953%2Ctas%3Ainstituto%20de%20investiga%C3%A7%C3%A3o%20" target="_new"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a>
+                    <a class="footer-social-icons" href="https://pt.pinterest.com/i3suppt/" target="_new"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a>
+                </span>
+                <p class="rodape-info">
+                    Phone: +351 220 408 800 <br/>
+                    Email: info@i3s.up.pt <br/>
+                    Address: Rua Alfredo Allen, 208 <br/>
+                    4200-135 Porto, Portugal </p>
+                <span>
+                    <a class="footer-icons" href="https://www.ibmc.up.pt" target="_new"><img src="{{URL::asset('images/IBMC.png')}}" alt="IBMC"></a>
+                    <a class="footer-icons" href="http://www.ineb.up.pt" target="_new"><img src="{{URL::asset('images/INEB.png')}}" alt="INEB"></a>
+                    <a class="footer-icons" href="https://www.ipatimup.pt" target="_new"><img src="{{URL::asset('images/IPATIMUP.png')}}" alt="IPATIMUP"></a>
+                    <a class="footer-icons" href="http://www.up.pt" target="_new"><img src="{{URL::asset('images/UPORTO.png')}}" alt="UPORTO"></a>
+                </span>
+            </div>
         </div>
-        <div class="footer-right">
-            <span>
-                <a class="footer-social-icons" href="https://www.facebook.com/i3s.up.pt/?fref=ts/" target="_new"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a>
-                <a class="footer-social-icons" href="https://twitter.com/i3si3" target="_new"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a>
-                <a class="footer-social-icons" href="https://www.linkedin.com/company/10318110?trk=tyah&trkInfo=clickedVertical%3Acompany%2CclickedEntityId%3A10318110%2Cidx%3A1-1-1%2CtarId%3A1479142019953%2Ctas%3Ainstituto%20de%20investiga%C3%A7%C3%A3o%20" target="_new"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a>
-                <a class="footer-social-icons" href="https://pt.pinterest.com/i3suppt/" target="_new"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a>
-            </span>
-            <p class="rodape-info">
-                Phone: +351 220 408 800 <br/>
-                Email: info@i3s.up.pt <br/>
-                Address: Rua Alfredo Allen, 208 <br/>
-                4200-135 Porto, Portugal </p>
-            <span>
-                <a class="footer-icons" href="https://www.ibmc.up.pt" target="_new"><img src="{{URL::asset('images/IBMC.png')}}" alt="IBMC"></a>
-                <a class="footer-icons" href="http://www.ineb.up.pt" target="_new"><img src="{{URL::asset('images/INEB.png')}}" alt="INEB"></a>
-                <a class="footer-icons" href="https://www.ipatimup.pt" target="_new"><img src="{{URL::asset('images/IPATIMUP.png')}}" alt="IPATIMUP"></a>
-                <a class="footer-icons" href="http://www.up.pt" target="_new"><img src="{{URL::asset('images/UPORTO.png')}}" alt="UPORTO"></a>
-            </span>
-        </div>
-    </footer>
+    </div>
 
     <script type="text/javascript" src="{{URL::asset('js/jquery.min.js')}}"></script>
     <script type="text/javascript" src="{{URL::asset('js/jquery-ui.min.js')}}"></script>

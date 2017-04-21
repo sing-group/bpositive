@@ -20,9 +20,11 @@
  */
 
 
-html, body{
-    padding:0;
-    margin:0;
+body {
+    position: relative;
+    min-height: 100vh;
+    padding-bottom: 220px;
+    box-sizing: border-box;
 }
 header{
     height: 50px;
@@ -33,6 +35,7 @@ header{
     background-color: #808080;
     background-image: url('../images/banner.png');
     background-repeat: repeat;
+    margin-top: -22px;
 }
 .project-logo{
     width: 180px;
@@ -62,8 +65,8 @@ a:hover{
 }
 
 .content{
-    clear: both;
-    /*min-height: 250px;*/
+    position:relative;
+    min-height: 100%;
     /*padding: 20px;*/
 }
 .project-content{
@@ -103,27 +106,23 @@ a:hover{
 }
 
 
-footer{
-    clear: both;
-    background-color: #000000;
-    min-height: 330px;
-    margin-bottom: 0px;
-    float: left;
-    width: 100%;
-    font-family: Raleway;
-    color: #ffffff;
+
+.navbar-static-bottom{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    color: #00ACEC;
 }
+
 .footer-left{
     float: left;
     width: 60%;
-    padding-top: 50px;
-    padding-left: 30px;
+    padding-top: 10px;
 }
 .footer-right{
     float:right;
     width: 40%;
-    padding-top: 50px;
-    padding-right: 30px;
+    padding-top: 10px;
     text-align: right;
 }
 .footer-social-icons{
@@ -198,4 +197,12 @@ footer{
 
 .project_description a{
     color: #337ab7;
+}
+
+.navbar{
+    background-color: #000000;
+}
+
+.navbar a{
+    color: #00ACEC;
 }
