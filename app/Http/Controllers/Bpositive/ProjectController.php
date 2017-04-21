@@ -25,6 +25,7 @@ namespace App\Http\Controllers\Bpositive;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
 
 class ProjectController extends Controller
@@ -50,12 +51,11 @@ class ProjectController extends Controller
 
     public function all(Request $request){
 
-        $request->session()->flush();
-
         $projects = Project::all();
 
         return view('index',[
-            'projects' => $projects
+            'projects' => $projects,
+            'errors' => new MessageBag([$request->get('errors')])
         ]);
     }
 
@@ -65,6 +65,14 @@ class ProjectController extends Controller
             'id' => 'required|numeric',
             'state' => 'in:accessPrivate,makePublic'
         ]);
+
+        if($request->get('state') === 'makePublic'){
+            if(Gate::denies('make-public')){
+                return redirect()->route('projects', [
+                    'errors' => 'Not Authorized'
+                ]);
+            }
+        }
 
         $project = Project::getPrivate($request->get('id'));
 
@@ -76,24 +84,34 @@ class ProjectController extends Controller
 
     public function makePublic(Request $request){
 
+        if(Gate::denies('make-public')){
+            return redirect()->route('projects', [
+                'errors' => 'Not Authorized'
+            ]);
+        }
+
         $this->validate($request, [
-            'id' => 'required|numeric',
-            'password' => 'required|string',
-            'state' => 'in:makePublic'
+            'id' => 'required|numeric'
         ]);
 
-        $project = Project::getPrivate($request->get('id'));
-        if($project->publicPassword != hash('sha512', $request->get('password')) ){
-            return view('projectPrivate', [
-                'project' => $project,
-                'errors' => new MessageBag(['Wrong password']),
-                'state' => $request->get('state')
-            ]);
+        Project::setPublic($request->get('id'), 1);
 
+        return redirect()->route('projects');
+    }
+
+    public function makePrivate(Request $request){
+
+        if(Gate::denies('make-private')){
+            return redirect()->route('projects', [
+                'errors' => 'Not Authorized'
+            ]);
         }
-        else {
-            Project::setPublic($request->get('id'), 1);
-        }
+
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        Project::setPublic($request->get('id'), 0);
 
         return redirect()->route('projects');
     }

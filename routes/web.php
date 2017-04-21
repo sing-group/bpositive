@@ -32,8 +32,9 @@
 */
 
 Route::get('/', 'Bpositive\ProjectController@all')->name('projects');
-Route::get('/project/getPrivate', 'Bpositive\ProjectController@getPrivate')->name('project_private');
+Route::post('/project/getPrivate', 'Bpositive\ProjectController@getPrivate')->name('project_private');
 Route::post('/project/makePublic', 'Bpositive\ProjectController@makePublic')->name('project_make_public');
+Route::post('/project/makePrivate', 'Bpositive\ProjectController@makePrivate')->name('project_make_private');
 Route::post('/project/accessPrivate', 'Bpositive\ProjectController@accessPrivate')->name('project_access_private');
 
 Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('transcriptions');

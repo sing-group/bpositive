@@ -39,19 +39,43 @@
         <div class="project">
             <div class="project_name col-md-4">
                 <h1>{{$project->name}}</h1>
-                @if ($project->public == 1)
+                @if ($project->public == 1 || Gate::allows('access-private'))
                     <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
-                    <a href="transcriptions?id={{$project->id}}">
-                        <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Open</button>
-                    </a>
+                    <div class="form-group">
+                        {{ Form::open(['url' => 'transcriptions', 'method' => 'get', 'id' => 'openForm']) }}
+                        {{ Form::hidden('id', $project->id) }}
+                        {{ Form::button('<span class="glyphicon glyphicon-plus"></span> Open', ['type' => 'submit', 'class' => 'btn btn-default btn-md']) }}
+                        {{ Form::close() }}
+                    </div>
                 @else
                     <h4>{{$project->code}}</h4>
-                    <a href="project/getPrivate?id={{$project->id}}&state=accessPrivate">
-                        <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Access</button>
-                    </a>
-                    <a href="project/getPrivate?id={{$project->id}}&state=makePublic">
-                        <button type="button"class="button_more btn btn-default btn-md"> <span class="glyphicon glyphicon glyphicon-globe" aria-hidden="true"></span> Make public</button>
-                    </a>
+                    <div class="form-group">
+                        {{ Form::open(['action' => 'Bpositive\ProjectController@getPrivate', 'method' => 'post', 'id' => 'accessForm']) }}
+                        {{ Form::hidden('id', $project->id) }}
+                        {{ Form::hidden('state', 'accessPrivate') }}
+                        {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Access', ['type' => 'submit', 'class' => 'btn btn-default btn-md']) }}
+                        {{ Form::close() }}
+                    </div>
+                @endif
+
+                @if ($project->public == 0 && Gate::allows('make-public'))
+                    <div class="form-group">
+                        {{ Form::open(['action' => 'Bpositive\ProjectController@makePublic', 'method' => 'post', 'id' => 'publicForm']) }}
+                        {{ Form::hidden('id', $project->id) }}
+                        {{ Form::hidden('state', 'makePublic') }}
+                        {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Make public', ['type' => 'submit', 'class' => 'btn btn-primary btn-md']) }}
+                        {{ Form::close() }}
+                    </div>
+                @endif
+
+                @if ($project->public == 1 && Gate::allows('make-private'))
+                    <div class="form-group">
+                        {{ Form::open(['action' => 'Bpositive\ProjectController@makePrivate', 'method' => 'post', 'id' => 'privateForm']) }}
+                        {{ Form::hidden('id', $project->id) }}
+                        {{ Form::hidden('state', 'makePrivate') }}
+                        {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-md']) }}
+                        {{ Form::close() }}
+                    </div>
                 @endif
             </div>
             <div class="project_description col-md-8">

@@ -27,6 +27,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 
@@ -74,11 +75,9 @@ class TranscriptionController extends Controller
 
         $project = null;
         if($request->has('id')) {
-            if($request->session()->get('allowPrivateAccessToId') == $request->get('id')){
+            $project = Project::get($request->get('id'));
+            if($project == null && ($request->session()->get('allowPrivateAccessToId') == $request->get('id') || Gate::allows('access-private'))){
                 $project = Project::getPrivate($request->get('id'));
-            }
-            else {
-                $project = Project::get($request->get('id'));
             }
         }
         else{
@@ -113,7 +112,7 @@ class TranscriptionController extends Controller
         $project = Project::getByTranscription($request->get('id'), '1');
         if(!$project){
             $project = Project::getByTranscription($request->get('id'), '0');
-            if($request->session()->get('allowPrivateAccessToId') == $project->id){
+            if($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private')){
                 $transcription = new Transcription(Transcription::getPrivate($request->get('id')));
             }
         }
@@ -153,7 +152,7 @@ class TranscriptionController extends Controller
             $project = Project::getByTranscription($request->get('id'), '1');
             if(!$project){
                 $project = Project::getByTranscription($request->get('id'), '0');
-                if($request->session()->get('allowPrivateAccessToId') == $project->id){
+                if($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private')){
                     return response()->download(Transcription::getTgzPath($request->get('id'), '0'));
                 }
             }
@@ -187,7 +186,7 @@ class TranscriptionController extends Controller
 
         $project = null;
         if($request->has('id')) {
-            if($request->session()->get('allowPrivateAccessToId') == $request->get('id')){
+            if($request->session()->get('allowPrivateAccessToId') == $request->get('id') || Gate::allows('access-private')){
                 $project = Project::getPrivate($request->get('id'));
             }
             else {

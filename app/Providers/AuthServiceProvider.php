@@ -27,6 +27,9 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
+    const ADMIN_ROLE = 1;
+    const USER_ROLE = 2;
+
     /**
      * The policy mappings for the application.
      *
@@ -46,5 +49,18 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         //
+
+        Gate::define('make-public', function ($user) {
+            return $user->role_id == self::ADMIN_ROLE;
+        });
+
+        Gate::define('make-private', function ($user) {
+            return $user->role_id == self::ADMIN_ROLE;
+        });
+
+        Gate::define('access-private', function ($user) {
+            return $user->role_id == self::ADMIN_ROLE;
+        });
+
     }
 }
