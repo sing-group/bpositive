@@ -52,7 +52,7 @@
 
                 <div class="top-icons">
                     <span class="top-icons-space">
-                        <a class="top-icons-link" href="index.php"><i class="fa fa-home fa-lg iconformat_top" title="Home"></i></a>
+                        <a class="top-icons-link" href="/"><i class="fa fa-home fa-lg iconformat_top" title="Home"></i></a>
                         <a class="top-icons-link" href="mailto:jbvieira@ibmc.up.pt"><i class="fa fa-envelope fa-lg iconformat_top" title="Contact us"></i></a>
                         <a class="top-icons-link" href="howtocite.php"><i class="fa fa-pencil-square fa-lg iconformat-top" title="How to cite?" aria-hidden="true"></i></a>
                     </span>
