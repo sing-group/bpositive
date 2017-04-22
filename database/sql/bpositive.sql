@@ -11,7 +11,12 @@ CREATE TABLE `project` (
   `description` text NOT NULL,
   `deleted` int(11) NOT NULL,
   `creationDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  `code` varchar(12) NOT NULL,
+  `publicPassword` varchar(128) DEFAULT NULL,
+  `privatePassword` varchar(128) DEFAULT NULL,
+  `public` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code_UNIQUE` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `transcription` (
@@ -27,3 +32,36 @@ CREATE TABLE `transcription` (
   `positivelySelected` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `roles` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `role_id` int(11) unsigned NOT NULL DEFAULT '2',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`),
+  KEY `fk_role_idx` (`role_id`),
+  CONSTRAINT `fk_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `password_resets` (
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`),
+  KEY `password_resets_token_index` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `roles` WRITE;
+INSERT INTO `roles` VALUES (1,'Administrator'),(2,'User');
+UNLOCK TABLES;
