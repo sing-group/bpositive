@@ -31,7 +31,6 @@
     <link href="{{URL::asset('css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/jquery-ui.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
-    <link href="{{URL::asset('css/app.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
     @yield('startcss')
