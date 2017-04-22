@@ -41,6 +41,8 @@
         </div>
         @if ($state == 'makePublic')
             <h1>Make public {{$project->name}} ({{$project->code}})</h1>
+        @elseif ($state == 'makePrivate')
+             <h1>Make private {{$project->name}} ({{$project->code}})</h1>
         @else
             <h1>Access {{$project->name}} ({{$project->code}})</h1>
         @endif
@@ -49,7 +51,20 @@
         <div class="project_name col-md-4">
             <h1>{{$project->name}}</h1>
             @if ($project->public == 1)
-                <p>Project is already public.</p>
+                @if ($state == 'makePrivate')
+                    {{ Form::open(['action' => 'Bpositive\ProjectController@makePrivate', 'method' => 'post', 'id' => 'publicForm']) }}
+                    <div class="form-group form-inline">
+                        {{ Form::label('password', 'Password: ') }}
+                        {{ Form::password('password', ['id' => 'password', 'required' => 'required', 'class' => 'form-control']) }}
+                    </div>
+                    {{ Form::hidden('id', $project->id) }}
+                    {{ Form::hidden('state', $state) }}
+                    {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-block']) }}
+                    {{ Form::close() }}
+                @else
+                    <p>Project is already public.</p>
+                @endif
+
             @else
                 @if ($state == 'makePublic')
                     {{ Form::open(['action' => 'Bpositive\ProjectController@makePublic', 'method' => 'post', 'id' => 'publicForm']) }}

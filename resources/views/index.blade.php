@@ -70,7 +70,7 @@
 
                 @if ($project->public == 1 && Gate::allows('make-private'))
                     <div class="form-group">
-                        {{ Form::open(['action' => 'Bpositive\ProjectController@makePrivate', 'method' => 'post', 'id' => 'privateForm']) }}
+                        {{ Form::open(['action' => 'Bpositive\ProjectController@getPrivate', 'method' => 'post', 'id' => 'privateForm']) }}
                         {{ Form::hidden('id', $project->id) }}
                         {{ Form::hidden('state', 'makePrivate') }}
                         {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-md']) }}

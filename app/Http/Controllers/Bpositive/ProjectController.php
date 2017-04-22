@@ -64,9 +64,10 @@ class ProjectController extends Controller
 
         $this->validate($request, [
             'id' => 'required|numeric',
-            'state' => 'in:accessPrivate,makePublic'
+            'state' => 'in:accessPrivate,makePublic,makePrivate'
         ]);
 
+        $project = null;
         if($request->get('state') === 'makePublic'){
             if(Gate::denies('make-public')){
                 return redirect()->route('projects', [
@@ -74,8 +75,17 @@ class ProjectController extends Controller
                 ]);
             }
         }
-
-        $project = Project::getPrivate($request->get('id'));
+        if($request->get('state') === 'makePrivate'){
+            if(Gate::denies('make-private')){
+                return redirect()->route('projects', [
+                    'errors' => 'Not Authorized'
+                ]);
+            }
+            $project = Project::get($request->get('id'));
+        }
+        else {
+            $project = Project::getPrivate($request->get('id'));
+        }
 
         return view('projectPrivate',[
             'project' => $project,
@@ -109,10 +119,11 @@ class ProjectController extends Controller
         }
 
         $this->validate($request, [
-            'id' => 'required|numeric'
+            'id' => 'required|numeric',
+            'password' => 'required|string'
         ]);
 
-        Project::setPublic($request->get('id'), 0);
+        Project::setPrivate($request->get('id'), $request->get('password'));
 
         return redirect()->route('projects');
     }
