@@ -52,11 +52,12 @@ class ProjectController extends Controller
     public function all(Request $request){
 
         $projects = Project::all();
+        $params = ['projects' => $projects];
+        if($request->has('errors')){
+            array_push($params, new MessageBag([$request->get('errors')]));
+        }
 
-        return view('index',[
-            'projects' => $projects,
-            'errors' => new MessageBag([$request->get('errors')])
-        ]);
+        return view('index', $params);
     }
 
     public function getPrivate(Request $request){
