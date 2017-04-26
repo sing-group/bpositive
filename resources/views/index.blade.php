@@ -66,6 +66,25 @@
                         {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Make public', ['type' => 'submit', 'class' => 'btn btn-primary btn-md']) }}
                         {{ Form::close() }}
                     </div>
+                    <div class="form-group">
+                        {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Show password', ['type' => 'submit', 'class' => 'btn btn-info btn-md', 'id' => 'btnShPass'.$project->id]) }}
+                    </div>
+                    <div class="form-group" style="display:none;" id="grpHdPass{{$project->id}}">
+                        <div class="form-group">
+                            {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Hide password', ['type' => 'submit', 'class' => 'btn btn-info btn-md', 'id' => 'btnHdPass'.$project->id]) }}
+                        </div>
+
+                        {{ Form::open(['action' => 'Bpositive\ProjectController@makePrivate', 'method' => 'post', 'id' => 'formChPass'.$project->id]) }}
+                        <div class="form-group form-inline">
+                            {{ Form::label('password', 'Password: ') }}
+                            {{ Form::text('password', $project->privatePassword, ['required' => 'required', 'class' => 'form-control']) }}
+                        </div>
+                        {{ Form::hidden('id', $project->id) }}
+                        {{ Form::hidden('state', 'makePrivate') }}
+                        {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Change password', ['type' => 'submit', 'class' => 'btn btn-warning btn-md']) }}
+                        {{ Form::close() }}
+                    </div>
+
                 @endif
 
                 @if ($project->public == 1 && Gate::allows('make-private'))
@@ -97,13 +116,23 @@
 @endsection
 
 @section('endscripts')
-    @foreach ($projects as $project)
+    <script type="application/javascript">
+        @foreach ($projects as $project)
 
-        <script type="application/javascript">
             $('#btnMkPrivate{{$project->id}}').click({id: '{{$project->id}}'}, function(event){
                 $('#btnMkPrivate{{$project->id}}').hide();
                 $('#formMkPrivate{{$project->id}}').show();
             });
-        </script>
-    @endforeach
+
+            $('#btnShPass{{$project->id}}').click({id: '{{$project->id}}'}, function(event){
+                $('#btnShPass{{$project->id}}').hide();
+                $('#grpHdPass{{$project->id}}').show();
+            });
+
+            $('#btnHdPass{{$project->id}}').click({id: '{{$project->id}}'}, function(event){
+                $('#grpHdPass{{$project->id}}').hide();
+                $('#btnShPass{{$project->id}}').show();
+            });
+        @endforeach
+    </script>
 @endsection

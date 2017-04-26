@@ -82,7 +82,7 @@ class Project
 
     public static function setPrivate($id, $password){
 
-        DB::statement('update project set public = 0, privatePassword = SHA2(?, 512) where id = ?',[$password, $id]);
+        DB::statement('update project set public = 0, privatePassword = ? where id = ?',[$password, $id]);
 
     }
 

@@ -137,7 +137,7 @@ class ProjectController extends Controller
         ]);
 
         $project = Project::getPrivate($request->get('id'));
-        if($project->privatePassword != hash('sha512', $request->get('password')) ){
+        if($project->privatePassword != $request->get('password') ){
             return view('projectPrivate', [
                 'project' => $project,
                 'errors' => new MessageBag(['Wrong password']),
