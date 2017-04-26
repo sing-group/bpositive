@@ -70,12 +70,18 @@
 
                 @if ($project->public == 1 && Gate::allows('make-private'))
                     <div class="form-group">
-                        {{ Form::open(['action' => 'Bpositive\ProjectController@getPrivate', 'method' => 'post', 'id' => 'privateForm']) }}
-                        {{ Form::hidden('id', $project->id) }}
-                        {{ Form::hidden('state', 'makePrivate') }}
-                        {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-md']) }}
-                        {{ Form::close() }}
+                        {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-md btnMkPrivate', 'id' => 'btnMkPrivate'.$project->id]) }}
                     </div>
+
+                    {{ Form::open(['action' => 'Bpositive\ProjectController@makePrivate', 'method' => 'post', 'id' => 'formMkPrivate'.$project->id, 'style' => 'display:none;']) }}
+                    <div class="form-group form-inline">
+                        {{ Form::label('password', 'Password: ') }}
+                        {{ Form::password('password', ['id' => 'password', 'required' => 'required', 'class' => 'form-control']) }}
+                    </div>
+                    {{ Form::hidden('id', $project->id) }}
+                    {{ Form::hidden('state', 'makePrivate') }}
+                    {{ Form::button('<span class="glyphicon glyphicon-globe"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-md']) }}
+                    {{ Form::close() }}
                 @endif
             </div>
             <div class="project_description col-md-8">
@@ -86,4 +92,18 @@
 
     @endforeach
 
+
+
+@endsection
+
+@section('endscripts')
+    @foreach ($projects as $project)
+
+        <script type="application/javascript">
+            $('#btnMkPrivate{{$project->id}}').click({id: '{{$project->id}}'}, function(event){
+                $('#btnMkPrivate{{$project->id}}').hide();
+                $('#formMkPrivate{{$project->id}}').show();
+            });
+        </script>
+    @endforeach
 @endsection
