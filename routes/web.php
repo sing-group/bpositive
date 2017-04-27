@@ -50,6 +50,8 @@ Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail
 Route::get('/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
 Route::post('/password/reset', 'Auth\ForgotPasswordController@reset');
 Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
-//Route::post('/register', 'Auth\RegisterController@register');
-//Route::get('/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::post('/user/register', 'Auth\RegisterController@register');
+Route::get('/user/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+Route::get('/user/manage', 'Auth\UserController@all')->name('userManage');
+Route::post('/user/remove', 'Auth\UserController@remove')->name('userRemove');
 
