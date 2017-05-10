@@ -51,6 +51,7 @@
                             <th>id</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Edit</th>
                             <th>Remove</th>
                         </tr>
                         </thead>
@@ -60,6 +61,13 @@
                                 <td>{{$user->id}}</td>
                                 <td>{{$user->name}}</td>
                                 <td>{{$user->email}}</td>
+                                <td>
+                                    {{ Form::open(['action' => 'Auth\UserController@edit', 'method' => 'post', 'class' => 'frmEdit']) }}
+                                    {{ csrf_field() }}
+                                    {{ Form::hidden('id', $user->id) }}
+                                    {{ Form::button('<span class="glyphicon glyphicon-edit"></span>', ['type' => 'submit', 'class' => 'btn btn-info']) }}
+                                    {{ Form::close() }}
+                                </td>
                                 <td>
                                     @if($user->id != Auth::user()->id)
                                         {{ Form::open(['action' => 'Auth\UserController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}

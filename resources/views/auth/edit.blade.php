@@ -31,7 +31,7 @@
             <div class="page-header">
                 <div class="btn-toolbar pull-right">
                     <div class="btn-group">
-                        <a class="btn btn-default" href="/">Back</a>
+                        <a class="btn btn-default" href="/user/manage">Back</a>
                     </div>
                 </div>
                 <h1>Edit profile</h1>
