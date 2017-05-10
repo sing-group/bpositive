@@ -78,6 +78,18 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li>
+                                    <a href="{{ url('/user/edit') }}"
+                                        onclick="event.preventDefault();
+                                        document.getElementById('edit-form').submit();">
+                                        Edit profile
+                                    </a>
+
+                                    <form id="edit-form" action="{{ url('/user/edit') }}" method="POST" style="display: none;">
+                                        {{ Form::hidden('id', Auth::user()->id) }}
+                                        {{ csrf_field() }}
+                                    </form>
+                                </li>
+                                <li>
                                     <a href="{{ url('/logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

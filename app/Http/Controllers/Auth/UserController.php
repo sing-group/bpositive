@@ -69,4 +69,40 @@ class UserController extends Controller
             'users' => User::all()
         ]);
     }
+
+    public function edit(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        return view('auth/edit', [
+            'user' => User::findOrFail($request->get('id'))
+        ]);
+    }
+
+    public function save(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric',
+            'name' => 'required|min:3|max:255',
+            'email' => 'required|email|max:255',
+        ]);
+
+        if($validator->fails()){
+            return view('auth/edit', [
+                'user' => User::findOrFail($request->get('id'))
+            ])->withErrors($validator);
+        }
+        $user = User::findOrFail($request->get('id'));
+
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
+
+        $user->save();
+
+        return view('auth/manage', [
+            'users' => User::all()
+        ]);
+    }
 }
