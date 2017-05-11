@@ -25,8 +25,9 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
 
 class UserController extends Controller
 {
@@ -87,6 +88,8 @@ class UserController extends Controller
             'id' => 'required|numeric',
             'name' => 'required|min:3|max:255',
             'email' => 'required|email|max:255',
+            'old-password' => 'required_with:password',
+            'password' => 'string|min:6|confirmed|required_with:old-password',
         ]);
 
         if($validator->fails()){
@@ -98,6 +101,18 @@ class UserController extends Controller
 
         $user->name = $request->get('name');
         $user->email = $request->get('email');
+
+        if($user->id === Auth::user()->id && $request->has('password')){
+            if(Hash::check($request->get('old-password'), $user->password)) {
+                $user->password = bcrypt($request->get('password'));
+            }
+            else{
+                $validator->errors()->add('old-password', 'The old password is not correct.');
+                return view('auth/edit', [
+                    'user' => User::findOrFail($request->get('id'))
+                ])->withErrors($validator);
+            }
+        }
 
         $user->save();
 
