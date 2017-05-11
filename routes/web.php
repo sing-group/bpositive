@@ -42,13 +42,12 @@ Route::get('/transcription', 'Bpositive\TranscriptionController@get')->name('tra
 Route::get('/transcription/name', 'Bpositive\TranscriptionController@findByName')->name('transcription_name');
 Route::get('/download/transcription', 'Bpositive\TranscriptionController@download')->name('download_transcription');
 
-
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('logout');
 Route::post('/logout', 'Auth\LoginController@logout');
 Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 Route::get('/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm');
-Route::post('/password/reset', 'Auth\ForgotPasswordController@reset');
+Route::post('/password/reset', 'Auth\ResetPasswordController@reset');
 Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
 Route::post('/user/register', 'Auth\RegisterController@register');
 Route::get('/user/register', 'Auth\RegisterController@showRegistrationForm')->name('register');
