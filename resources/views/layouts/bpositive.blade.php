@@ -53,7 +53,7 @@
                     <span class="top-icons-space">
                         <a class="top-icons-link" href="/"><i class="fa fa-home fa-lg iconformat_top" title="Home"></i></a>
                         <a class="top-icons-link" href="mailto:jbvieira@ibmc.up.pt"><i class="fa fa-envelope fa-lg iconformat_top" title="Contact us"></i></a>
-                        <a class="top-icons-link" href="howtocite.php"><i class="fa fa-pencil-square fa-lg iconformat-top" title="How to cite?" aria-hidden="true"></i></a>
+                        <!--a class="top-icons-link" href="howtocite.php"><i class="fa fa-pencil-square fa-lg iconformat-top" title="How to cite?" aria-hidden="true"></i></a-->
                     </span>
                 </div>
             </div>
@@ -131,20 +131,29 @@
     <div class="nav navbar-inverse navbar-static-bottom">
         <div class="container">
             <div class="footer-left">
-                <a href="http://www.i3s.up.pt"><img src="{{URL::asset('images/i3s.png')}}" alt="i3S"></a>
+                <p style="float: left">
+                    <a href="http://www.i3s.up.pt"><img src="{{URL::asset('images/i3s.png')}}" alt="i3S"></a>
+                </p>
+                <p class="rodape-info">
+                    Phone: +351 220 408 800 <br/>
+                    Email: info@i3s.up.pt <br/>
+                    Address: Rua Alfredo Allen, 208 <br/>
+                    4200-135 Porto, Portugal
+                </p>
             </div>
             <div class="footer-right">
+                <p style="color: white; font-weight: bold; font-size: 1.2em"><strong>If you use B+, please cite us:</strong></p>
+                <p>
+                    N. V&aacute;zquez, C.P. Vieira, B.S.R. Amorin, A. Torres, H. L&oacute;pez-Fern&aacute;ndez, F. Fdez-Riverola, J.L.R. Sousa, M. Reboiro-Jato, J. Vieira (2017)
+                    On the automated collection and sharing (B+ database) of data on adaptive amino acid changes.
+                    <em>11<sup>th</sup> International Conference on Practical Applications of Computational Biology &amp; Bioinformatics.</em> Porto, Portugal
+                </p>
                 <span>
                     <a class="footer-social-icons" href="https://www.facebook.com/i3s.up.pt/?fref=ts/" target="_new"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a>
                     <a class="footer-social-icons" href="https://twitter.com/i3si3" target="_new"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a>
                     <a class="footer-social-icons" href="https://www.linkedin.com/company/10318110?trk=tyah&trkInfo=clickedVertical%3Acompany%2CclickedEntityId%3A10318110%2Cidx%3A1-1-1%2CtarId%3A1479142019953%2Ctas%3Ainstituto%20de%20investiga%C3%A7%C3%A3o%20" target="_new"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a>
                     <a class="footer-social-icons" href="https://pt.pinterest.com/i3suppt/" target="_new"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a>
                 </span>
-                <p class="rodape-info">
-                    Phone: +351 220 408 800 <br/>
-                    Email: info@i3s.up.pt <br/>
-                    Address: Rua Alfredo Allen, 208 <br/>
-                    4200-135 Porto, Portugal </p>
                 <span>
                     <a class="footer-icons" href="https://www.ibmc.up.pt" target="_new"><img src="{{URL::asset('images/IBMC.png')}}" alt="IBMC"></a>
                     <a class="footer-icons" href="http://www.ineb.up.pt" target="_new"><img src="{{URL::asset('images/INEB.png')}}" alt="INEB"></a>

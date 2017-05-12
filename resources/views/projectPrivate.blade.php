@@ -24,7 +24,7 @@
 
 @extends('layouts.bpositive')
 
-@section('title', 'Wellcome')
+@section('title', 'Welcome')
 {{--
 @section('sidebar')
     @parent
