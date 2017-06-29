@@ -143,7 +143,7 @@ class Transcription
         }
 
 
-        return Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().'files/'.$transcription->linkZip.'.tar.gz';
+        return Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().'files/'.$transcription->projectId.'/'.$transcription->linkZip.'.tar.gz';
 
     }
 
@@ -162,7 +162,7 @@ class Transcription
 
     public function getScores(){
 
-        $scoresFile = FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.score_ascii');
+        $scoresFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.score_ascii');
         preg_match_all('/c[o-]n?\s+([0-9]|-)+/', $scoresFile, $scores);
         $scores = preg_replace('/c[o-]n?\s+/', '', $scores[0]);
         $scores = implode($scores);
@@ -171,8 +171,8 @@ class Transcription
 
     public function getConfidences(){
 
-        $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.prot.fasta'));
-        $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/allfiles/codeml/input.fasta.fasta.out.sum'));
+        $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.prot.fasta'));
+        $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/allfiles/codeml/input.fasta.fasta.out.sum'));
 
         return $confidences;
     }
@@ -210,7 +210,7 @@ class Transcription
     public function getNewicks(){
         $newicks = array();
 
-        $file_contents = FileUtils::readFileFromTgz('files/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/tree.con');
+        $file_contents = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/tree.con');
 
         $trees = array();
         preg_match_all('/(tree con_50_majrule = \(.+\)\;)/', $file_contents, $trees);
@@ -252,7 +252,7 @@ class Transcription
         $files['codemlSummary'] = $basePath.'codeml.sum';
         $files['experiment'] = $basePath.'experiment.conf';
 
-        $files_contents = FileUtils::readFilesFromTgz('files/'.$this->linkZip.'.tar.gz', $files);
+        $files_contents = FileUtils::readFilesFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $files);
 
         $files_contents['summary'] = "--- EXPERIMENT NOTES\n\n"
             .$files_contents['notes']
@@ -264,5 +264,28 @@ class Transcription
             .$files_contents['codemlSummary'];
 
         return $files_contents;
+    }
+
+    public static function create($projectId, $name, $file){
+
+        $path = $file->storeAs('bpositive/files/'.$projectId, $file->getClientOriginalName());
+
+        if($path) {
+            $link = str_replace('.tar.gz', '', $file->getClientOriginalName());
+            $transcription = DB::table('transcription')
+                ->insertGetId([
+                    'projectId' => $projectId,
+                    'name' => $link,
+                    'description' => '',
+                    'linkZip' => $link,
+                    'linkPdf' => $link,
+                    'deleted' => 0,
+                    'analyzed' => 1,
+                    'positivelySelected' => 1,
+                ]);
+            return $transcription;
+        }
+
+        return -1;
     }
 }

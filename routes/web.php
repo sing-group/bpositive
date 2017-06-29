@@ -37,6 +37,9 @@ Route::post('/project/makePublic', 'Bpositive\ProjectController@makePublic')->na
 Route::post('/project/makePrivate', 'Bpositive\ProjectController@makePrivate')->name('project_make_private');
 Route::post('/project/accessPrivate', 'Bpositive\ProjectController@accessPrivate')->name('project_access_private');
 
+Route::get('/project/create', 'Bpositive\ProjectManagerController@showCreateForm')->name('project_create_form');
+Route::post('/project/create', 'Bpositive\ProjectManagerController@create')->name('project_create');
+
 Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('transcriptions');
 Route::get('/transcription', 'Bpositive\TranscriptionController@get')->name('transcription');
 Route::get('/transcription/name', 'Bpositive\TranscriptionController@findByName')->name('transcription_name');

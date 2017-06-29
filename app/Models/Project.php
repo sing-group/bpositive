@@ -23,6 +23,7 @@
 namespace App\Models;
 
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Project
@@ -93,6 +94,33 @@ class Project
             ->where('id', '=', $id)
             ->where('public', '=', '0')
             ->first();
+
+        return $project;
+    }
+
+    public static function create($name, $description){
+
+        $year = Carbon::now()->year;
+        $code = $year.str_pad('1', 6, '0', STR_PAD_LEFT);
+        $last_project_code = DB::table('project')
+            ->where('code', 'like', 'BP'.$year.'%')
+            ->orderBy('code', 'desc')
+            ->pluck('code')
+            ->first();
+
+        if($last_project_code) {
+            preg_match('/[0-9]+/', $last_project_code, $last_id_code);
+            $code = $last_id_code[0] + 1;
+        }
+
+        $project = DB::table('project')
+            ->insertGetId([
+                'name' => $name,
+                'description' => $description,
+                'deleted' => 0,
+                'public' => 0,
+                'code' => 'BP'.$code,
+            ]);
 
         return $project;
     }
