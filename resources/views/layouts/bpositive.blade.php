@@ -66,11 +66,14 @@
 
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
+                    @if (Auth::user()->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE)
+                        <li><a href="{{ url('/user/manage') }}">Manage Users</a></li>
+                    @endif
                     <!-- Authentication Links -->
                     @if (Auth::guest())
                         <li><a href="{{ url('/login') }}">Login</a></li>
                     @else
-                        <li><a href="{{ url('/user/manage') }}">Manage Users</a></li>
+                        <li><a href="{{ url('/project/manage') }}">Manage Projects</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 {{ Auth::user()->name }} <span class="caret"></span>
