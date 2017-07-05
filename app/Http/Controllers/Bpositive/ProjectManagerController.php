@@ -25,7 +25,9 @@ namespace App\Http\Controllers\Bpositive;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
+use App\Providers\AuthServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
@@ -48,7 +50,7 @@ class ProjectManagerController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('admin')->except('all');
     }
 
 
@@ -94,6 +96,59 @@ class ProjectManagerController extends Controller
 
     public function showCreateForm(Request $request){
         return view('project.create');
+    }
+
+    public function all(Request $request){
+
+        if ( Auth::check() ) {
+            if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
+                $projects = Project::all();
+            }
+            else{
+                $projects = Project::getByUser(Auth::user()->id);
+            }
+            $params = ['projects' => $projects];
+            return view('project.manage', $params);
+        }
+        return view('index');
+    }
+
+    public function edit(Request $request){
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+
+        $project = Project::getByAdmin($request->get('id'));
+
+        return view('project.edit',[
+            'project' => $project,
+            'transcriptions' => Transcription::all($request->get('id'), '', [], ''), //TODO: pagination
+        ]);
+    }
+
+    public function save(Request $request){
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'files.*' => 'file',
+        ]);
+
+        Project::save($request->get('id'), $request->get('name'), $request->get('description'));
+
+        //TODO: update files
+
+        return redirect()->route('project_manage');
+    }
+
+    public function remove(Request $request){
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+
+        Project::delete($request->get('id'));
+
+        return redirect()->route('project_manage');
     }
 
 }

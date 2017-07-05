@@ -39,6 +39,10 @@ Route::post('/project/accessPrivate', 'Bpositive\ProjectController@accessPrivate
 
 Route::get('/project/create', 'Bpositive\ProjectManagerController@showCreateForm')->name('project_create_form');
 Route::post('/project/create', 'Bpositive\ProjectManagerController@create')->name('project_create');
+Route::get('/project/manage', 'Bpositive\ProjectManagerController@all')->name('project_manage');
+Route::post('/project/remove', 'Bpositive\ProjectManagerController@remove')->name('project_remove');
+Route::post('/project/edit', 'Bpositive\ProjectManagerController@edit')->name('project_edit_form');
+Route::post('/project/save', 'Bpositive\ProjectManagerController@save')->name('project_edit');
 
 Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('transcriptions');
 Route::get('/transcription', 'Bpositive\TranscriptionController@get')->name('transcription');

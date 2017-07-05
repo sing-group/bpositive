@@ -49,6 +49,15 @@ class Project
         return $project;
     }
 
+    public static function getByAdmin($id){
+
+        $project = DB::table('project')
+            ->where('id', '=', $id)
+            ->first();
+
+        return $project;
+    }
+
     public static function getByCode($code){
 
         $project = DB::table('project')
@@ -58,6 +67,17 @@ class Project
             ->first();
 
         return $project;
+    }
+
+    public static function getByUser($id){
+
+        $projects = DB::table('project')
+            ->join('users_projects', 'project.id', '=', 'users_projects.projectId')
+            ->where('project.deleted', '=', '0')
+            ->where('users_projects.userId', '=', $id)
+            ->get();
+
+        return $projects;
     }
 
     public static function getByTranscription($id, $public){
@@ -123,5 +143,24 @@ class Project
             ]);
 
         return $project;
+    }
+
+    public static function delete($id){
+
+        DB::table('project')
+            ->where('id', '=', $id)
+            ->update(['deleted' => 1]);
+
+    }
+
+    public static function save($id, $name, $description){
+
+        DB::table('project')
+            ->where('id', '=', $id)
+            ->update([
+                'name' => $name,
+                'description' => $description,
+            ]);
+
     }
 }

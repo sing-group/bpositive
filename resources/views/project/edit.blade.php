@@ -34,18 +34,19 @@
                         <a class="btn btn-default" href="/project/manage">Back</a>
                     </div>
                 </div>
-                <h1>Create new project</h1>
+                <h1>Edit project</h1>
             </div>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/project/create') }}" enctype="multipart/form-data">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/project/save') }}">
+                        {{ Form::hidden('id', $project->id) }}
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                             <label for="name" class="col-md-4 control-label">Name</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus />
+                                <input id="name" type="text" class="form-control" name="name" value="{{ $project->name }}" required autofocus>
 
                                 @if ($errors->has('name'))
                                     <span class="help-block">
@@ -55,11 +56,11 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <label for="description" class="col-md-4 control-label">Description</label>
 
                             <div class="col-md-6">
-                                <textarea id="description" class="form-control" name="description" required autofocus>{{ old('description') }}</textarea>
+                                <textarea id="description" class="form-control" name="description" required autofocus>{{$project->description}}</textarea>
 
                                 @if ($errors->has('description'))
                                     <span class="help-block">
@@ -70,7 +71,7 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('files') ? ' has-error' : '' }}">
-                            <label for="files" class="col-md-4 control-label">Files</label>
+                            <label for="files" class="col-md-4 control-label">Add files</label>
 
                             <div class="col-md-6">
                                 <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip" autofocus multiple/>
@@ -83,10 +84,47 @@
                             </div>
                         </div>
 
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Creation Date</th>
+                                <th>PDF</th>
+                                <th>ZIP</th>
+                                <th>Analyzed</th>
+                                <th>Positively Selected</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($transcriptions as $transcription)
+                                <tr>
+                                <td>{{$transcription->id}}</td>
+                                <td>{{$transcription->name}}</td>
+                                <td>{{$transcription->description}}</td>
+                                <td>{{$transcription->creationDate}}</td>
+                                <td>{{$transcription->linkPdf}}</td>
+                                <td>{{$transcription->linkZip}}</td>
+                                <td>{{($transcription->analyzed?'Yes':'No')}}</td>
+                                <td>{{($transcription->positivelySelected?'Yes':'No')}}</td>
+                                <td>
+                                    TODO
+                                </td>
+                                <td>
+                                    TODO
+                                </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Create
+                                    Save
                                 </button>
                             </div>
                         </div>
