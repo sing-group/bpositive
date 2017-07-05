@@ -107,6 +107,17 @@
                                 </div>
                             </div>
 
+                        @else
+                            <div class="form-group">
+                                <label for="role_id" class="col-md-4 control-label">Role</label>
+
+                                <div class="col-md-6">
+                                    <select id="role_id" class="form-control" name="role_id">
+                                        <option value="{{\App\Providers\AuthServiceProvider::ADMIN_ROLE}}" {{($user->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE?'selected':'')}}>Admin</option>
+                                        <option value="{{\App\Providers\AuthServiceProvider::USER_ROLE}}" {{($user->role_id == \App\Providers\AuthServiceProvider::USER_ROLE?'selected':'')}}>User</option>
+                                    </select>
+                                </div>
+                            </div>
                         @endif
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">

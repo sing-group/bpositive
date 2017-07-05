@@ -90,6 +90,7 @@ class UserController extends Controller
             'email' => 'required|email|max:255',
             'old-password' => 'required_with:password',
             'password' => 'string|min:6|confirmed|required_with:old-password',
+            'role_id' => 'numeric|in:1,2',
         ]);
 
         if($validator->fails()){
@@ -101,6 +102,9 @@ class UserController extends Controller
 
         $user->name = $request->get('name');
         $user->email = $request->get('email');
+        if($request->has('role_id')) {
+            $user->role_id = $request->get('role_id');
+        }
 
         if($user->id === Auth::user()->id && $request->has('password')){
             if(Hash::check($request->get('old-password'), $user->password)) {

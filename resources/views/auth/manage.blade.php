@@ -51,6 +51,7 @@
                             <th>id</th>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Admin</th>
                             <th>Edit</th>
                             <th>Remove</th>
                         </tr>
@@ -61,6 +62,7 @@
                                 <td>{{$user->id}}</td>
                                 <td>{{$user->name}}</td>
                                 <td>{{$user->email}}</td>
+                                <td>{{($user->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE? 'Yes' : 'No')}}</td>
                                 <td>
                                     {{ Form::open(['action' => 'Auth\UserController@edit', 'method' => 'post', 'class' => 'frmEdit']) }}
                                     {{ csrf_field() }}
