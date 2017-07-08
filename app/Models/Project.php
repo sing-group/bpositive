@@ -59,6 +59,18 @@ class Project
         return $project;
     }
 
+    public static function getByUser($userId, $projectId){
+
+        $projects = DB::table('project')
+            ->join('users_projects', 'project.id', '=', 'users_projects.projectId')
+            ->where('project.deleted', '=', '0')
+            ->where('users_projects.userId', '=', $userId)
+            ->where('project.id', '=', $projectId)
+            ->first();
+
+        return $projects;
+    }
+
     public static function getByCode($code){
 
         $project = DB::table('project')
@@ -70,7 +82,7 @@ class Project
         return $project;
     }
 
-    public static function getByUser($id){
+    public static function getAllByUser($id){
 
         $projects = DB::table('project')
             ->join('users_projects', 'project.id', '=', 'users_projects.projectId')

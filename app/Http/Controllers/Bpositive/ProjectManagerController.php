@@ -100,17 +100,14 @@ class ProjectManagerController extends Controller
 
     public function all(Request $request){
 
-        if ( Auth::check() ) {
-            if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
-                $projects = Project::all();
-            }
-            else{
-                $projects = Project::getByUser(Auth::user()->id);
-            }
-            $params = ['projects' => $projects];
-            return view('project.manage', $params);
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
+            $projects = Project::all();
         }
-        return redirect()->route('projects');
+        else{
+            $projects = Project::getAllByUser(Auth::user()->id);
+        }
+        $params = ['projects' => $projects];
+        return view('project.manage', $params);
     }
 
     public function edit(Request $request){
@@ -118,7 +115,12 @@ class ProjectManagerController extends Controller
             'id' => 'required|numeric',
         ]);
 
-        $project = Project::getByAdmin($request->get('id'));
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
+            $project = Project::getByAdmin($request->get('id'));
+        }
+        else{
+            $project = Project::getByUser(Auth::user()->id, $request->get('id'));
+        }
 
         return view('project.edit',[
             'project' => $project,
@@ -146,13 +148,11 @@ class ProjectManagerController extends Controller
             'id' => 'required|numeric',
         ]);
 
-        if ( Auth::check() ) {
-            if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
-                Project::delete($request->get('id'));
-            }
-            else{
-                Project::deleteByUser($request->get('id'), Auth::user()->id );
-            }
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
+            Project::delete($request->get('id'));
+        }
+        else{
+            Project::deleteByUser($request->get('id'), Auth::user()->id );
         }
 
 
