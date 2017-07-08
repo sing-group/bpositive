@@ -50,7 +50,7 @@ class ProjectManagerController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('admin')->except('all');
+        $this->middleware('auth');
     }
 
 
@@ -64,9 +64,9 @@ class ProjectManagerController extends Controller
 
         DB::beginTransaction();
 
-        $projectId = Project::create($request->get('name'), $request->get('description'));
+        $projectId = Project::create(Auth::user()->id, $request->get('name'), $request->get('description'));
 
-        if($projectId ) {
+        if($projectId) {
             if(is_array($request->file('files'))) {
                 foreach ($request->file('files') as $file) {
 
@@ -91,7 +91,7 @@ class ProjectManagerController extends Controller
         }
 
         DB::commit();
-        return redirect()->route('projects');
+        return redirect()->route('project_manage');
     }
 
     public function showCreateForm(Request $request){
@@ -146,7 +146,15 @@ class ProjectManagerController extends Controller
             'id' => 'required|numeric',
         ]);
 
-        Project::delete($request->get('id'));
+        if ( Auth::check() ) {
+            if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
+                Project::delete($request->get('id'));
+            }
+            else{
+                Project::deleteByUser($request->get('id'), Auth::user()->id );
+            }
+        }
+
 
         return redirect()->route('project_manage');
     }

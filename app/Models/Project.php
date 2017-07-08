@@ -23,6 +23,7 @@
 namespace App\Models;
 
 
+use App\Utils\FileUtils;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -118,7 +119,7 @@ class Project
         return $project;
     }
 
-    public static function create($name, $description){
+    public static function create($userId, $name, $description){
 
         $year = Carbon::now()->year;
         $code = $year.str_pad('1', 6, '0', STR_PAD_LEFT);
@@ -142,6 +143,12 @@ class Project
                 'code' => 'BP'.$code,
             ]);
 
+        DB::table('users_projects')
+            ->insert([
+                'projectId' => $project,
+                'userId' => $userId,
+            ]);
+
         return $project;
     }
 
@@ -151,6 +158,18 @@ class Project
             ->where('id', '=', $id)
             ->update(['deleted' => 1]);
 
+        //FileUtils::deleteDirectory('files/'.$id.'/');
+    }
+
+    public static function deleteByUser($id, $userId){
+
+        DB::table('project')
+            ->join('users_projects', 'project.id', '=', 'users_projects.projectId')
+            ->where('project.id', '=', $id)
+            ->where('users_projects.userId', '=', $userId)
+            ->update(['project.deleted' => 1]);
+
+        //FileUtils::deleteDirectory('files/'.$id.'/');
     }
 
     public static function save($id, $name, $description){
