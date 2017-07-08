@@ -66,7 +66,7 @@
 
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
-                    @if (Auth::user()->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE)
+                    @if (Auth::check() && Auth::user()->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE)
                         <li><a href="{{ url('/user/manage') }}">Manage Users</a></li>
                     @endif
                     <!-- Authentication Links -->

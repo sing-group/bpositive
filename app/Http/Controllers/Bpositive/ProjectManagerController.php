@@ -110,7 +110,7 @@ class ProjectManagerController extends Controller
             $params = ['projects' => $projects];
             return view('project.manage', $params);
         }
-        return view('index');
+        return redirect()->route('projects');
     }
 
     public function edit(Request $request){
