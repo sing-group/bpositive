@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
+use Illuminate\Validation\Rule;
 
 class ProjectManagerController extends Controller
 {
@@ -113,6 +114,13 @@ class ProjectManagerController extends Controller
     public function edit(Request $request){
         $this->validate($request, [
             'id' => 'required|numeric',
+            'query' => 'string',
+            'page' => 'numeric',
+            'pagesize' => 'numeric',
+            'orderBy' => Rule::in(['name', 'description', 'analyzed', 'positivelySelected']),
+            'orderType' => Rule::in(['asc', 'desc']),
+            'filters.*' => Rule::in(['pss', 'analyzed', 'notAnalyzed', 'all']),
+            'searchType' => Rule::in(['contains', 'regexp', 'exact']),
         ]);
 
         if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
@@ -122,9 +130,23 @@ class ProjectManagerController extends Controller
             $project = Project::getByUser(Auth::user()->id, $request->get('id'));
         }
 
+        $query = $request->get('query', '');
+        $pagesize = $request->get('pagesize', '10');
+        $orderBy = $request->get('orderBy', 'name');
+        $orderType = $request->get('orderType', 'asc');
+        $filters = $request->get('filters');
+        $searchType = $request->get('searchType');
+
+        $transcriptions = Transcription::all($request->get('id'), $query, $filters, $searchType, $pagesize, $orderBy, $orderType);
         return view('project.edit',[
             'project' => $project,
-            'transcriptions' => Transcription::all($request->get('id'), '', [], ''), //TODO: pagination
+            'transcriptions' => $transcriptions,
+            'query' => $query,
+            'pagesize' => $pagesize,
+            'orderBy' => $orderBy,
+            'orderType' => $orderType,
+            'filters' => $filters,
+            'searchType' => $searchType
         ]);
     }
 

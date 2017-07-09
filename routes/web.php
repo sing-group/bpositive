@@ -42,12 +42,14 @@ Route::post('/project/create', 'Bpositive\ProjectManagerController@create')->nam
 Route::get('/project/manage', 'Bpositive\ProjectManagerController@all')->name('project_manage');
 Route::post('/project/remove', 'Bpositive\ProjectManagerController@remove')->name('project_remove');
 Route::post('/project/edit', 'Bpositive\ProjectManagerController@edit')->name('project_edit_form');
+Route::get('/project/edit', 'Bpositive\ProjectManagerController@edit');
 Route::post('/project/save', 'Bpositive\ProjectManagerController@save')->name('project_edit');
 
 Route::get('/transcriptions', 'Bpositive\TranscriptionController@all')->name('transcriptions');
 Route::get('/transcription', 'Bpositive\TranscriptionController@get')->name('transcription');
 Route::get('/transcription/name', 'Bpositive\TranscriptionController@findByName')->name('transcription_name');
 Route::get('/download/transcription', 'Bpositive\TranscriptionController@download')->name('download_transcription');
+Route::post('/transcription/remove', 'Bpositive\TranscriptionController@remove')->name('transcription_remove');
 
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('logout');

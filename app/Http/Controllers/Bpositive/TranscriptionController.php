@@ -26,7 +26,9 @@ use App\Exceptions\PrivateException;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
+use App\Providers\AuthServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
@@ -49,7 +51,7 @@ class TranscriptionController extends Controller
      */
     public function __construct()
     {
-
+        $this->middleware('auth')->only('remove');
     }
 
     public function all(Request $request){
@@ -206,5 +208,23 @@ class TranscriptionController extends Controller
         }
 
         return response()->json($results);
+    }
+
+    public function remove(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
+            $projectId = Transcription::delete($request->get('id'));
+        }
+        else{
+            $projectId = Transcription::deleteByUser($request->get('id'), Auth::user()->id );
+        }
+
+        return redirect()->route('project_edit_form',[
+            'id' => $projectId,
+        ]);
     }
 }

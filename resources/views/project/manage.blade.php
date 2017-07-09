@@ -93,7 +93,7 @@
 @section('endscripts')
     <script type="application/javascript">
         $('.frmDelete').submit(function () {
-            var res = confirm('Do you want to delelete project?');
+            var res = confirm('Do you want to delete project?');
             return res;
         });
     </script>

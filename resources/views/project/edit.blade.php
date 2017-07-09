@@ -84,6 +84,88 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                        {{ Form::close() }}
+
+                        <div class="navbar navbar-default">
+                            <div class="container-fluid">
+                                {{ Form::open(['class' => '', 'method' => 'get', 'id' => 'queryForm']) }}
+                                <div class="">
+                                    <ul class="nav navbar-nav navbar-left">
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Filters <span class="caret"></span></a>
+                                            <ul class="dropdown-menu dropdown-menu-form" id="filters">
+                                                <li>
+                                                    <a>
+                                                        {{ Form::radio('filters[]', 'pss', (is_array($filters) ? in_array('pss', $filters): false), ['id' => 'filtersPSS']) }}
+                                                        {{ Form::label('filtersPSS', 'Positively Selected') }}
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a>
+                                                        {{ Form::radio('filters[]', 'analyzed', (is_array($filters) ? in_array('analyzed', $filters): false), ['id' => 'filtersAnalyzed']) }}
+                                                        {{ Form::label('filtersAnalyzed', 'Analyzed') }}
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a>
+                                                        {{ Form::radio('filters[]', 'notAnalyzed', (is_array($filters) ? in_array('notAnalyzed', $filters): false), ['id' => 'filtersNotAnalyzed']) }}
+                                                        {{ Form::label('filtersNotAnalyzed', 'Not Analyzed') }}
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a>
+                                                        {{ Form::radio('filters[]', 'all', (is_array($filters) ? in_array('all', $filters): true), ['id' => 'filtersAll'], ['id' => 'filtersAll']) }}
+                                                        {{ Form::label('filtersAll', 'All') }}
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <div class="navbar-form navbar-right">
+                                        <div class="input-group">
+                            <span class="input-group-addon">
+                                {{ Form::label('pagesize', 'Rows by page ') }}
+                            </span>
+                                            <span class="input-group-btn">
+                                <span class="btn-group">
+                                    {{ Form::select('pagesize', array('10' => '10', '25' => '25', '50' => '50', '100' => '100'), $pagesize, ['class' => 'form-control']) }}
+                                </span>
+                            </span>
+                                        </div>
+                                        <div class="input-group">
+                            <span class="input-group-addon">
+                                {{ Form::label('search', 'Search ') }}
+                            </span>
+                                            {{ Form::input('search', 'query', $value = $query, ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch']) }}
+
+                                            <span class="input-group-btn">
+                                <span class="btn-group">
+                                    {{ Form::select('searchType', array('contains' => 'contains', 'regexp' => 'regexp', 'exact' => 'exact'), $searchType, ['class' => 'form-control', 'id' => 'searchType']) }}
+                                </span>
+                                <span class="btn-group">
+                                    {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'button', 'class' => 'btn btn-default btn-block', 'id' => 'resetSearch']) }}
+                                </span>
+                                <span class="btn-group">
+                                    {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block']) }}
+                                </span>
+                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{ Form::hidden('id', $project->id) }}
+                                {{ Form::hidden('orderBy', $orderBy) }}
+                                {{ Form::hidden('orderType', $orderType) }}
+                                {{ Form::close() }}
+                            </div>
+                        </div>
+
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -95,39 +177,34 @@
                                 <th>ZIP</th>
                                 <th>Analyzed</th>
                                 <th>Positively Selected</th>
-                                <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($transcriptions as $transcription)
                                 <tr>
-                                <td>{{$transcription->id}}</td>
-                                <td>{{$transcription->name}}</td>
-                                <td>{{$transcription->description}}</td>
-                                <td>{{$transcription->creationDate}}</td>
-                                <td>{{$transcription->linkPdf}}</td>
-                                <td>{{$transcription->linkZip}}</td>
-                                <td>{{($transcription->analyzed?'Yes':'No')}}</td>
-                                <td>{{($transcription->positivelySelected?'Yes':'No')}}</td>
-                                <td>
-                                    TODO
-                                </td>
-                                <td>
-                                    TODO
-                                </td>
+                                    <td>{{$transcription->id}}</td>
+                                    <td>{{$transcription->name}}</td>
+                                    <td>{{$transcription->description}}</td>
+                                    <td>{{$transcription->creationDate}}</td>
+                                    <td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
+                                    <td><a href="../download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
+                                    <td>{{($transcription->analyzed?'Yes':'No')}}</td>
+                                    <td>{{($transcription->positivelySelected?'Yes':'No')}}</td>
+                                    <td>
+                                        {{ Form::open(['action' => 'Bpositive\TranscriptionController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
+                                        {{ csrf_field() }}
+                                        {{ Form::hidden('id', $transcription->id) }}
+                                        {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
+                                        {{ Form::close() }}
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
+                        {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => $orderBy, 'orderType' => $orderType, 'filters' => $filters])->links()}}
+                        <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
 
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Save
-                                </button>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -135,3 +212,45 @@
     </div>
 </div>
 @endsection
+@section('endscripts')
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#pagesize').on('change', function(e) {
+                $(this).closest('form').submit();
+            });
+            $('#filters :radio').on('change', function(e) {
+                $(this).closest('form').submit();
+            });
+            $('#resetSearch').on('click', function(e) {
+                $('#querySearch').val('');
+                $('#filtersAll').prop("checked", true);
+                $('#searchType').val('contains');
+                $(this).closest('form').submit();
+            });
+
+            $('#querySearch').autocomplete({
+                source: function(request, response) {
+                    var url = '{{URL::route('transcription_name')}}';
+
+                    $.getJSON(url, {
+                        id: {{$project->id}},
+                        query: request.term.split(/,\s*/).pop(),
+                        searchType: $('#searchType option:selected').val(),
+                        'filter[]': $('input[name="filters[]"]:checked').val()
+                    }, response);
+                },
+                minLength: 1,
+                select: function(event, ui) {
+                    $('#querySearch').val(ui.item.value);
+                    $('#searchType').val('exact');
+                    $('#queryForm').submit();
+                }
+            })
+        });
+        $('.frmDelete').submit(function () {
+            var res = confirm('Do you want to delete transcription?');
+            return res;
+        });
+    </script>
+@endsection('endscripts')
+

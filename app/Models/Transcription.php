@@ -132,6 +132,30 @@ class Transcription
         return $transcription;
     }
 
+    public static function getByAdmin($id){
+
+        $transcription = DB::table('transcription')
+            ->select(DB::raw('transcription.*'))
+            ->join('project', 'transcription.projectId', '=', 'project.id')
+            ->where('transcription.id', '=', $id)
+            ->first();
+
+        return $transcription;
+    }
+
+    public static function getByUser($userId, $transcriptionId){
+
+        $transcription = DB::table('transcription')
+            ->select(DB::raw('transcription.*'))
+            ->join('project', 'transcription.projectId', '=', 'project.id')
+            ->join('users_projects', 'transcription.projectId', '=', 'users_projects.projectId')
+            ->where('users_projects.userId', '=', $userId)
+            ->where('transcription.id', '=', $transcriptionId)
+            ->first();
+
+        return $transcription;
+    }
+
     public static function getTgzPath($id, $public){
 
         $transcription = null;
@@ -287,5 +311,31 @@ class Transcription
         }
 
         return -1;
+    }
+
+    public static function delete($id){
+
+        $transcription = Transcription::getByAdmin($id);
+
+        if($transcription) {
+            DB::table('transcription')
+                ->where('id', '=', $transcription->id)
+                ->delete();
+
+            FileUtils::deleteFile('files/' . $transcription->projectId . '/' . $transcription->linkZip . '.tar.gz');
+        }
+
+        return $transcription->projectId;
+    }
+
+    public static function deleteByUser($id, $userId){
+
+        $transcription = Transcription::getByUser($userId, $id);
+        if($transcription){
+            Transcription::delete($id);
+            FileUtils::deleteFile('files/'.$transcription->projectId.'/'.$transcription->linkZip . '.tar.gz');
+        }
+        return $transcription->projectId;
+
     }
 }

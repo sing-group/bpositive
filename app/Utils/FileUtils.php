@@ -108,4 +108,8 @@ class FileUtils
         return rmdir($dir);
     }
 
+    public static function deleteFile($file){
+        return unlink(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$file);
+    }
+
 }
