@@ -160,7 +160,20 @@ class ProjectManagerController extends Controller
 
         Project::save($request->get('id'), $request->get('name'), $request->get('description'));
 
-        //TODO: update files
+        if(is_array($request->file('files'))) {
+            foreach ($request->file('files') as $file) {
+
+                $transcription = Transcription::create($request->get('id'), $file->getClientOriginalName(), $file);
+
+                if ($transcription == -1) {
+                    DB::rollBack();
+                    return view('project.create', [
+                        'project' => $request->get('id'),
+                        'errors' => new MessageBag(['Error creating transcription:' . $file->getClientOriginalName()])
+                    ]);
+                };
+            }
+        }
 
         return redirect()->route('project_manage');
     }

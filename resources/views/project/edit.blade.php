@@ -38,7 +38,7 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/project/save') }}">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/project/save') }}" enctype="multipart/form-data">
                         {{ Form::hidden('id', $project->id) }}
                         {{ csrf_field() }}
 
