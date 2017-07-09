@@ -333,7 +333,6 @@ class Transcription
         $transcription = Transcription::getByUser($userId, $id);
         if($transcription){
             Transcription::delete($id);
-            FileUtils::deleteFile('files/'.$transcription->projectId.'/'.$transcription->linkZip . '.tar.gz');
         }
         return $transcription->projectId;
 
