@@ -299,26 +299,33 @@ class Transcription
 
             if($file->getMimeType() == 'application/zip'){
                 $link = str_replace('.zip', '', $file->getClientOriginalName());
-                FileUtils::zipToTgz($path, 'files/'.$projectId.'/'.$link);
+                $path = FileUtils::zipToTgz($path);
             }
             else if($file->getMimeType() == 'application/x-gzip'){
                 $link = str_replace('.tar.gz', '', $file->getClientOriginalName());
 
             }
 
-            if(isset($link)) {
-                $transcription = DB::table('transcription')
-                    ->insertGetId([
-                        'projectId' => $projectId,
-                        'name' => $link,
-                        'description' => '',
-                        'linkZip' => $link,
-                        'linkPdf' => $link,
-                        'deleted' => 0,
-                        'analyzed' => 1,
-                        'positivelySelected' => 1,
-                    ]);
-                return $transcription;
+            $result = Transcription::validateFile($projectId, $link, $path);
+
+            if($result->valid) {
+                if (isset($link)) {
+                    $transcription = DB::table('transcription')
+                        ->insertGetId([
+                            'projectId' => $projectId,
+                            'name' => $link,
+                            'description' => '',
+                            'linkZip' => $link,
+                            'linkPdf' => $link,
+                            'deleted' => 0,
+                            'analyzed' => $result->analyzed,
+                            'positivelySelected' => $result->positivelySelected,
+                        ]);
+                    return $transcription;
+                }
+            }
+            else{
+                throw new FileException("File '" . $file->getClientOriginalName(). "' is not a valid file: " . $result->message);
             }
         }
         else{
@@ -352,5 +359,71 @@ class Transcription
         }
         return $transcription->projectId;
 
+    }
+
+    public static function validateFile($projectId, $name, $path){
+        $result = new ValidationResult();
+
+        try {
+            $files = array();
+            $files['input'] = $name.'/input.fasta';
+            $files['names'] = $name.'/names.txt';
+            $files['project'] = $name.'/project.conf';
+
+            FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '.tar.gz', $files);
+
+            $result->valid = true;
+        }
+        catch (FileException $fe){
+            $result->message = $fe->getMessage();
+            $result->valid = false;
+            return $result;
+        }
+
+        try{
+            $files = array();
+            $basePath = $name.'/ClustalW2/';
+            $files['notes'] = $basePath.'notes.txt';
+            $files['log'] = $basePath.'output.log';
+            $files['alnFile'] = $basePath.'aligned.prot.aln';
+            $files['alnNucl'] = $basePath.'aligned.fasta';
+            $files['alnAmin'] = $basePath.'aligned.prot.fasta';
+            $files['tree'] = $basePath.'tree.con';
+            $files['psrf'] = $basePath.'mrbayes.log.psrf';
+            $files['codemlOutput'] = $basePath.'codeml.out';
+            $files['codemlSummary'] = $basePath.'codeml.sum';
+            $files['experiment'] = $basePath.'experiment.conf';
+            $files['score'] = $basePath.'aligned.score_ascii';
+            $files['confidencesSum'] = $basePath.'allfiles/codeml/input.fasta.fasta.out.sum';
+
+            FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '.tar.gz', $files);
+
+            $result->analyzed = true;
+        }
+        catch (FileException $fe){
+            $result->message = $fe->getMessage();
+            $result->analyzed = false;
+            return $result;
+        }
+
+
+        try{
+            $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name.'.tar.gz', $name.'/ClustalW2/aligned.prot.fasta'));
+            $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name.'.tar.gz', $name.'/ClustalW2/allfiles/codeml/input.fasta.fasta.out.sum'));
+            if($confidences->getNumModels() > 0){
+                $result->positivelySelected = true;
+            }
+            else{
+                $result->positivelySelected = false;
+            }
+
+        }
+        catch (FileException $fe){
+            $result->message = $fe->getMessage();
+            $result->positivelySelected = false;
+            return $result;
+        }
+
+        return $result;
     }
 }

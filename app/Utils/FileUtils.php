@@ -86,6 +86,40 @@ class FileUtils
         return $result;
     }
 
+    public static function checkFilesFromTgz($pathToTgz, $mapOfFiles) {
+
+        if (!Storage::disk('bpositive')->exists($pathToTgz)) {
+            error_log('File does not exist');
+            throw new \Exception('File does not exist.');
+        }
+
+        try {
+            $dir = '/tmp/'.uniqid();
+
+            $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
+            $phar->extractTo($dir); // extract all files
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            throw new FileException($e->getMessage());
+        }
+
+        //Check subdirectories
+        $dirs = glob($dir.'/*', GLOB_ONLYDIR);
+        if(count($dirs)>1){
+            throw new FileException('The file has more than one subdirectory: ' . $pathToTgz);
+        }
+
+        foreach ($mapOfFiles as $name => $path) {
+            if(file_exists($dir . '/' . $path) === FALSE){
+                error_log('File does not exist: ' . $dir . '/' . $path);
+                throw new FileException('File does not exist: ' . $dir . '/' . $path);
+            }
+        }
+        FileUtils::deleteDirectory($dir);
+
+        return TRUE;
+    }
+
 
     public static function storeAs($file, $path) {
 
@@ -103,7 +137,7 @@ class FileUtils
         }
     }
 
-    public static function zipToTgz($pathToReadZip, $pathToStoreTgz) {
+    public static function zipToTgz($pathToReadZip) {
 
         if (!Storage::disk('bpositive')->exists($pathToReadZip)) {
             error_log('File does not exist');

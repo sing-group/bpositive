@@ -122,5 +122,9 @@ class AlignmentConfidences
         return json_encode($this->models);
     }
 
+    public function getNumModels(){
+        return count($this->models);
+    }
+
 
 }
