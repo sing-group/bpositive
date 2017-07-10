@@ -151,6 +151,18 @@ body {
     }
 }
 
+@media (min-width: 1000px) and (max-width: 1400px) {
+    body{
+        padding-bottom: 240px;
+    }
+}
+
+@media (max-width: 1000px) {
+    body{
+        padding-bottom: 300px;
+    }
+}
+
 .width-50{
     width:50%;
 }
