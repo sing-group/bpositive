@@ -23,6 +23,7 @@
 namespace App\Utils;
 
 
+use App\Exceptions\FileException;
 use Illuminate\Support\Facades\Storage;
 
 class FileUtils
@@ -83,6 +84,44 @@ class FileUtils
         //Storage::disk('bpositive')->deleteDirectory($dir); //TODO: not working
 
         return $result;
+    }
+
+
+    public static function storeAs($file, $path) {
+
+        if (Storage::disk('bpositive')->exists($path.$file->getClientOriginalName())) {
+            error_log('File does not exist');
+            throw new FileException('File already exists: '  . $path.$file->getClientOriginalName());
+        }
+
+        try {
+            return Storage::disk('bpositive')->putFileAs($path, $file, $file->getClientOriginalName());
+
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public static function zipToTgz($pathToReadZip, $pathToStoreTgz) {
+
+        if (!Storage::disk('bpositive')->exists($pathToReadZip)) {
+            error_log('File does not exist');
+            throw new FileException('File does not exist.'  . $pathToReadZip);
+        }
+
+        try {
+
+            $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
+            $phar->convertToData(\Phar::TAR, \Phar::GZ);
+
+            Storage::disk('bpositive')->delete($pathToReadZip);
+            return $phar->getMetadata();
+
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            throw new FileException($e->getMessage());
+        }
     }
 
     public static function deleteDirectory($dir) {

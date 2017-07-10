@@ -74,7 +74,7 @@
                             <label for="files" class="col-md-4 control-label">Add files</label>
 
                             <div class="col-md-6">
-                                <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip" autofocus multiple/>
+                                <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip, .zip, application/zip" autofocus multiple/>
 
                                 @if ($errors->has('files'))
                                     <span class="help-block">

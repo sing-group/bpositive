@@ -23,6 +23,7 @@
 namespace App\Models;
 
 
+use App\Exceptions\FileException;
 use App\Utils\FileUtils;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -292,22 +293,37 @@ class Transcription
 
     public static function create($projectId, $name, $file){
 
-        $path = $file->storeAs('bpositive/files/'.$projectId, $file->getClientOriginalName());
+        if($file->isValid()){
 
-        if($path) {
-            $link = str_replace('.tar.gz', '', $file->getClientOriginalName());
-            $transcription = DB::table('transcription')
-                ->insertGetId([
-                    'projectId' => $projectId,
-                    'name' => $link,
-                    'description' => '',
-                    'linkZip' => $link,
-                    'linkPdf' => $link,
-                    'deleted' => 0,
-                    'analyzed' => 1,
-                    'positivelySelected' => 1,
-                ]);
-            return $transcription;
+            $path = FileUtils::storeAs($file, 'files/'.$projectId);
+
+            if($file->getMimeType() == 'application/zip'){
+                $link = str_replace('.zip', '', $file->getClientOriginalName());
+                FileUtils::zipToTgz($path, 'files/'.$projectId.'/'.$link);
+            }
+            else if($file->getMimeType() == 'application/x-gzip'){
+                $link = str_replace('.tar.gz', '', $file->getClientOriginalName());
+
+            }
+
+            if(isset($link)) {
+                $transcription = DB::table('transcription')
+                    ->insertGetId([
+                        'projectId' => $projectId,
+                        'name' => $link,
+                        'description' => '',
+                        'linkZip' => $link,
+                        'linkPdf' => $link,
+                        'deleted' => 0,
+                        'analyzed' => 1,
+                        'positivelySelected' => 1,
+                    ]);
+                return $transcription;
+            }
+        }
+        else{
+            error_log("invalid");
+            throw new FileException("Upload of file '" . $file->getClientOriginalName(). "' invalid.");
         }
 
         return -1;

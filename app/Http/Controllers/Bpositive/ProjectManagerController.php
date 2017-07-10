@@ -22,6 +22,7 @@
 
 namespace App\Http\Controllers\Bpositive;
 
+use App\Exceptions\FileException;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
@@ -60,7 +61,7 @@ class ProjectManagerController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'description' => 'required|string',
-            'files.*' => 'file',
+            'files.*' => 'file|mimetypes:application/zip,application/x-gzip',
         ]);
 
         DB::beginTransaction();
@@ -71,13 +72,18 @@ class ProjectManagerController extends Controller
             if(is_array($request->file('files'))) {
                 foreach ($request->file('files') as $file) {
 
-                    $transcription = Transcription::create($projectId, $file->getClientOriginalName(), $file);
-
-                    if ($transcription == -1) {
+                    try {
+                        Transcription::create($projectId, $file->getClientOriginalName(), $file);
+                    }
+                    catch (FileException $fe){
+                        error_log(print_r($fe->getMessage(), true));
                         DB::rollBack();
                         return view('project.create', [
                             'project' => $projectId,
-                            'errors' => new MessageBag(['Error creating transcription:' . $file->getClientOriginalName()])
+                            'errors' => new MessageBag([
+                                'Error creating transcription: \'' . $file->getClientOriginalName().'\'',
+                                $fe->getMessage(),
+                            ])
                         ]);
                     };
                 }
@@ -155,7 +161,7 @@ class ProjectManagerController extends Controller
             'id' => 'required|numeric',
             'name' => 'required|string',
             'description' => 'required|string',
-            'files.*' => 'file',
+            'files.*' => 'file|mimetypes:application/zip,application/x-gzip',
         ]);
 
         Project::save($request->get('id'), $request->get('name'), $request->get('description'));
