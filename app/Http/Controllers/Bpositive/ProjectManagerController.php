@@ -27,6 +27,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
 use App\Providers\AuthServiceProvider;
+use App\Utils\FileUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,7 @@ class ProjectManagerController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'description' => 'required|string',
+            'bundle' => 'in:1',
             'files.*' => 'file|mimetypes:application/zip,application/x-gzip',
         ]);
 
@@ -71,21 +73,43 @@ class ProjectManagerController extends Controller
         if($projectId) {
             if(is_array($request->file('files'))) {
                 foreach ($request->file('files') as $file) {
+                    if($file->isValid()) {
+                        $names = array();
+                        if ($request->has('bundle') && $request->get('bundle') == 1) {
+                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $projectId);
+                            $names = array_merge($names, $bundleNames);
 
-                    try {
-                        Transcription::create($projectId, $file->getClientOriginalName(), $file);
+                        } else {
+                            $path = FileUtils::storeAs($file, 'files/' . $projectId);
+                            if ($file->getMimeType() == 'application/zip' ) {
+                                FileUtils::zipToTgz($path);
+                                $name = str_replace('.zip', '', $file->getClientOriginalName());
+                            }
+                            else{
+                                $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
+                            }
+                            array_push($names, $name);
+                        }
+                        foreach ($names as $transcriptionName){
+                            try {
+                                Transcription::create($projectId, $transcriptionName);
+                            } catch (FileException $fe) {
+                                error_log(print_r($fe->getMessage(), true));
+                                DB::rollBack();
+                                return view('project.create', [
+                                    'project' => $projectId,
+                                    'errors' => new MessageBag([
+                                        'Error creating transcription: \'' . $file->getClientOriginalName() . '\'',
+                                        $fe->getMessage(),
+                                    ])
+                                ]);
+                            };
+
+                        }
                     }
-                    catch (FileException $fe){
-                        error_log(print_r($fe->getMessage(), true));
-                        DB::rollBack();
-                        return view('project.create', [
-                            'project' => $projectId,
-                            'errors' => new MessageBag([
-                                'Error creating transcription: \'' . $file->getClientOriginalName().'\'',
-                                $fe->getMessage(),
-                            ])
-                        ]);
-                    };
+                    else{
+                        throw new FileException("Upload of file '" . $file->getClientOriginalName(). "' invalid.");
+                    }
                 }
             }
         }

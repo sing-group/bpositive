@@ -124,7 +124,6 @@ class FileUtils
     public static function storeAs($file, $path) {
 
         if (Storage::disk('bpositive')->exists($path.$file->getClientOriginalName())) {
-            error_log('File does not exist');
             throw new FileException('File already exists: '  . $path.$file->getClientOriginalName());
         }
 
@@ -134,6 +133,52 @@ class FileUtils
         } catch (\Exception $e) {
             error_log($e->getMessage());
             throw new \Exception($e->getMessage());
+        }
+    }
+
+    public static function storeBundleAs($file, $path) {
+
+        try {
+
+            $dir = '/tmp/'.uniqid();
+
+            $bundlePath = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().Storage::disk('bpositive')->putFileAs($dir.'/bundle', $file, $file->getClientOriginalName());
+
+            if ($file->getMimeType() == 'application/zip' ) {
+                $zip = new \ZipArchive();
+                $zip->open($bundlePath);
+                $zip->extractTo($dir.'/extracted');
+                $zip->close();
+            }
+            else{
+                $phar = new \PharData($bundlePath);
+                $phar->extractTo($dir.'/extracted');
+            }
+
+            Storage::disk('bpositive')->deleteDirectory($dir);
+
+            mkdir(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/');
+
+            $subdirs = glob($dir.'/extracted'.'/*', GLOB_ONLYDIR);
+            $names = array();
+            foreach ($subdirs as $subdir){
+                $info = pathinfo($subdir);
+                $names[] = $info['filename'];
+                $tar = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/'.$info['filename'].'.tar';
+                $pharTranscription = new \PharData($tar);
+                $pharTranscription->buildFromDirectory($dir.'/extracted', '/'.$info['filename'].'\//');
+                $pharTranscription->compress(\Phar::GZ);
+                unlink($tar);
+            }
+
+
+            FileUtils::deleteDirectory($dir);
+
+            return $names;
+
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            throw new FileException($e->getMessage());
         }
     }
 

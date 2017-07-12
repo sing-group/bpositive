@@ -303,46 +303,25 @@ class Transcription
         return $files_contents;
     }
 
-    public static function create($projectId, $name, $file){
+    public static function create($projectId, $name)
+    {
+        $result = Transcription::validateFile($projectId, $name);
 
-        if($file->isValid()){
-
-            $path = FileUtils::storeAs($file, 'files/'.$projectId);
-
-            if($file->getMimeType() == 'application/zip'){
-                $link = str_replace('.zip', '', $file->getClientOriginalName());
-                $path = FileUtils::zipToTgz($path);
-            }
-            else if($file->getMimeType() == 'application/x-gzip'){
-                $link = str_replace('.tar.gz', '', $file->getClientOriginalName());
-
-            }
-
-            $result = Transcription::validateFile($projectId, $link, $path);
-
-            if($result->valid) {
-                if (isset($link)) {
-                    $transcription = DB::table('transcription')
-                        ->insertGetId([
-                            'projectId' => $projectId,
-                            'name' => $link,
-                            'description' => '',
-                            'linkZip' => $link,
-                            'linkPdf' => $link,
-                            'deleted' => 0,
-                            'analyzed' => $result->analyzed,
-                            'positivelySelected' => $result->positivelySelected,
-                        ]);
-                    return $transcription;
-                }
-            }
-            else{
-                throw new FileException("File '" . $file->getClientOriginalName(). "' is not a valid file: " . $result->message);
-            }
-        }
-        else{
-            error_log("invalid");
-            throw new FileException("Upload of file '" . $file->getClientOriginalName(). "' invalid.");
+        if ($result->valid) {
+            $transcription = DB::table('transcription')
+                ->insertGetId([
+                    'projectId' => $projectId,
+                    'name' => $name,
+                    'description' => '',
+                    'linkZip' => $name,
+                    'linkPdf' => $name,
+                    'deleted' => 0,
+                    'analyzed' => $result->analyzed,
+                    'positivelySelected' => $result->positivelySelected,
+                ]);
+            return $transcription;
+        } else {
+            throw new FileException("File '" . $name . "' is not a valid file: " . $result->message);
         }
 
         return -1;
@@ -373,7 +352,7 @@ class Transcription
 
     }
 
-    public static function validateFile($projectId, $name, $path){
+    public static function validateFile($projectId, $name){
         $result = new ValidationResult();
 
         try {
