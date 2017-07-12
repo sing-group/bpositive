@@ -157,7 +157,8 @@ class FileUtils
 
             Storage::disk('bpositive')->deleteDirectory($dir);
 
-            mkdir(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/');
+
+            Storage::disk('bpositive')->makeDirectory($path.'/');
 
             $subdirs = glob($dir.'/extracted'.'/*', GLOB_ONLYDIR);
             $names = array();
@@ -177,6 +178,8 @@ class FileUtils
             return $names;
 
         } catch (\Exception $e) {
+            FileUtils::deleteDirectory($dir);
+            Storage::disk('bpositive')->deleteDirectory($path.'/');
             error_log($e->getMessage());
             throw new FileException($e->getMessage());
         }

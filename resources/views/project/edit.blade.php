@@ -84,6 +84,23 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('bundle') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label"></label>
+                            <div class="col-md-6">
+                                <label for="bundle" class="form-check-label control-label">
+
+                                    <input name="bundle" type="checkbox" value="1">
+                                    Uploaded files contain a bundle of projects in each file
+                                </label>
+                            </div>
+                            @if ($errors->has('bundle'))
+                                <span class="help-block">
+                                        <strong>{{ $errors->first('bundle') }}</strong>
+                                    </span>
+                            @endif
+
+                        </div>
+
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
@@ -171,10 +188,10 @@
                             <tr>
                                 <th>id</th>
                                 <th>Name</th>
-                                <th>Description</th>
+                                <!--th>Description</th-->
                                 <th>Creation Date</th>
-                                <th>PDF</th>
-                                <th>ZIP</th>
+                                <th>View</th>
+                                <th>Download</th>
                                 <th>Analyzed</th>
                                 <th>Positively Selected</th>
                                 <th>Delete</th>
@@ -185,7 +202,7 @@
                                 <tr>
                                     <td>{{$transcription->id}}</td>
                                     <td>{{$transcription->name}}</td>
-                                    <td>{{$transcription->description}}</td>
+                                    <!--td>{{$transcription->description}}</td-->
                                     <td>{{$transcription->creationDate}}</td>
                                     <td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
                                     <td><a href="../download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
