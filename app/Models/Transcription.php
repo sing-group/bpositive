@@ -99,7 +99,19 @@ class Transcription
                 }
                 return $query;
             })
-            ->orderBy($orderBy, $orderType)
+            ->when($orderBy, function ($query) use ($orderBy, $orderType){
+                switch ($orderBy) {
+                    case 'analyzed':
+                        $query->orderBy('analyzed', $orderType);
+                        $query->orderBy('positivelySelected', $orderType);
+                        break;
+                    default:
+                        $query->orderBy($orderBy, $orderType);
+                        break;
+                }
+                return $query;
+            })
+
             ->paginate($pagesize);
 
         return $transriptions;
