@@ -157,9 +157,33 @@ body {
     }
 }
 
-@media (max-width: 1000px) {
+@media (min-width: 680px) and (max-width: 1000px) {
     body{
         padding-bottom: 300px;
+    }
+}
+
+@media (min-width: 530px) and (max-width: 680px) {
+    body{
+        padding-bottom: 400px;
+    }
+}
+
+@media (min-width: 430px) and (max-width: 530px) {
+    body{
+        padding-bottom: 500px;
+    }
+}
+
+@media (min-width: 330px) and (max-width: 430px) {
+    body{
+        padding-bottom: 700px;
+    }
+}
+
+@media (max-width: 330px) {
+    body{
+        padding-bottom: 800px;
     }
 }
 
