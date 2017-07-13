@@ -62,6 +62,15 @@ CREATE TABLE `password_resets` (
   KEY `password_resets_token_index` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `users_projects` (
+  `userId` int(10) unsigned NOT NULL,
+  `projectId` int(10) NOT NULL,
+  PRIMARY KEY (`userId`,`projectId`),
+  KEY `fk_projects_idx` (`projectId`),
+  CONSTRAINT `fk_projects` FOREIGN KEY (`projectId`) REFERENCES `project` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 LOCK TABLES `roles` WRITE;
 INSERT INTO `roles` VALUES (1,'Administrator'),(2,'User');
 UNLOCK TABLES;
