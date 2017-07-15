@@ -48,7 +48,6 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>id</th>
                             <th>Code</th>
                             <th>Name</th>
                             <th>Creation Date</th>
@@ -60,7 +59,6 @@
                         <tbody>
                         @foreach($projects as $project)
                             <tr>
-                                <td>{{$project->id}}</td>
                                 <td>{{$project->code}}</td>
                                 <td>{{$project->name}}</td>
                                 <td>{{$project->creationDate}}</td>
