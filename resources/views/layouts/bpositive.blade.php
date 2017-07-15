@@ -128,6 +128,15 @@
                 </ul>
             </div>
         @endif
+        @if (isset($results) && count($results) > 0)
+            <div class="alert alert-success">
+                <ul>
+                    @foreach ($results as $result)
+                        <li>{{ $result }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         @yield('content')
     </div>
 

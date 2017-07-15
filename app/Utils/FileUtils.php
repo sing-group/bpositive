@@ -166,6 +166,10 @@ class FileUtils
                 $info = pathinfo($subdir);
                 $names[] = $info['filename'];
                 $tar = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/'.$info['filename'].'.tar';
+
+                if(file_exists($tar.'.gz')){
+                    FileUtils::deleteDirectory($tar.'.gz');
+                }
                 $pharTranscription = new \PharData($tar);
                 $pharTranscription->buildFromDirectory($dir.'/extracted', '/'.$info['filename'].'\//');
                 $pharTranscription->compress(\Phar::GZ);
@@ -192,6 +196,12 @@ class FileUtils
             throw new FileException('File does not exist.'  . $pathToReadZip);
         }
 
+
+        $tgz = str_replace('.zip', '.tar.gz', Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
+
+        if(file_exists($tgz)){
+            FileUtils::deleteDirectory($tgz);
+        }
         try {
 
             $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
@@ -201,6 +211,7 @@ class FileUtils
             return $phar->getMetadata();
 
         } catch (\Exception $e) {
+            FileUtils::deleteDirectory($phar->getPath());
             error_log($e->getMessage());
             throw new FileException($e->getMessage());
         }

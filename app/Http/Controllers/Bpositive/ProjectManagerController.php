@@ -131,6 +131,9 @@ class ProjectManagerController extends Controller
     }
 
     public function all(Request $request){
+        $this->validate($request, [
+            'results' => 'array',
+        ]);
 
         if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
             $projects = Project::all();
@@ -138,7 +141,10 @@ class ProjectManagerController extends Controller
         else{
             $projects = Project::getAllByUser(Auth::user()->id);
         }
-        $params = ['projects' => $projects];
+        $params = [
+            'projects' => $projects,
+            'results' => $request->get('results'),
+        ];
         return view('project.manage', $params);
     }
 
@@ -152,6 +158,8 @@ class ProjectManagerController extends Controller
             'orderType' => Rule::in(['asc', 'desc']),
             'filters.*' => Rule::in(['pss', 'analyzed', 'notAnalyzed', 'all']),
             'searchType' => Rule::in(['contains', 'regexp', 'exact']),
+            'uploadErrors' => 'array',
+            'results' => 'array',
         ]);
 
         if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE) {
@@ -168,6 +176,22 @@ class ProjectManagerController extends Controller
         $filters = $request->get('filters');
         $searchType = $request->get('searchType');
 
+        if($request->has('uploadErrors')){
+            $uploadErrors = $request->get('uploadErrors');
+        }
+        else{
+            $uploadErrors = [];
+        }
+
+        if($request->has('results')){
+            $uploadResults = $request->get('results');
+        }
+        else{
+            $uploadResults = [];
+        }
+
+        //print_r($uploadErrors);
+
         $transcriptions = Transcription::all($request->get('id'), $query, $filters, $searchType, $pagesize, $orderBy, $orderType);
         return view('project.edit',[
             'project' => $project,
@@ -177,8 +201,9 @@ class ProjectManagerController extends Controller
             'orderBy' => $orderBy,
             'orderType' => $orderType,
             'filters' => $filters,
-            'searchType' => $searchType
-        ]);
+            'searchType' => $searchType,
+            'results' => $uploadResults,
+        ])->withErrors($uploadErrors);
     }
 
     public function save(Request $request){
@@ -199,16 +224,42 @@ class ProjectManagerController extends Controller
 
         if(is_array($request->file('files'))) {
             foreach ($request->file('files') as $file) {
-                if($file->isValid()) {
+                if ($file->isValid()) {
                     $names = array();
                     if ($request->has('bundle') && $request->get('bundle') == 1) {
-                        $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $request->get('id'));
+                        try {
+                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $request->get('id'));
+                        }
+                        catch (FileException $fe){
+                            DB::rollBack();
+                            FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                            return redirect()->route('project_edit_form', [
+                                'id' => $request->get('id'),
+                                'uploadErrors' => [
+                                    'Error extracting bundle file:' . $file->getClientOriginalName(),
+                                    $fe->getMessage(),
+                                ]
+                            ]);
+                        }
                         $names = array_merge($names, $bundleNames);
 
                     } else {
                         $path = FileUtils::storeAs($file, 'files/' . $request->get('id'));
                         if ($file->getMimeType() == 'application/zip') {
-                            FileUtils::zipToTgz($path);
+                            try {
+                                FileUtils::zipToTgz($path);
+                            }
+                            catch (FileException $fe){
+                                DB::rollBack();
+                                FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                                return redirect()->route('project_edit_form', [
+                                    'id' => $request->get('id'),
+                                    'uploadErrors' => [
+                                        'Error extracting zip file:' . $file->getClientOriginalName(),
+                                        $fe->getMessage(),
+                                    ]
+                                ]);
+                            }
                             $name = str_replace('.zip', '', $file->getClientOriginalName());
                         } else {
                             $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
@@ -221,34 +272,47 @@ class ProjectManagerController extends Controller
 
                             if ($transcription == -1) {
                                 DB::rollBack();
-                                return view('project.create', [
-                                    'project' => $request->get('id'),
-                                    'errors' => new MessageBag(['Error saving transcription:' . $file->getClientOriginalName()])
+                                FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                                return redirect()->route('project_edit_form', [
+                                    'id' => $request->get('id'),
+                                    'uploadErrors' => [
+                                        'Error saving transcription:' . $file->getClientOriginalName(),
+                                    ]
                                 ]);
                             };
                         } catch (FileException $fe) {
-                            error_log(print_r($fe->getMessage(), true));
                             DB::rollBack();
-                            return view('project.create', [
-                                'project' => $request->get('id'),
-                                'errors' => new MessageBag([
-                                    'Error saving transcription: \'' . $file->getClientOriginalName() . '\'',
+                            FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                            return redirect()->route('project_edit_form', [
+                                'id' => $request->get('id'),
+                                'uploadErrors' => [
+                                    'Error saving transcription:' . $file->getClientOriginalName(),
                                     $fe->getMessage(),
-                                ])
+                                ]
                             ]);
                         };
 
                     }
-                }
-                else{
+                } else {
                     DB::rollBack();
-                    throw new FileException("Upload of file '" . $file->getClientOriginalName(). "' invalid.");
+                    throw new FileException("Upload of file '" . $file->getClientOriginalName() . "' invalid.");
                 }
             }
+            DB::commit();
+            return redirect()->route('project_edit_form', [
+                'id' => $request->get('id'),
+                'results' => [
+                    'Project updated successfully',
+                ]
+            ]);
         }
 
         DB::commit();
-        return redirect()->route('project_manage');
+        return redirect()->route('project_manage', [
+            'results' => [
+                'Project updated successfully',
+            ]
+        ]);
     }
 
     public function remove(Request $request){
