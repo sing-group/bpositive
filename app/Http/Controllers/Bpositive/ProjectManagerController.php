@@ -76,13 +76,35 @@ class ProjectManagerController extends Controller
                     if($file->isValid()) {
                         $names = array();
                         if ($request->has('bundle') && $request->get('bundle') == 1) {
-                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $projectId);
+                            try {
+                                $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $projectId);
+                            }
+                            catch (FileException $fe){
+                                DB::rollBack();
+                                FileUtils::deleteDirectory($file, 'files/' . $projectId);
+                                $request->flash();
+                                return view('project.create')->withErrors([
+                                    'Error extracting bundle file:' . $file->getClientOriginalName(),
+                                    $fe->getMessage(),
+                                ]);
+                            }
                             $names = array_merge($names, $bundleNames);
 
                         } else {
                             $path = FileUtils::storeAs($file, 'files/' . $projectId);
                             if ($file->getMimeType() == 'application/zip' ) {
-                                FileUtils::zipToTgz($path);
+                                try {
+                                    FileUtils::zipToTgz($path);
+                                }
+                                catch (FileException $fe){
+                                    DB::rollBack();
+                                    FileUtils::deleteDirectory($file, 'files/' . $projectId);
+                                    $request->flash();
+                                    return view('project.create')->withErrors([
+                                        'Error extracting zip file:' . $file->getClientOriginalName(),
+                                        $fe->getMessage(),
+                                    ]);
+                                }
                                 $name = str_replace('.zip', '', $file->getClientOriginalName());
                             }
                             else{
@@ -94,14 +116,11 @@ class ProjectManagerController extends Controller
                             try {
                                 Transcription::create($projectId, $transcriptionName);
                             } catch (FileException $fe) {
-                                error_log(print_r($fe->getMessage(), true));
                                 DB::rollBack();
-                                return view('project.create', [
-                                    'project' => $projectId,
-                                    'errors' => new MessageBag([
-                                        'Error creating transcription: \'' . $file->getClientOriginalName() . '\'',
-                                        $fe->getMessage(),
-                                    ])
+                                $request->flash();
+                                return view('project.create')->withErrors([
+                                    'Error creating transcription: \'' . $file->getClientOriginalName() . '\'',
+                                    $fe->getMessage(),
                                 ]);
                             };
 
@@ -109,21 +128,28 @@ class ProjectManagerController extends Controller
                     }
                     else{
                         DB::rollBack();
-                        throw new FileException("Upload of file '" . $file->getClientOriginalName(). "' invalid.");
+                        $request->flash();
+                        return view('project.create')->withErrors([
+                            "Upload of file '" . $file->getClientOriginalName(). "' invalid.",
+                        ]);
                     }
                 }
             }
         }
         else{
             DB::rollBack();
+            $request->flash();
             return view('project.create', [
-                'project' => $projectId,
-                'errors' => new MessageBag(['Error creating project'])
+                'errors' => new MessageBag(['Error creating project']),
             ]);
         }
 
         DB::commit();
-        return redirect()->route('project_manage');
+        return redirect()->route('project_manage', [
+            'results' => [
+                'Project created successfully',
+            ]
+        ]);
     }
 
     public function showCreateForm(Request $request){
@@ -268,18 +294,8 @@ class ProjectManagerController extends Controller
                     }
                     foreach ($names as $transcriptionName) {
                         try {
-                            $transcription = Transcription::create($request->get('id'), $transcriptionName);
+                            Transcription::create($request->get('id'), $transcriptionName);
 
-                            if ($transcription == -1) {
-                                DB::rollBack();
-                                FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
-                                return redirect()->route('project_edit_form', [
-                                    'id' => $request->get('id'),
-                                    'uploadErrors' => [
-                                        'Error saving transcription:' . $file->getClientOriginalName(),
-                                    ]
-                                ]);
-                            };
                         } catch (FileException $fe) {
                             DB::rollBack();
                             FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));

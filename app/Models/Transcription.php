@@ -323,8 +323,6 @@ class Transcription
         } else {
             throw new FileException("File '" . $name . "' is not a valid file: " . $result->message);
         }
-
-        return -1;
     }
 
     public static function delete($id){
