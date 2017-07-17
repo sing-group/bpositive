@@ -211,7 +211,7 @@
                                     <td>
                                         {{ Form::open(['action' => 'Bpositive\TranscriptionController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
                                         {{ csrf_field() }}
-                                        {{ Form::hidden('id', $transcription->id) }}
+                                        <input type="hidden" name="id" value="{{$transcription->id}}" />
                                         {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
                                         {{ Form::close() }}
                                     </td>
