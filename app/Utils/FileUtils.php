@@ -120,11 +120,32 @@ class FileUtils
         return TRUE;
     }
 
+    public static function checkFilesFromPath($dir, $mapOfFiles) {
 
-    public static function storeAs($file, $path) {
+        if (!file_exists($dir)) {
+            throw new FileException('Path does not exist: ' . $dir);
+        }
 
-        if (Storage::disk('bpositive')->exists($path.$file->getClientOriginalName())) {
-            throw new FileException('File already exists: '  . $path.$file->getClientOriginalName());
+        //Check subdirectories
+        $dirs = glob($dir.'/*', GLOB_ONLYDIR);
+        if(count($dirs)>1){
+            throw new FileException('The file has more than one subdirectory: ' . $dir);
+        }
+
+        foreach ($mapOfFiles as $name => $path) {
+            if(file_exists($dir . '/' . $path) === FALSE){
+                throw new FileException('File does not exist: ' . $dir . '/' . $path);
+            }
+        }
+
+        return TRUE;
+    }
+
+
+    public static function storeAs($file, $path, $update = FALSE) {
+
+        if (!$update && Storage::disk('bpositive')->exists($path.'/'.$file->getClientOriginalName())) {
+            throw new FileException('File already exists: '  . $path.'/'.$file->getClientOriginalName());
         }
 
         try {
@@ -136,7 +157,7 @@ class FileUtils
         }
     }
 
-    public static function storeBundleAs($file, $path) {
+    public static function storeBundleAs($file, $path, $update = FALSE) {
 
         try {
 
@@ -167,7 +188,7 @@ class FileUtils
                 $names[] = $info['filename'];
                 $tar = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/'.$info['filename'].'.tar';
 
-                if(file_exists($tar.'.gz')){
+                if($update && file_exists($tar.'.gz')){
                     FileUtils::deleteDirectory($tar.'.gz');
                 }
                 $pharTranscription = new \PharData($tar);
@@ -184,8 +205,51 @@ class FileUtils
 
         } catch (\Exception $e) {
             FileUtils::deleteDirectory($dir);
-            Storage::disk('bpositive')->deleteDirectory($path.'/');
+            //Storage::disk('bpositive')->deleteDirectory($path.'/');
             error_log($e->getMessage());
+            throw new FileException($e->getMessage());
+        }
+    }
+
+    public static function scanBundle($file) {
+        $dir = '/tmp/'.uniqid();
+
+        try {
+
+            $bundlePath = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().Storage::disk('bpositive')->putFileAs($dir.'/bundle', $file, $file->getClientOriginalName());
+
+            if ($file->getMimeType() == 'application/zip' ) {
+                $zip = new \ZipArchive();
+                $zip->open($bundlePath);
+                $zip->extractTo($dir.'/extracted');
+                $zip->close();
+                $name = str_replace('.zip', '', $file->getClientOriginalName());
+            }
+            else{
+                $phar = new \PharData($bundlePath);
+                $phar->extractTo($dir.'/extracted');
+                $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
+            }
+
+            try {
+                $files = array();
+                $files['input'] = $name.'/input.fasta';
+                $files['names'] = $name.'/names.txt';
+                $files['project'] = $name.'/project.conf';
+
+                FileUtils::checkFilesFromPath($dir.'/extracted', $files);
+
+                FileUtils::deleteDirectory($dir);
+                return FALSE;
+            }
+            catch (FileException $fe){
+                $subdirs = glob($dir.'/extracted'.'/*', GLOB_ONLYDIR);
+                FileUtils::deleteDirectory($dir);
+                return $subdirs;
+            }
+
+        } catch (\Exception $e) {
+            FileUtils::deleteDirectory($dir);
             throw new FileException($e->getMessage());
         }
     }
@@ -212,7 +276,10 @@ class FileUtils
             return $phar->getMetadata();
 
         } catch (\Exception $e) {
-            FileUtils::deleteDirectory($phar->getPath());
+            if(isset($phar)) {
+                $p = $phar->getPath();
+                \Phar::unlinkArchive($p);
+            }
             error_log($e->getMessage());
             throw new FileException($e->getMessage());
         }

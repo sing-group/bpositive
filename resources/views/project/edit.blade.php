@@ -46,7 +46,7 @@
                             <label for="name" class="col-md-4 control-label">Name</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ $project->name }}" required autofocus>
+                                <input id="name" type="text" class="form-control" name="name" value="{{ (old('name') ? old('name') : $project->name )}}" required autofocus>
 
                                 @if ($errors->has('name'))
                                     <span class="help-block">
@@ -60,7 +60,7 @@
                             <label for="description" class="col-md-4 control-label">Description</label>
 
                             <div class="col-md-6">
-                                <textarea id="description" class="form-control" name="description" required autofocus>{{$project->description}}</textarea>
+                                <textarea id="description" class="form-control" name="description" required autofocus>{{ (old('description') ? old('description') : $project->description) }}</textarea>
 
                                 @if ($errors->has('description'))
                                     <span class="help-block">
@@ -97,6 +97,22 @@
                                 <span class="help-block">
                                         <strong>{{ $errors->first('bundle') }}</strong>
                                     </span>
+                            @endif
+
+                        </div>
+
+                        <div class="form-group{{ $errors->has('update') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label"></label>
+                            <div class="col-md-6">
+                                <label for="update" class="form-check-label control-label">
+                                    <input name="update" type="checkbox" value="1">
+                                    Update any existing results with the same name
+                                </label>
+                            </div>
+                            @if ($errors->has('update'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('update') }}</strong>
+                                </span>
                             @endif
 
                         </div>

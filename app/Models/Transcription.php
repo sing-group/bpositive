@@ -325,6 +325,20 @@ class Transcription
         }
     }
 
+    public static function createIfNotExists($projectId, $name)
+    {
+        $transcription = Transcription::all($projectId, $name, '', 'exact' );
+        if($transcription->total() === 0){
+            Transcription::create($projectId, $name);
+        }
+        else if($transcription->total() > 1){
+            throw new FileException("There are duplicated results, please delete them before uploading any more.");
+        }
+        else {
+            return $transcription[0]->id;
+        }
+    }
+
     public static function delete($id){
 
         $transcription = Transcription::getByAdmin($id);

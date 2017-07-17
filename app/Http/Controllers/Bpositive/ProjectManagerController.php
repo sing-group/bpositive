@@ -31,7 +31,6 @@ use App\Utils\FileUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 
@@ -91,7 +90,18 @@ class ProjectManagerController extends Controller
                             $names = array_merge($names, $bundleNames);
 
                         } else {
-                            $path = FileUtils::storeAs($file, 'files/' . $projectId);
+                            try {
+                                $path = FileUtils::storeAs($file, 'files/' . $projectId);
+                            }
+                            catch (FileException $fe){
+                                DB::rollBack();
+                                FileUtils::deleteDirectory($file, 'files/' . $projectId);
+                                $request->flash();
+                                return view('project.create')->withErrors([
+                                    'Error extracting project file:' . $file->getClientOriginalName(),
+                                    $fe->getMessage(),
+                                ]);
+                            }
                             if ($file->getMimeType() == 'application/zip' ) {
                                 try {
                                     FileUtils::zipToTgz($path);
@@ -239,12 +249,81 @@ class ProjectManagerController extends Controller
             'description' => 'required|string',
             'bundle' => 'in:1',
             'files.*' => 'file|mimetypes:application/zip,application/x-gzip',
+            'update' =>'boolean'
         ]);
+
+        //Check if files need to be overwritten
+        if(!$request->has('update') && is_array($request->file('files'))){
+            $updatedNames = [];
+            $createdNames = [];
+
+            foreach ($request->file('files') as $file) {
+                if ($file->isValid()) {
+                    $names = array();
+                    try {
+                        $bundleNames = FileUtils::scanBundle($file);
+                    }
+                    catch (FileException $fe){
+                        return redirect()->route('project_edit_form', [
+                            'id' => $request->get('id'),
+                            'uploadErrors' => [
+                                'Error checking for bundle file:' . $file->getClientOriginalName(),
+                                $fe->getMessage(),
+                            ]
+                        ]);
+                    }
+
+                    //This is a standalone project
+                    if (!$bundleNames) {
+                        if ($file->getMimeType() == 'application/zip') {
+                            $name = str_replace('.zip', '', $file->getClientOriginalName());
+                        } else {
+                            $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
+                        }
+                        array_push($names, $name);
+                    }
+                    else if(is_array($bundleNames)){
+                        $names = array_merge($names, $bundleNames);
+                    }
+                    else {
+                        throw new \Exception("Something weird happend checking files");
+                    }
+
+                    foreach ($names as $name){
+                        if(Transcription::all($request->get('id'), $name, '', 'exact' )->total() === 0){
+                            $createdNames[] = $name;
+                        }
+                        else{
+                            $updatedNames[] = $name;
+                        }
+                    }
+                }
+            }
+            if(count($updatedNames) > 0){
+                $warnings = [
+                    'Saving this project will update ' . count($updatedNames) . ' and create ' . count($createdNames) . ' results.',
+                    'Will update: ' . implode(', ', $updatedNames),
+
+                ];
+                if(count($createdNames) > 0){
+                    $warnings[] = 'Will create: ' . implode(', ', $createdNames);
+                }
+
+                $warnings[] = 'Check \'update any existing results with the same name\' and select the files to upload again to proceed.';
+
+                $request->flash();
+                return redirect()->route('project_edit_form', [
+                    'id' => $request->get('id'),
+                    'uploadErrors' => $warnings
+                ]);
+            }
+        }
 
         DB::beginTransaction();
         //TODO: check if transcription exists
         //TODO: rollback storage if exception
         //TODO: display smth when updated successfully
+        //TODO: improve error when bundle contains duplicated transcription
 
         Project::save($request->get('id'), $request->get('name'), $request->get('description'));
 
@@ -254,7 +333,7 @@ class ProjectManagerController extends Controller
                     $names = array();
                     if ($request->has('bundle') && $request->get('bundle') == 1) {
                         try {
-                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $request->get('id'));
+                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $request->get('id', $request->has('update')));
                         }
                         catch (FileException $fe){
                             DB::rollBack();
@@ -270,7 +349,20 @@ class ProjectManagerController extends Controller
                         $names = array_merge($names, $bundleNames);
 
                     } else {
-                        $path = FileUtils::storeAs($file, 'files/' . $request->get('id'));
+                        try {
+                            $path = FileUtils::storeAs($file, 'files/' . $request->get('id'), $request->has('update'));
+                        }
+                        catch (FileException $fe){
+                                DB::rollBack();
+                                FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                                return redirect()->route('project_edit_form', [
+                                    'id' => $request->get('id'),
+                                    'uploadErrors' => [
+                                        'Error extracting project file:' . $file->getClientOriginalName(),
+                                        $fe->getMessage(),
+                                    ]
+                                ]);
+                            }
                         if ($file->getMimeType() == 'application/zip') {
                             try {
                                 FileUtils::zipToTgz($path);
@@ -294,7 +386,7 @@ class ProjectManagerController extends Controller
                     }
                     foreach ($names as $transcriptionName) {
                         try {
-                            Transcription::create($request->get('id'), $transcriptionName);
+                            Transcription::createIfNotExists($request->get('id'), $transcriptionName);
 
                         } catch (FileException $fe) {
                             DB::rollBack();
