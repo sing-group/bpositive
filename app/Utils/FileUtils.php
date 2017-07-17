@@ -173,7 +173,8 @@ class FileUtils
                 $pharTranscription = new \PharData($tar);
                 $pharTranscription->buildFromDirectory($dir.'/extracted', '/'.$info['filename'].'\//');
                 $pharTranscription->compress(\Phar::GZ);
-                unlink($tar);
+                unset($pharTranscription);
+                \Phar::unlinkArchive($tar);
             }
 
 
