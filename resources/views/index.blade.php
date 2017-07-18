@@ -39,8 +39,12 @@
         <div class="project">
             <div class="project_name col-md-4">
                 <h1>{{$project->name}}</h1>
-                @if ($project->public == 1 || Gate::allows('access-private'))
+                @if ($project->public == 1)
                     <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
+                @elseif (Gate::allows('access-private'))
+                    <h4>{{$project->code}}</h4>
+                @endif
+                @if ($project->public == 1 || Gate::allows('access-private'))
                     <div class="form-group">
                         {{ Form::open(['url' => 'transcriptions', 'method' => 'get', 'id' => 'openForm']) }}
                         {{ Form::hidden('id', $project->id) }}
