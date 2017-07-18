@@ -184,7 +184,9 @@ class ProjectManagerController extends Controller
     }
 
     public function showCreateForm(Request $request){
-        return view('project.create');
+        return view('project.create', [
+            'modalInfo' => 'Uploaded files can be ADOPS project files in ".zip" or ".tar.gz" format or a compressed file (".zip" or ".tar.gz") with the folders of the ADOPS projects inside in the first level.'
+        ]);
     }
 
     public function all(Request $request){
@@ -260,6 +262,7 @@ class ProjectManagerController extends Controller
             'filters' => $filters,
             'searchType' => $searchType,
             'results' => $uploadResults,
+            'modalInfo' => 'Uploaded files can be ADOPS project files in ".zip" or ".tar.gz" format or a compressed file (".zip" or ".tar.gz") with the folders of the ADOPS projects inside in the first level.',
         ])->withErrors($uploadErrors);
     }
 

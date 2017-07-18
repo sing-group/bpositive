@@ -81,6 +81,9 @@
                                     </span>
                                 @endif
                             </div>
+                            <span class="modalIcon" onclick="$('#modalInfo').modal('show');">
+                                <span class="glyphicon glyphicon-question-sign text-primary"></span>
+                            </span>
                         </div>
 
                         <div class="form-group">
@@ -113,5 +116,6 @@
             </div>
         </div>
     </div>
+    @include('includes.modalInfo', ['modalInfo' => $modalInfo])
 </div>
 @endsection
