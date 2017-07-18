@@ -85,12 +85,30 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary"
+                                        data-toggle="modal" data-target="#modalProgressBar" data-backdrop="static" data-keyboard="false">
                                     Create
                                 </button>
                             </div>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalProgressBar" tabindex="-1" role="dialog" aria-labelledby="myModalProgressBar">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">Progress information
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Creating project, please be patient...</label>
+                    </div>
+                    <div id="myProgress" class="progress active">
+                        <div id="myBar" class="progress-bar progress-bar-striped"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%" >
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
