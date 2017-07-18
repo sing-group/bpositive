@@ -65,6 +65,8 @@ class ProjectManagerController extends Controller
             'files.*' => 'file|mimetypes:application/zip,application/x-gzip',
         ]);
 
+        $createdNames = [];
+
         DB::beginTransaction();
 
         $projectId = Project::create(Auth::user()->id, $request->get('name'), $request->get('description'));
@@ -133,6 +135,7 @@ class ProjectManagerController extends Controller
                             }
                             array_push($names, $name);
                         }
+                        $createdNames = array_merge($createdNames, $names);
                         foreach ($names as $transcriptionName){
                             try {
                                 Transcription::create($projectId, $transcriptionName);
@@ -166,10 +169,17 @@ class ProjectManagerController extends Controller
         }
 
         DB::commit();
+
+        $project = Project::getByAdmin($projectId);
+
+        $results = [
+            'Project ' . $project->code . ' created successfully',
+        ];
+        if(count($createdNames) > 0){
+            $results[]= 'Created ' . count($createdNames) . ' results: ' . implode(',', $createdNames);
+        }
         return redirect()->route('project_manage', [
-            'results' => [
-                'Project created successfully',
-            ]
+            'results' => $results
         ]);
     }
 
@@ -266,9 +276,10 @@ class ProjectManagerController extends Controller
         $bundleNames = FALSE;
 
         //Check if files need to be overwritten
-        if(!$request->has('update') && is_array($request->file('files'))){
-            $updatedNames = [];
-            $createdNames = [];
+        $updatedNames = [];
+        $createdNames = [];
+
+        if(is_array($request->file('files'))){
 
             foreach ($request->file('files') as $file) {
                 if ($file->isValid()) {
@@ -312,7 +323,7 @@ class ProjectManagerController extends Controller
                     }
                 }
             }
-            if(count($updatedNames) > 0){
+            if(!$request->has('update') && count($updatedNames) > 0){
                 $warnings = [
                     'Saving this project will update ' . count($updatedNames) . ' and create ' . count($createdNames) . ' results.',
                     'Will update: ' . implode(', ', $updatedNames),
@@ -333,10 +344,6 @@ class ProjectManagerController extends Controller
         }
 
         DB::beginTransaction();
-        //TODO: check if transcription exists
-        //TODO: rollback storage if exception
-        //TODO: display smth when updated successfully
-        //TODO: improve error when bundle contains duplicated transcription
 
         Project::save($request->get('id'), $request->get('name'), $request->get('description'));
 
@@ -438,19 +445,32 @@ class ProjectManagerController extends Controller
                 }
             }
             DB::commit();
+            $project = Project::getByAdmin($request->get('id'));
+
+            $results = [
+                'Project ' . $project->code . ' updated successfully',
+            ];
+            if(count($createdNames) > 0){
+                $results[]= 'Created ' . count($createdNames) . ' results: ' . implode(',', $createdNames);
+            }
+            if(count($updatedNames) > 0){
+                $results[]= 'Updated ' . count($updatedNames) . ' results: ' . implode(',', $updatedNames);
+            }
             return redirect()->route('project_edit_form', [
                 'id' => $request->get('id'),
-                'results' => [
-                    'Project updated successfully',
-                ]
+                'results' => $results
             ]);
         }
 
         DB::commit();
+
+        $project = Project::getByAdmin($request->get('id'));
+
+        $results = [
+            'Project ' . $project->code . ' updated successfully',
+        ];
         return redirect()->route('project_manage', [
-            'results' => [
-                'Project updated successfully',
-            ]
+            'results' => $results
         ]);
     }
 
