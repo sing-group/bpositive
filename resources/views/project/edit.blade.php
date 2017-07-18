@@ -230,24 +230,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalProgressBar" tabindex="-1" role="dialog" aria-labelledby="myModalProgressBar">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">Progress information
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="recipient-name" class="control-label">Creating project, please be patient...</label>
-                    </div>
-                    <div id="myProgress" class="progress active">
-                        <div id="myBar" class="progress-bar progress-bar-striped"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%" >
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @include('includes.modalInfo', ['modalInfo' => $modalInfo])
+    @include('includes.progress')
+    @include('includes.modalInfo', ['modalInfo' => 'Uploaded files can be ADOPS project files in ".zip" or ".tar.gz" format or a compressed file (".zip" or ".tar.gz") with the folders of the ADOPS projects inside in the first level.'])
 </div>
 @endsection
 @section('endscripts')
