@@ -83,23 +83,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('bundle') ? ' has-error' : '' }}">
-                            <label class="col-md-4 control-label"></label>
-                            <div class="col-md-6">
-                            <label for="bundle" class="form-check-label control-label">
-
-                                <input name="bundle" type="checkbox" value="1">
-                                Uploaded files contain a bundle of projects in each file
-                            </label>
-                            </div>
-                                @if ($errors->has('bundle'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('bundle') }}</strong>
-                                    </span>
-                                @endif
-
-                        </div>
-
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">

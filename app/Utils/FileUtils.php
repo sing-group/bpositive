@@ -159,10 +159,9 @@ class FileUtils
 
     public static function storeBundleAs($file, $path, $update = FALSE) {
 
+        $dir = '/tmp/'.uniqid();
+
         try {
-
-            $dir = '/tmp/'.uniqid();
-
             $bundlePath = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().Storage::disk('bpositive')->putFileAs($dir.'/bundle', $file, $file->getClientOriginalName());
 
             if ($file->getMimeType() == 'application/zip' ) {
@@ -170,14 +169,14 @@ class FileUtils
                 $zip->open($bundlePath);
                 $zip->extractTo($dir.'/extracted');
                 $zip->close();
+                unset($zip);
+                //unlink($bundlePath);
             }
             else{
                 $phar = new \PharData($bundlePath);
                 $phar->extractTo($dir.'/extracted');
+                unset($phar);
             }
-
-            Storage::disk('bpositive')->deleteDirectory($dir);
-
 
             Storage::disk('bpositive')->makeDirectory($path.'/');
 
@@ -188,9 +187,13 @@ class FileUtils
                 $names[] = $info['filename'];
                 $tar = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/'.$info['filename'].'.tar';
 
+                if($update && file_exists($tar)){
+                    FileUtils::deleteDirectory($tar);
+                }
                 if($update && file_exists($tar.'.gz')){
                     FileUtils::deleteDirectory($tar.'.gz');
                 }
+
                 $pharTranscription = new \PharData($tar);
                 $pharTranscription->buildFromDirectory($dir.'/extracted', '/'.$info['filename'].'\//');
                 $pharTranscription->compress(\Phar::GZ);
@@ -200,11 +203,13 @@ class FileUtils
 
 
             FileUtils::deleteDirectory($dir);
+            Storage::disk('bpositive')->deleteDirectory($dir);
 
             return $names;
 
         } catch (\Exception $e) {
             FileUtils::deleteDirectory($dir);
+            Storage::disk('bpositive')->deleteDirectory($dir);
             //Storage::disk('bpositive')->deleteDirectory($path.'/');
             error_log($e->getMessage());
             throw new FileException($e->getMessage());
@@ -238,14 +243,20 @@ class FileUtils
                 $files['project'] = $name.'/project.conf';
 
                 FileUtils::checkFilesFromPath($dir.'/extracted', $files);
-
                 FileUtils::deleteDirectory($dir);
+                Storage::disk('bpositive')->deleteDirectory($dir);
                 return FALSE;
             }
             catch (FileException $fe){
                 $subdirs = glob($dir.'/extracted'.'/*', GLOB_ONLYDIR);
+                $names = [];
+                foreach ($subdirs as $subdir){
+                    $info = pathinfo($subdir);
+                    $names[] = $info['filename'];
+                }
                 FileUtils::deleteDirectory($dir);
-                return $subdirs;
+                Storage::disk('bpositive')->deleteDirectory($dir);
+                return $names;
             }
 
         } catch (\Exception $e) {
@@ -278,6 +289,7 @@ class FileUtils
         } catch (\Exception $e) {
             if(isset($phar)) {
                 $p = $phar->getPath();
+                unset($phar);
                 \Phar::unlinkArchive($p);
             }
             error_log($e->getMessage());

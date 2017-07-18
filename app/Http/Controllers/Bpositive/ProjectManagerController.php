@@ -74,7 +74,18 @@ class ProjectManagerController extends Controller
                 foreach ($request->file('files') as $file) {
                     if($file->isValid()) {
                         $names = array();
-                        if ($request->has('bundle') && $request->get('bundle') == 1) {
+                        try {
+                            $bundleNames = FileUtils::scanBundle($file);
+                        }
+                        catch (FileException $fe){
+                            $request->flash();
+                            return view('project.create')->withErrors([
+                                'Error checking if file is a bundle:' . $file->getClientOriginalName(),
+                                $fe->getMessage(),
+                            ]);
+                        }
+
+                        if ($bundleNames) {
                             try {
                                 $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $projectId);
                             }
@@ -252,6 +263,8 @@ class ProjectManagerController extends Controller
             'update' =>'boolean'
         ]);
 
+        $bundleNames = FALSE;
+
         //Check if files need to be overwritten
         if(!$request->has('update') && is_array($request->file('files'))){
             $updatedNames = [];
@@ -331,13 +344,28 @@ class ProjectManagerController extends Controller
             foreach ($request->file('files') as $file) {
                 if ($file->isValid()) {
                     $names = array();
-                    if ($request->has('bundle') && $request->get('bundle') == 1) {
+                    try {
+                        $bundleNames = FileUtils::scanBundle($file);
+                    }
+                    catch (FileException $fe){
+                        $request->flash();
+                        return redirect()->route('project_edit_form', [
+                            'id' => $request->get('id'),
+                            'uploadErrors' => [
+                                'Error checking if file is a bundle:' . $file->getClientOriginalName(),
+                                $fe->getMessage(),
+                            ]
+                        ]);
+                    }
+
+                    if ($bundleNames) {
                         try {
-                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $request->get('id', $request->has('update')));
+                            $bundleNames = FileUtils::storeBundleAs($file, 'files/' . $request->get('id'), $request->has('update'));
                         }
                         catch (FileException $fe){
                             DB::rollBack();
                             FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                            $request->flash();
                             return redirect()->route('project_edit_form', [
                                 'id' => $request->get('id'),
                                 'uploadErrors' => [
@@ -352,17 +380,18 @@ class ProjectManagerController extends Controller
                         try {
                             $path = FileUtils::storeAs($file, 'files/' . $request->get('id'), $request->has('update'));
                         }
-                        catch (FileException $fe){
-                                DB::rollBack();
-                                FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
-                                return redirect()->route('project_edit_form', [
-                                    'id' => $request->get('id'),
-                                    'uploadErrors' => [
-                                        'Error extracting project file:' . $file->getClientOriginalName(),
-                                        $fe->getMessage(),
-                                    ]
-                                ]);
-                            }
+                        catch (FileException $fe) {
+                            DB::rollBack();
+                            FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                            $request->flash();
+                            return redirect()->route('project_edit_form', [
+                                'id' => $request->get('id'),
+                                'uploadErrors' => [
+                                    'Error extracting project file:' . $file->getClientOriginalName(),
+                                    $fe->getMessage(),
+                                ]
+                            ]);
+                        }
                         if ($file->getMimeType() == 'application/zip') {
                             try {
                                 FileUtils::zipToTgz($path);
@@ -370,6 +399,7 @@ class ProjectManagerController extends Controller
                             catch (FileException $fe){
                                 DB::rollBack();
                                 FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                                $request->flash();
                                 return redirect()->route('project_edit_form', [
                                     'id' => $request->get('id'),
                                     'uploadErrors' => [
@@ -391,6 +421,7 @@ class ProjectManagerController extends Controller
                         } catch (FileException $fe) {
                             DB::rollBack();
                             FileUtils::deleteDirectory($file, 'files/' . $request->get('id'));
+                            $request->flash();
                             return redirect()->route('project_edit_form', [
                                 'id' => $request->get('id'),
                                 'uploadErrors' => [
