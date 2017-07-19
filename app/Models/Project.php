@@ -194,4 +194,15 @@ class Project
             ]);
 
     }
+
+    public static function owns($userId, $projectId){
+
+        $project = DB::table('users_projects')
+            ->where('userId', '=', $userId)
+            ->where('projectId', '=', $projectId)
+            ->first();
+
+        return !is_null($project);
+    }
+
 }

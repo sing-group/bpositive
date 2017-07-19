@@ -22,6 +22,7 @@
 
 namespace App\Providers;
 
+use App\Models\Project;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -50,16 +51,16 @@ class AuthServiceProvider extends ServiceProvider
 
         //
 
-        Gate::define('make-public', function ($user) {
-            return $user->role_id == self::ADMIN_ROLE;
+        Gate::define('make-public', function ($user, $projectId) {
+            return Project::owns($user->id, $projectId) || $user->role_id == self::ADMIN_ROLE;
         });
 
-        Gate::define('make-private', function ($user) {
-            return $user->role_id == self::ADMIN_ROLE;
+        Gate::define('make-private', function ($user, $projectId) {
+            return Project::owns($user->id, $projectId) || $user->role_id == self::ADMIN_ROLE;
         });
 
-        Gate::define('access-private', function ($user) {
-            return $user->role_id == self::ADMIN_ROLE;
+        Gate::define('access-private', function ($user, $projectId) {
+            return Project::owns($user->id, $projectId) || $user->role_id == self::ADMIN_ROLE;
         });
 
     }

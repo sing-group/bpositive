@@ -39,12 +39,13 @@
         <div class="project">
             <div class="project_name col-md-4">
                 <h1>{{$project->name}}</h1>
+                {!! (\App\Models\Project::owns(Auth::user()->id, $project->id) ? '<p>(You are the owner)</p>': '') !!}
                 @if ($project->public == 1)
                     <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
-                @elseif (Gate::allows('access-private'))
+                @elseif (Gate::allows('access-private', $project->id))
                     <h4>{{$project->code}}</h4>
                 @endif
-                @if ($project->public == 1 || Gate::allows('access-private'))
+                @if ($project->public == 1 || Gate::allows('access-private', $project->id))
                     <div class="form-group">
                         {{ Form::open(['url' => 'transcriptions', 'method' => 'get', 'id' => 'openForm']) }}
                         {{ Form::hidden('id', $project->id) }}
@@ -62,7 +63,7 @@
                     </div>
                 @endif
 
-                @if ($project->public == 0 && Gate::allows('make-public'))
+                @if ($project->public == 0 && Gate::allows('make-public', $project->id))
                     <div class="form-group">
                         {{ Form::open(['action' => 'Bpositive\ProjectController@makePublic', 'method' => 'post', 'id' => 'publicForm']) }}
                         {{ Form::hidden('id', $project->id) }}
@@ -91,7 +92,7 @@
 
                 @endif
 
-                @if ($project->public == 1 && Gate::allows('make-private'))
+                @if ($project->public == 1 && Gate::allows('make-private', $project->id))
                     <div class="form-group">
                         {{ Form::button('<span class="glyphicon glyphicon-lock"></span> Make private', ['type' => 'submit', 'class' => 'btn btn-warning btn-md btnMkPrivate', 'id' => 'btnMkPrivate'.$project->id]) }}
                     </div>

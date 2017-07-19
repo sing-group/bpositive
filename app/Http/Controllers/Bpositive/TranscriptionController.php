@@ -78,7 +78,7 @@ class TranscriptionController extends Controller
         $project = null;
         if($request->has('id')) {
             $project = Project::get($request->get('id'));
-            if($project == null && ($request->session()->get('allowPrivateAccessToId') == $request->get('id') || Gate::allows('access-private'))){
+            if($project == null && ($request->session()->get('allowPrivateAccessToId') == $request->get('id') || Gate::allows('access-private', $request->get('id')))){
                 $project = Project::getPrivate($request->get('id'));
             }
         }
@@ -114,7 +114,7 @@ class TranscriptionController extends Controller
         $project = Project::getByTranscription($request->get('id'), '1');
         if(!$project){
             $project = Project::getByTranscription($request->get('id'), '0');
-            if($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private')){
+            if($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private', $project->id)){
                 $transcription = new Transcription(Transcription::getPrivate($request->get('id')));
             }
         }
@@ -154,7 +154,7 @@ class TranscriptionController extends Controller
             $project = Project::getByTranscription($request->get('id'), '1');
             if(!$project){
                 $project = Project::getByTranscription($request->get('id'), '0');
-                if($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private')){
+                if($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private', $project->id)){
                     return response()->download(Transcription::getTgzPath($request->get('id'), '0'));
                 }
             }
@@ -188,7 +188,7 @@ class TranscriptionController extends Controller
 
         $project = null;
         if($request->has('id')) {
-            if($request->session()->get('allowPrivateAccessToId') == $request->get('id') || Gate::allows('access-private')){
+            if($request->session()->get('allowPrivateAccessToId') == $request->get('id') || Gate::allows('access-private', $request->get('id'))){
                 $project = Project::getPrivate($request->get('id'));
             }
             else {

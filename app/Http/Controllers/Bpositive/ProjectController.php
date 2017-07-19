@@ -69,14 +69,14 @@ class ProjectController extends Controller
 
         $project = null;
         if($request->get('state') === 'makePublic'){
-            if(Gate::denies('make-public')){
+            if(Gate::denies('make-public', $request->get('id'))){
                 return redirect()->route('projects', [
                     'errors' => 'Not Authorized'
                 ]);
             }
         }
         if($request->get('state') === 'makePrivate'){
-            if(Gate::denies('make-private')){
+            if(Gate::denies('make-private', $request->get('id'))){
                 return redirect()->route('projects', [
                     'errors' => 'Not Authorized'
                 ]);
@@ -95,15 +95,15 @@ class ProjectController extends Controller
 
     public function makePublic(Request $request){
 
-        if(Gate::denies('make-public')){
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        if(Gate::denies('make-public', $request->get('id'))){
             return redirect()->route('projects', [
                 'errors' => 'Not Authorized'
             ]);
         }
-
-        $this->validate($request, [
-            'id' => 'required|numeric'
-        ]);
 
         Project::setPublic($request->get('id'), 1);
 
@@ -112,16 +112,17 @@ class ProjectController extends Controller
 
     public function makePrivate(Request $request){
 
-        if(Gate::denies('make-private')){
-            return redirect()->route('projects', [
-                'errors' => 'Not Authorized'
-            ]);
-        }
-
         $this->validate($request, [
             'id' => 'required|numeric',
             'password' => 'required|string'
         ]);
+
+
+        if(Gate::denies('make-private', $request->get('id'))){
+            return redirect()->route('projects', [
+                'errors' => 'Not Authorized'
+            ]);
+        }
 
         Project::setPrivate($request->get('id'), $request->get('password'));
 
