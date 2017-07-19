@@ -50,6 +50,7 @@
                         <tr>
                             <th>Code</th>
                             <th>Name</th>
+                            <th>Owner</th>
                             <th>Creation Date</th>
                             <th>Public</th>
                             <th>Edit</th>
@@ -61,6 +62,7 @@
                             <tr>
                                 <td>{{$project->code}}</td>
                                 <td>{{$project->name}}</td>
+                                <td>{{(isset($project->email)?$project->email:'')}}</td>
                                 <td>{{$project->creationDate}}</td>
                                 <td>{{($project->public?'Yes':'No')}}</td>
                                 <td>

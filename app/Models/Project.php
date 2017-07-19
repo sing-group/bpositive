@@ -32,7 +32,9 @@ class Project
 
     public static function all(){
 
-        $projects = DB::table('project')
+        $projects = DB::table('project')->select(DB::raw('project.*, users.email'))
+            ->leftJoin('users_projects', 'project.id', '=', 'users_projects.projectId')
+            ->leftJoin('users', 'users.id', '=', 'users_projects.userId')
             ->where('deleted', '=', '0')
             ->get();
 
@@ -84,8 +86,9 @@ class Project
 
     public static function getAllByUser($id){
 
-        $projects = DB::table('project')
-            ->join('users_projects', 'project.id', '=', 'users_projects.projectId')
+        $projects = DB::table('project')->select(DB::raw('project.*, users.email'))
+            ->leftJoin('users_projects', 'project.id', '=', 'users_projects.projectId')
+            ->leftJoin('users', 'users.id', '=', 'users_projects.userId')
             ->where('project.deleted', '=', '0')
             ->where('users_projects.userId', '=', $id)
             ->get();
