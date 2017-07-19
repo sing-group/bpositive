@@ -38,7 +38,7 @@
             </div>
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/user/save') }}">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ ($user->id === Auth::user()->id ? url('/user/saveOwn') : url('/user/save') ) }}">
                         {{ Form::hidden('id', $user->id) }}
                         {{ csrf_field() }}
 

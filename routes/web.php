@@ -64,5 +64,7 @@ Route::get('/user/manage', 'Auth\UserController@all')->name('userManage');
 Route::post('/user/remove', 'Auth\UserController@remove')->name('userRemove');
 Route::post('/user/edit', 'Auth\UserController@edit')->name('userEdit');
 Route::get('/user/edit', 'Auth\UserController@edit');
+Route::post('/user/editOwn', 'Auth\UserController@editOwn')->name('userEditOwn');
 Route::post('/user/save', 'Auth\UserController@save')->name('userSave');
+Route::post('/user/saveOwn', 'Auth\UserController@saveOwn')->name('userSaveOwn');
 

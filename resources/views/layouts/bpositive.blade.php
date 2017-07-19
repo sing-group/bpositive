@@ -87,7 +87,7 @@
                                         Edit profile
                                     </a>
 
-                                    <form id="edit-form" action="{{ url('/user/edit') }}" method="POST" style="display: none;">
+                                    <form id="edit-form" action="{{ url('/user/editOwn') }}" method="POST" style="display: none;">
                                         {{ Form::hidden('id', Auth::user()->id) }}
                                         {{ csrf_field() }}
                                     </form>

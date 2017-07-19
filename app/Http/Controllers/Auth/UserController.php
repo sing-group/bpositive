@@ -47,7 +47,8 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('admin')->except('editOwn', 'saveOwn');
+        $this->middleware('auth')->only('editOwn', 'saveOwn');
     }
 
 
@@ -122,6 +123,51 @@ class UserController extends Controller
 
         return view('auth/manage', [
             'users' => User::all()
+        ]);
+    }
+
+    public function saveOwn(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3|max:255',
+            'email' => 'required|email|max:255',
+            'old-password' => 'required_with:password',
+            'password' => 'string|min:6|confirmed|required_with:old-password',
+        ]);
+
+        if($validator->fails()){
+            return view('auth/edit', [
+                'user' => User::findOrFail(Auth::user()->id)
+            ])->withErrors($validator);
+        }
+        $user = User::findOrFail(Auth::user()->id);
+
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
+
+        if($request->has('password')){
+            if(Hash::check($request->get('old-password'), $user->password)) {
+                $user->password = bcrypt($request->get('password'));
+            }
+            else{
+                $validator->errors()->add('old-password', 'The old password is not correct.');
+                return view('auth/edit', [
+                    'user' => User::findOrFail(Auth::user()->id)
+                ])->withErrors($validator);
+            }
+        }
+
+        $user->save();
+
+        return view('auth/edit', [
+            'user' => User::findOrFail(Auth::user()->id),
+            'results' => ['Profile updated successfully'],
+        ]);
+    }
+
+    public function editOwn(Request $request){
+        return view('auth/edit', [
+            'user' => User::findOrFail(Auth::user()->id)
         ]);
     }
 }
