@@ -39,7 +39,7 @@
         <div class="project">
             <div class="project_name col-md-4">
                 <h1>{{$project->name}}</h1>
-                {!! (\App\Models\Project::owns(Auth::user()->id, $project->id) ? '<p>(You are the owner)</p>': '') !!}
+                {!! (Auth::check() && \App\Models\Project::owns(Auth::user()->id, $project->id) ? '<p>(You are the owner)</p>': '') !!}
                 @if ($project->public == 1)
                     <h4><a href="transcriptions?code={{$project->code}}">{{$project->code}}</a></h4>
                 @elseif (Gate::allows('access-private', $project->id))
