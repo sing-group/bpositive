@@ -444,32 +444,22 @@ class ProjectManagerController extends Controller
                     throw new FileException("Upload of file '" . $file->getClientOriginalName() . "' invalid.");
                 }
             }
-            DB::commit();
-            $project = Project::getByAdmin($request->get('id'));
-
-            $results = [
-                'Project ' . $project->code . ' updated successfully',
-            ];
-            if(count($createdNames) > 0){
-                $results[]= 'Created ' . count($createdNames) . ' results: ' . implode(',', $createdNames);
-            }
-            if(count($updatedNames) > 0){
-                $results[]= 'Updated ' . count($updatedNames) . ' results: ' . implode(',', $updatedNames);
-            }
-            return redirect()->route('project_edit_form', [
-                'id' => $request->get('id'),
-                'results' => $results
-            ]);
         }
 
         DB::commit();
-
         $project = Project::getByAdmin($request->get('id'));
 
         $results = [
             'Project ' . $project->code . ' updated successfully',
         ];
-        return redirect()->route('project_manage', [
+        if(count($createdNames) > 0){
+            $results[]= 'Created ' . count($createdNames) . ' results: ' . implode(',', $createdNames);
+        }
+        if(count($updatedNames) > 0){
+            $results[]= 'Updated ' . count($updatedNames) . ' results: ' . implode(',', $updatedNames);
+        }
+        return redirect()->route('project_edit_form', [
+            'id' => $request->get('id'),
             'results' => $results
         ]);
     }
