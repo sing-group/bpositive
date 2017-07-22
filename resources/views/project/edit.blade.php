@@ -191,7 +191,7 @@
                             <th>Name</th>
                             <!--th>Description</th-->
                             <th>Creation Date</th>
-                            <th>View</th>
+                            <!--th>View</th-->
                             <th>Download</th>
                             <th>Analyzed</th>
                             <th>Positively Selected</th>
@@ -205,7 +205,7 @@
                                 <td>{{$transcription->name}}</td>
                                 <!--td>{{$transcription->description}}</td-->
                                 <td>{{$transcription->creationDate}}</td>
-                                <td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
+                                <!--td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td-->
                                 <td><a href="../download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
                                 <td>{{($transcription->analyzed?'Yes':'No')}}</td>
                                 <td>{{($transcription->positivelySelected?'Yes':'No')}}</td>
