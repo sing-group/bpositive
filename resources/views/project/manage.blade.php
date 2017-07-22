@@ -58,7 +58,7 @@
                     <tbody>
                     @foreach($projects as $project)
                         <tr>
-                            <td>{{$project->code}}</td>
+                            <td><a href="/transcriptions?id={{$project->id}}">{{$project->code}}</a></td>
                             <td>{{$project->name}}</td>
                             <td>{{(isset($project->email)?$project->email:'')}}</td>
                             <td>{{$project->creationDate}}</td>
