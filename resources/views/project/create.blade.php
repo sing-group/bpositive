@@ -25,81 +25,77 @@
 @extends('layouts.bpositive')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="page-header">
-                <div class="btn-toolbar pull-right">
-                    <div class="btn-group">
-                        <a class="btn btn-default" href="/project/manage">Back</a>
-                    </div>
+    <div class="project-content">
+        <div class="page-header">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="/project/manage">Back</a>
                 </div>
-                <h1>Create new project</h1>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/project/create') }}" enctype="multipart/form-data">
-                        {{ csrf_field() }}
+            <h1>Create new project</h1>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="form-horizontal" role="form" method="POST" action="{{ url('/project/create') }}" enctype="multipart/form-data">
+                    {{ csrf_field() }}
 
-                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <label for="name" class="col-md-4 control-label">Name</label>
+                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                        <label for="name" class="col-md-4 control-label">Name</label>
 
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus />
+                        <div class="col-md-6">
+                            <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus />
 
-                                @if ($errors->has('name'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('name') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                            @if ($errors->has('name'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </span>
+                            @endif
                         </div>
+                    </div>
 
-                        <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
-                            <label for="description" class="col-md-4 control-label">Description</label>
+                    <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
+                        <label for="description" class="col-md-4 control-label">Description</label>
 
-                            <div class="col-md-6">
-                                <textarea id="description" class="form-control" name="description" required autofocus>{{ old('description') }}</textarea>
+                        <div class="col-md-6">
+                            <textarea id="description" class="form-control" name="description" required autofocus>{{ old('description') }}</textarea>
 
-                                @if ($errors->has('description'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('description') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                            @if ($errors->has('description'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('description') }}</strong>
+                                </span>
+                            @endif
                         </div>
+                    </div>
 
-                        <div class="form-group{{ $errors->has('files') ? ' has-error' : '' }}">
-                            <label for="files" class="col-md-4 control-label">Files</label>
+                    <div class="form-group{{ $errors->has('files') ? ' has-error' : '' }}">
+                        <label for="files" class="col-md-4 control-label">Files</label>
 
-                            <div class="col-md-6">
-                                <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip, .zip, application/zip" autofocus multiple/>
+                        <div class="col-md-6">
+                            <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip, .zip, application/zip" autofocus multiple/>
 
-                                @if ($errors->has('files'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('files') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                            <span class="modalIcon" onclick="$('#modalInfo').modal('show');">
-                                <span class="glyphicon glyphicon-question-sign text-primary"></span>
-                            </span>
+                            @if ($errors->has('files'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('files') }}</strong>
+                                </span>
+                            @endif
                         </div>
+                        <span class="modalIcon" onclick="$('#modalInfo').modal('show');">
+                            <span class="glyphicon glyphicon-question-sign text-primary"></span>
+                        </span>
+                    </div>
 
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary"
-                                        data-toggle="modal" data-target="#modalProgressBar" data-backdrop="static" data-keyboard="false">
-                                    Create
-                                </button>
-                            </div>
+                    <div class="form-group">
+                        <div class="col-md-6 col-md-offset-4">
+                            <button type="submit" class="btn btn-primary"
+                                    data-toggle="modal" data-target="#modalProgressBar" data-backdrop="static" data-keyboard="false">
+                                Create
+                            </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
     @include('includes.progress')
     @include('includes.modalInfo', ['modalInfo' => 'Uploaded files can be ADOPS project files in ".zip" or ".tar.gz" format or a compressed file (".zip" or ".tar.gz") with the folders of the ADOPS projects inside in the first level.'])
-</div>
+    </div>
 @endsection

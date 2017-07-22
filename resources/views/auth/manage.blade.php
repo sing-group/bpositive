@@ -25,69 +25,65 @@
 @extends('layouts.bpositive')
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="page-header">
-                <div class="btn-toolbar pull-right">
-                    <div class="btn-group">
-                        <a class="btn btn-default" href="/">Back</a>
-                    </div>
+<div class="project-content">
+        <div class="page-header">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="/">Back</a>
                 </div>
-                <h1>Manage users</h1>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading clearfix">
-                    <h5 class="pull-left">Users</h5>
-                    {{ Form::open(['action' => 'Auth\RegisterController@showRegistrationForm', 'method' => 'get']) }}
-                    {{ csrf_field() }}
-                    {{ Form::button('New', ['type' => 'submit', 'class' => 'btn btn-primary pull-right']) }}
-                    {{ Form::close() }}
-                </div>
-                <div class="panel-body">
-                    <table class="table table-striped">
-                        <thead>
+            <h1>Manage users</h1>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h5 class="pull-left">Users</h5>
+                {{ Form::open(['action' => 'Auth\RegisterController@showRegistrationForm', 'method' => 'get']) }}
+                {{ csrf_field() }}
+                {{ Form::button('New', ['type' => 'submit', 'class' => 'btn btn-primary pull-right']) }}
+                {{ Form::close() }}
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Admin</th>
+                        <th>Edit</th>
+                        <th>Remove</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($users as $user)
                         <tr>
-                            <th>id</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Admin</th>
-                            <th>Edit</th>
-                            <th>Remove</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($users as $user)
-                            <tr>
-                                <td>{{$user->id}}</td>
-                                <td>{{$user->name}}</td>
-                                <td>{{$user->email}}</td>
-                                <td>{{($user->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE? 'Yes' : 'No')}}</td>
-                                <td>
-                                    {{ Form::open(['action' => 'Auth\UserController@edit', 'method' => 'post', 'class' => 'frmEdit']) }}
+                            <td>{{$user->id}}</td>
+                            <td>{{$user->name}}</td>
+                            <td>{{$user->email}}</td>
+                            <td>{{($user->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE? 'Yes' : 'No')}}</td>
+                            <td>
+                                {{ Form::open(['action' => 'Auth\UserController@edit', 'method' => 'post', 'class' => 'frmEdit']) }}
+                                {{ csrf_field() }}
+                                {{ Form::hidden('id', $user->id) }}
+                                {{ Form::button('<span class="glyphicon glyphicon-edit"></span>', ['type' => 'submit', 'class' => 'btn btn-info']) }}
+                                {{ Form::close() }}
+                            </td>
+                            <td>
+                                @if($user->id != Auth::user()->id)
+                                    {{ Form::open(['action' => 'Auth\UserController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
                                     {{ csrf_field() }}
                                     {{ Form::hidden('id', $user->id) }}
-                                    {{ Form::button('<span class="glyphicon glyphicon-edit"></span>', ['type' => 'submit', 'class' => 'btn btn-info']) }}
+                                    {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
                                     {{ Form::close() }}
-                                </td>
-                                <td>
-                                    @if($user->id != Auth::user()->id)
-                                        {{ Form::open(['action' => 'Auth\UserController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
-                                        {{ csrf_field() }}
-                                        {{ Form::hidden('id', $user->id) }}
-                                        {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
-                                        {{ Form::close() }}
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('endscripts')
