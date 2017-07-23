@@ -64,7 +64,7 @@
                             <td>{{$project->creationDate}}</td>
                             <td>{{($project->public?'Yes':'No')}}</td>
                             <td>
-                                {{ Form::open(['action' => 'Bpositive\ProjectManagerController@edit', 'method' => 'post', 'class' => 'frmEdit']) }}
+                                {{ Form::open(['action' => 'Bpositive\ProjectManagerController@edit', 'method' => 'get', 'class' => 'frmEdit']) }}
                                 {{ csrf_field() }}
                                 {{ Form::hidden('id', $project->id) }}
                                 {{ Form::button('<span class="glyphicon glyphicon-edit"></span>', ['type' => 'submit', 'class' => 'btn btn-info']) }}

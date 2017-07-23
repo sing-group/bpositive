@@ -31,6 +31,7 @@ use App\Utils\FileUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 
@@ -264,7 +265,7 @@ class ProjectManagerController extends Controller
     }
 
     public function save(Request $request){
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'id' => 'required|numeric',
             'name' => 'required|string',
             'description' => 'required|string',
@@ -272,6 +273,14 @@ class ProjectManagerController extends Controller
             'files.*' => 'file|mimetypes:application/zip,application/x-gzip',
             'update' =>'boolean'
         ]);
+
+
+        if($validator->fails()){
+            return redirect()->route('project_edit_form', [
+                'id' => $request->get('id'),
+                'uploadErrors' => $validator->errors()->all(),
+            ]);
+        }
 
         $bundleNames = FALSE;
 

@@ -44,7 +44,7 @@
                         <label for="name" class="col-md-4 control-label">Name</label>
 
                         <div class="col-md-6">
-                            <input id="name" type="text" class="form-control" name="name" value="{{ (old('name') ? old('name') : $project->name )}}" required autofocus>
+                            <input id="name" type="text" class="form-control" name="name" value="{{ (old('name') ? old('name') : $project->name )}}" autofocus>
 
                             @if ($errors->has('name'))
                                 <span class="help-block">
@@ -58,7 +58,7 @@
                         <label for="description" class="col-md-4 control-label">Description</label>
 
                         <div class="col-md-6">
-                            <textarea id="description" class="form-control" name="description" required autofocus>{{ (old('description') ? old('description') : $project->description) }}</textarea>
+                            <textarea id="description" class="form-control" name="description" autofocus>{{ (old('description') ? old('description') : $project->description) }}</textarea>
 
                             @if ($errors->has('description'))
                                 <span class="help-block">
@@ -191,7 +191,7 @@
                             <th>Name</th>
                             <!--th>Description</th-->
                             <th>Creation Date</th>
-                            <!--th>View</th-->
+                            <th>View</th>
                             <th>Download</th>
                             <th>Analyzed</th>
                             <th>Positively Selected</th>
@@ -205,7 +205,7 @@
                                 <td>{{$transcription->name}}</td>
                                 <!--td>{{$transcription->description}}</td-->
                                 <td>{{$transcription->creationDate}}</td>
-                                <!--td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td-->
+                                <td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
                                 <td><a href="../download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
                                 <td>{{($transcription->analyzed?'Yes':'No')}}</td>
                                 <td>{{($transcription->positivelySelected?'Yes':'No')}}</td>
