@@ -68,3 +68,5 @@ Route::post('/user/editOwn', 'Auth\UserController@editOwn')->name('userEditOwn')
 Route::post('/user/save', 'Auth\UserController@save')->name('userSave');
 Route::post('/user/saveOwn', 'Auth\UserController@saveOwn')->name('userSaveOwn');
 
+Route::get('/info/submit', 'Bpositive\InfoController@showInfoSubmit')->name('info_submit');
+

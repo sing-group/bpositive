@@ -71,6 +71,7 @@
                     @endif
                     <!-- Authentication Links -->
                     @if (Auth::guest())
+                        <li><a href="{{ url('/info/submit') }}">How to submit a Dataset?</a></li>
                         <li><a href="{{ url('/login') }}">Login</a></li>
                     @else
                         <li><a href="{{ url('/project/manage') }}">Manage Projects</a></li>
