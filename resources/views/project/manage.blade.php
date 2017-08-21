@@ -32,7 +32,7 @@
                     <a class="btn btn-default" href="/">Back</a>
                 </div>
             </div>
-            <h1>Manage projects</h1>
+            <h1>Manage Datasets</h1>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading clearfix">
@@ -89,7 +89,7 @@
 @section('endscripts')
     <script type="application/javascript">
         $('.frmDelete').submit(function () {
-            var res = confirm('Do you want to delete project?');
+            var res = confirm('Do you want to delete Dataset?');
             return res;
         });
     </script>

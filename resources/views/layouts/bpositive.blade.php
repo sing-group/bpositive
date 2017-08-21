@@ -74,7 +74,7 @@
                         <li><a href="{{ url('/info/submit') }}">How to submit a Dataset?</a></li>
                         <li><a href="{{ url('/login') }}">Login</a></li>
                     @else
-                        <li><a href="{{ url('/project/manage') }}">Manage Projects</a></li>
+                        <li><a href="{{ url('/project/manage') }}">Manage Datasets</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 {{ Auth::user()->name }} <span class="caret"></span>

@@ -32,7 +32,7 @@
                     <a class="btn btn-default" href="/project/manage">Back</a>
                 </div>
             </div>
-            <h1>Create new project</h1>
+            <h1>Create new Dataset</h1>
         </div>
         <div class="panel panel-default">
             <div class="panel-body">

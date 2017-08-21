@@ -282,13 +282,15 @@ class ProjectManagerController extends Controller
             ]);
         }
 
+        $project = Project::getByAdmin($request->get('id'));
+
         $bundleNames = FALSE;
 
         //Check if files need to be overwritten
         $updatedNames = [];
         $createdNames = [];
 
-        if(is_array($request->file('files'))){
+        if(!$project->public && is_array($request->file('files'))){
 
             foreach ($request->file('files') as $file) {
                 if ($file->isValid()) {
@@ -356,7 +358,7 @@ class ProjectManagerController extends Controller
 
         Project::save($request->get('id'), $request->get('name'), $request->get('description'));
 
-        if(is_array($request->file('files'))) {
+        if(!$project->public && is_array($request->file('files'))) {
             foreach ($request->file('files') as $file) {
                 if ($file->isValid()) {
                     $names = array();
@@ -456,7 +458,7 @@ class ProjectManagerController extends Controller
         }
 
         DB::commit();
-        $project = Project::getByAdmin($request->get('id'));
+
 
         $results = [
             'Project ' . $project->code . ' updated successfully',

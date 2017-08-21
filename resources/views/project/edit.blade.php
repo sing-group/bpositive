@@ -32,7 +32,7 @@
                     <a class="btn btn-default" href="/project/manage">Back</a>
                 </div>
             </div>
-            <h1>Edit project</h1>
+            <h1>Edit Dataset</h1>
         </div>
         <div class="panel panel-default">
             <div class="panel-body">
@@ -54,7 +54,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                    <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
                         <label for="description" class="col-md-4 control-label">Description</label>
 
                         <div class="col-md-6">
@@ -68,39 +68,49 @@
                         </div>
                     </div>
 
-                    <div class="form-group{{ $errors->has('files') ? ' has-error' : '' }}">
-                        <label for="files" class="col-md-4 control-label">Add files</label>
+                    @if(!$project->public)
+                        <div class="form-group{{ $errors->has('files') ? ' has-error' : '' }}">
+                            <label for="files" class="col-md-4 control-label">Add files</label>
 
-                        <div class="col-md-6">
-                            <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip, .zip, application/zip" autofocus multiple/>
+                            <div class="col-md-6">
+                                <input id="files" type="file" class="form-control" name="files[]" accept=".tar.gz, application/tar+gzip, .zip, application/zip" autofocus multiple/>
 
-                            @if ($errors->has('files'))
+                                @if ($errors->has('files'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('files') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                            <span class="modalIcon" onclick="$('#modalInfo').modal('show');">
+                                <span class="glyphicon glyphicon-question-sign text-primary"></span>
+                            </span>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('update') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label"></label>
+                            <div class="col-md-6">
+                                <label for="update" class="form-check-label control-label">
+                                    <input name="update" type="checkbox" value="1">
+                                    Update any existing results with the same name
+                                </label>
+                            </div>
+                            @if ($errors->has('update'))
                                 <span class="help-block">
-                                    <strong>{{ $errors->first('files') }}</strong>
+                                    <strong>{{ $errors->first('update') }}</strong>
                                 </span>
                             @endif
+
                         </div>
-                        <span class="modalIcon" onclick="$('#modalInfo').modal('show');">
-                            <span class="glyphicon glyphicon-question-sign text-primary"></span>
-                        </span>
-                    </div>
-
-                    <div class="form-group{{ $errors->has('update') ? ' has-error' : '' }}">
-                        <label class="col-md-4 control-label"></label>
-                        <div class="col-md-6">
-                            <label for="update" class="form-check-label control-label">
-                                <input name="update" type="checkbox" value="1">
-                                Update any existing results with the same name
-                            </label>
+                    @else
+                        <div class="form-group{{ $errors->has('update') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label"></label>
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    Project edition is disabled when dataset is public
+                                </div>
+                            </div>
                         </div>
-                        @if ($errors->has('update'))
-                            <span class="help-block">
-                                <strong>{{ $errors->first('update') }}</strong>
-                            </span>
-                        @endif
-
-                    </div>
-
+                    @endif
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-4">
                             <button type="submit" class="btn btn-primary"
@@ -195,7 +205,9 @@
                             <th>Download</th>
                             <th>Analyzed</th>
                             <th>Positively Selected</th>
-                            <th>Delete</th>
+                            @if(!$project->public)
+                                <th>Delete</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
@@ -209,13 +221,15 @@
                                 <td><a href="../download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
                                 <td>{{($transcription->analyzed?'Yes':'No')}}</td>
                                 <td>{{($transcription->positivelySelected?'Yes':'No')}}</td>
-                                <td>
-                                    {{ Form::open(['action' => 'Bpositive\TranscriptionController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
-                                    {{ csrf_field() }}
-                                    <input type="hidden" name="id" value="{{$transcription->id}}" />
-                                    {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
-                                    {{ Form::close() }}
-                                </td>
+                                @if(!$project->public)
+                                    <td>
+                                        {{ Form::open(['action' => 'Bpositive\TranscriptionController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="id" value="{{$transcription->id}}" />
+                                        {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
+                                        {{ Form::close() }}
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                         </tbody>
@@ -266,7 +280,7 @@
             })
         });
         $('.frmDelete').submit(function () {
-            var res = confirm('Do you want to delete transcription?');
+            var res = confirm('Do you want to delete project?');
             return res;
         });
     </script>
