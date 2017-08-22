@@ -274,6 +274,15 @@ class ProjectManagerController extends Controller
             'update' =>'boolean'
         ]);
 
+        $project = Project::getByAdmin($request->get('id'));
+
+        if(Auth::user()->role_id != AuthServiceProvider::ADMIN_ROLE
+            && $project->public) {
+            return redirect()->route('project_edit_form', [
+                'id' => $request->get('id'),
+                'uploadErrors' => ["You are not allowed to edit this dataset"],
+            ]);
+        }
 
         if($validator->fails()){
             return redirect()->route('project_edit_form', [
@@ -282,7 +291,7 @@ class ProjectManagerController extends Controller
             ]);
         }
 
-        $project = Project::getByAdmin($request->get('id'));
+
 
         $bundleNames = FALSE;
 
@@ -356,7 +365,10 @@ class ProjectManagerController extends Controller
 
         DB::beginTransaction();
 
-        Project::save($request->get('id'), $request->get('name'), $request->get('description'));
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE
+                || (!$project->public && Project::owns(Auth::user()->user_id, $request->get('id')))) {
+            Project::save($request->get('id'), $request->get('name'), $request->get('description'));
+        }
 
         if(!$project->public && is_array($request->file('files'))) {
             foreach ($request->file('files') as $file) {
@@ -484,6 +496,13 @@ class ProjectManagerController extends Controller
             Project::delete($request->get('id'));
         }
         else{
+            $project = Project::getByAdmin($request->get('id'));
+            if($project->public) {
+                return redirect()->route('project_manage', [
+                    'id' => $request->get('id'),
+                    'results' => ["You are not allowed to delete this dataset"],
+                ]);
+            }
             Project::deleteByUser($request->get('id'), Auth::user()->id );
         }
 

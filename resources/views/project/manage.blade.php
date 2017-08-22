@@ -63,20 +63,27 @@
                             <td>{{(isset($project->email)?$project->email:'')}}</td>
                             <td>{{$project->creationDate}}</td>
                             <td>{{($project->public?'Yes':'No')}}</td>
-                            <td>
-                                {{ Form::open(['action' => 'Bpositive\ProjectManagerController@edit', 'method' => 'get', 'class' => 'frmEdit']) }}
-                                {{ csrf_field() }}
-                                {{ Form::hidden('id', $project->id) }}
-                                {{ Form::button('<span class="glyphicon glyphicon-edit"></span>', ['type' => 'submit', 'class' => 'btn btn-info']) }}
-                                {{ Form::close() }}
-                            </td>
-                            <td>
-                                {{ Form::open(['action' => 'Bpositive\ProjectManagerController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
-                                {{ csrf_field() }}
-                                {{ Form::hidden('id', $project->id) }}
-                                {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
-                                {{ Form::close() }}
-                            </td>
+                            @if(!$project->public || ($project->public && Auth::check() && Auth::user()->role_id == \App\Providers\AuthServiceProvider::ADMIN_ROLE))
+                                <td>
+                                    {{ Form::open(['action' => 'Bpositive\ProjectManagerController@edit', 'method' => 'get', 'class' => 'frmEdit']) }}
+                                    {{ csrf_field() }}
+                                    {{ Form::hidden('id', $project->id) }}
+                                    {{ Form::button('<span class="glyphicon glyphicon-edit"></span>', ['type' => 'submit', 'class' => 'btn btn-info']) }}
+                                    {{ Form::close() }}
+                                </td>
+                                <td>
+                                    {{ Form::open(['action' => 'Bpositive\ProjectManagerController@remove', 'method' => 'post', 'class' => 'frmDelete']) }}
+                                    {{ csrf_field() }}
+                                    {{ Form::hidden('id', $project->id) }}
+                                    {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
+                                    {{ Form::close() }}
+                                </td>
+                            @else
+                                <td colspan="2">
+                                    Public Datasets can't be modified
+                                </td>
+
+                            @endif
                         </tr>
                     @endforeach
                     </tbody>
