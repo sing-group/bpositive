@@ -56,7 +56,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('make-private', function ($user, $projectId) {
-            return Project::owns($user->id, $projectId) || $user->role_id == self::ADMIN_ROLE;
+            return $user->role_id == self::ADMIN_ROLE;
         });
 
         Gate::define('access-private', function ($user, $projectId) {
