@@ -71,13 +71,13 @@ class Transcription
                         if($queryString == ''){
                             $queryString = '.';
                         }
-                        $query->whereRaw('(transcription.name REGEXP \''.$queryString.'\')');
+                        $query->whereRaw('((transcription.name REGEXP \''.$queryString.'\') OR (transcription.experiment REGEXP \''.$queryString.'\'))');
                         break;
                     case 'exact':
-                        $query->whereRaw('(transcription.name = \''.$queryString.'\')');
+                        $query->whereRaw('((transcription.name = \''.$queryString.'\') OR (transcription.experiment = \''.$queryString.'\'))');
                         break;
                     default:
-                        $query->whereRaw('(transcription.name LIKE \'%'.$queryString.'%\')');
+                        $query->whereRaw('((transcription.name LIKE \'%'.$queryString.'%\') OR (transcription.experiment LIKE \'%'.$queryString.'%\'))');
                         break;
                 }
                 return $query;
