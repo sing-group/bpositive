@@ -62,7 +62,7 @@ class TranscriptionController extends Controller
             'query' => 'string',
             'page' => 'numeric',
             'pagesize' => 'numeric',
-            'orderBy' => Rule::in(['name', 'description', 'analyzed', 'positivelySelected']),
+            'orderBy' => Rule::in(['name', 'description', 'experiment', 'analyzed', 'positivelySelected']),
             'orderType' => Rule::in(['asc', 'desc']),
             'filters.*' => Rule::in(['pss', 'analyzed', 'notAnalyzed', 'all']),
             'searchType' => Rule::in(['contains', 'regexp', 'exact']),

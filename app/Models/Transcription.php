@@ -106,6 +106,9 @@ class Transcription
                         $query->orderBy('analyzed', $orderType);
                         $query->orderBy('positivelySelected', $orderType);
                         break;
+                    case 'experiment':
+                        $query->orderBy('experiment', $orderType);
+                        break;
                     default:
                         $query->orderBy($orderBy, $orderType);
                         break;
