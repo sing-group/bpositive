@@ -44,7 +44,7 @@
               <a class="btn btn-default" href="{{URL::previous()}}">Back</a>
             </div>
           </div>
-          <h1>{{$transcription->name}}</h1>
+          <h1>{{$transcription->name}} - {{$transcription->experiment}}</h1>
         </div>
 
         <ul class="nav nav-tabs" role="tablist" id="topTabs">

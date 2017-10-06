@@ -199,7 +199,7 @@
                         <tr>
                             <th>id</th>
                             <th>Name</th>
-                            <!--th>Description</th-->
+                            <th>Experiment</th>
                             <th>Creation Date</th>
                             <th>View</th>
                             <th>Download</th>
@@ -215,7 +215,7 @@
                             <tr>
                                 <td>{{$transcription->id}}</td>
                                 <td>{{$transcription->name}}</td>
-                                <!--td>{{$transcription->description}}</td-->
+                                <td>{{$transcription->experiment}}</td>
                                 <td>{{$transcription->creationDate}}</td>
                                 <td><a href="../transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
                                 <td><a href="../download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>

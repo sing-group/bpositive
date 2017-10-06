@@ -130,6 +130,15 @@
                             @endif
                         </a>
                     </th>
+                    <th>Experiment
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'experiment', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
+                            @if($orderBy === 'experiment')
+                                <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
+                            @else
+                                <i class="fa fa-sort" aria-hidden="true"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th>Result
                         <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'analyzed', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
                             @if($orderBy === 'analyzed')
@@ -146,6 +155,7 @@
                 @foreach($transcriptions as $transcription)
                     <tr>
                         <td>{{$transcription->name}}</td>
+                        <td>{{$transcription->experiment}}</td>
                         <td>
                             @if($transcription->analyzed == 0)
                                 <span>Not Analyzed</span>
@@ -169,6 +179,15 @@
                     <th>Name
                         <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'name', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
                             @if($orderBy === 'name')
+                                <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
+                            @else
+                                <i class="fa fa-sort" aria-hidden="true"></i>
+                            @endif
+                        </a>
+                    </th>
+                    <th>Experiment
+                        <a href="{{route('transcriptions', ['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => 'experiment', 'orderType' => ($orderType === 'asc'? 'desc' : 'asc'), 'filters' => $filters])}}">
+                            @if($orderBy === 'experiment')
                                 <i class="fa fa-sort-alpha-{{($orderType === 'asc'? 'asc' : 'desc')}}" aria-hidden="true"></i>
                             @else
                                 <i class="fa fa-sort" aria-hidden="true"></i>
