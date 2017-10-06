@@ -336,24 +336,36 @@ class FileUtils
         }
 
 
+        $tar = str_replace('.zip', '.tar', Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
         $tgz = str_replace('.zip', '.tar.gz', Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
 
         if(file_exists($tgz)){
             FileUtils::deleteDirectory($tgz);
         }
         try {
+            $dir = '/tmp/'.uniqid();
+            $zip = new \ZipArchive();
+            $zip->open(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
+            $zip->extractTo($dir.'/extracted');
+            $zip->close();
 
-            $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$pathToReadZip);
-            $phar->convertToData(\Phar::TAR, \Phar::GZ);
+            $phar = new \PharData($tar);
+            $phar->buildFromDirectory($dir.'/extracted');
+            $phar->compress(\Phar::GZ);
 
             Storage::disk('bpositive')->delete($pathToReadZip);
-            return $phar->getMetadata();
+            $metadata = $phar->getMetadata();
+            unset($phar);
+            \Phar::unlinkArchive($tar);
+            FileUtils::deleteDirectory($dir);
+            return $metadata;
 
         } catch (\Exception $e) {
             if(isset($phar)) {
                 $p = $phar->getPath();
                 unset($phar);
                 \Phar::unlinkArchive($p);
+                FileUtils::deleteDirectory($dir);
             }
             error_log($e->getMessage());
             throw new FileException($e->getMessage());
