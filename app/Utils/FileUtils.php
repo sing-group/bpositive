@@ -33,8 +33,8 @@ class FileUtils
     public static function readFileFromTgz($pathToTgz, $pathToFile) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
-            error_log('File does not exist');
-            throw new \Exception('File does not exist.');
+            error_log('File does not exist' . $pathToTgz);
+            throw new \Exception('File does not exist.' . $pathToTgz);
         }
 
         try {
@@ -89,8 +89,8 @@ class FileUtils
     public static function checkFilesFromTgz($pathToTgz, $mapOfFiles) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
-            error_log('File does not exist');
-            throw new \Exception('File does not exist.');
+            error_log('File does not exist' . $pathToTgz);
+            throw new \Exception('File does not exist.' . $pathToTgz);
         }
 
         try {
@@ -118,6 +118,65 @@ class FileUtils
         FileUtils::deleteDirectory($dir);
 
         return TRUE;
+    }
+
+    public static function scanExperiments($pathToTgz) {
+
+        if (!Storage::disk('bpositive')->exists($pathToTgz)) {
+            error_log('File does not exist');
+            throw new \Exception('File does not exist.');
+        }
+
+        $name = str_replace('.tar.gz', '', basename($pathToTgz));
+        try {
+            $dir = '/tmp/'.uniqid();
+
+            $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
+            $phar->extractTo($dir); // extract all files
+            FileUtils::deleteFile($pathToTgz);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            throw new FileException($e->getMessage());
+        }
+
+        //Check subdirectories
+        $experiments = glob($dir.'/*/*', GLOB_ONLYDIR);
+        $experiments = array_map('basename', $experiments);
+
+        if(count($experiments) == 0){
+            throw new FileException('The file does not have any experiments: ' . $pathToTgz);
+        }
+
+        try {
+            error_log(print_r($experiments, true));
+            foreach ($experiments as $experiment){
+                $tar = str_replace('.tar.gz', '-'.$experiment.'.tar', $pathToTgz);
+
+                if(file_exists(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$tar)){
+                    FileUtils::deleteFile($tar);
+                }
+                if(file_exists(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().$tar.'.gz')){
+                    FileUtils::deleteFile($tar.'.gz');
+                }
+
+                $ePhar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
+                $ePhar->buildFromDirectory($dir, '/'.$name.'\/'.$experiment.'.*/');
+                $ePhar->addFile($dir.'/'.$name.'/input.fasta', $name.'/input.fasta');
+                $ePhar->addFile($dir.'/'.$name.'/names.txt', $name.'/names.txt');
+                $ePhar->addFile($dir.'/'.$name.'/project.conf', $name.'/project.conf');
+                $ePhar->compress(\Phar::GZ);
+                unset($ePhar);
+                FileUtils::deleteFile($tar);
+            }
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            FileUtils::deleteFile($tar);
+            throw new FileException($e->getMessage()."@@".$dir."@@".$experiment."@@".$pathToTgz."@@".$tar."##".Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
+        }
+
+        FileUtils::deleteDirectory($dir);
+
+        return $experiments;
     }
 
     public static function checkFilesFromPath($dir, $mapOfFiles) {
@@ -184,7 +243,6 @@ class FileUtils
             $names = array();
             foreach ($subdirs as $subdir){
                 $info = pathinfo($subdir);
-                $names[] = $info['filename'];
                 $tar = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $path.'/'.$info['filename'].'.tar';
 
                 if($update && file_exists($tar)){
@@ -199,6 +257,11 @@ class FileUtils
                 $pharTranscription->compress(\Phar::GZ);
                 unset($pharTranscription);
                 \Phar::unlinkArchive($tar);
+
+                $experiments = FileUtils::scanExperiments($tar.'.gz');
+                foreach ($experiments as $experiment){
+                    $names[] = ['name' => $info['filename'], 'experiment' => $experiment];
+                }
             }
 
 

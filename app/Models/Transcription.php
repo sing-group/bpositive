@@ -41,6 +41,7 @@ class Transcription
     public $creationDate;
     public $analyzed;
     public $positivelySelected;
+    public $experiment;
 
     function __construct($src){
         $this->id = $src->id;
@@ -53,7 +54,7 @@ class Transcription
         $this->creationDate = $src->creationDate;
         $this->analyzed = $src->analyzed;
         $this->positivelySelected = $src->positivelySelected;
-
+        $this->experiment = $src->experiment;
     }
 
     public static function all($id, $queryString = '', $filters, $searchType, $pagesize = 10, $orderBy = 'name', $orderType = 'asc'){
@@ -199,7 +200,7 @@ class Transcription
 
     public function getScores(){
 
-        $scoresFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.score_ascii');
+        $scoresFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/aligned.score_ascii');
         preg_match_all('/c[o-]n?\s+([0-9]|-)+/', $scoresFile, $scores);
         $scores = preg_replace('/c[o-]n?\s+/', '', $scores[0]);
         $scores = implode($scores);
@@ -208,8 +209,8 @@ class Transcription
 
     public function getConfidences(){
 
-        $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/aligned.prot.fasta'));
-        $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/allfiles/codeml/input.fasta.fasta.out.sum'));
+        $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/aligned.prot.fasta'));
+        $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'));
 
         return $confidences;
     }
@@ -247,7 +248,7 @@ class Transcription
     public function getNewicks(){
         $newicks = array();
 
-        $file_contents = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/ClustalW2/tree.con');
+        $file_contents = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/tree.con');
 
         $trees = array();
         preg_match_all('/(tree con_50_majrule = \(.+\)\;)/', $file_contents, $trees);
@@ -276,7 +277,7 @@ class Transcription
 
     public function getPlainTextFiles(){
         $files = array();
-        $basePath = $this->name.'/ClustalW2/';
+        $basePath = $this->name.'/'.$this->experiment.'/';
 
         $files['notes'] = $basePath.'notes.txt';
         $files['log'] = $basePath.'output.log';
@@ -303,9 +304,9 @@ class Transcription
         return $files_contents;
     }
 
-    public static function create($projectId, $name)
+    public static function create($projectId, $name, $experiment)
     {
-        $result = Transcription::validateFile($projectId, $name);
+        $result = Transcription::validateFile($projectId, $name, $experiment);
 
         if ($result->valid) {
             $transcription = DB::table('transcription')
@@ -313,30 +314,29 @@ class Transcription
                     'projectId' => $projectId,
                     'name' => $name,
                     'description' => '',
-                    'linkZip' => $name,
-                    'linkPdf' => $name,
+                    'linkZip' => $name.'-'.$experiment,
+                    'linkPdf' => $name.'-'.$experiment,
                     'deleted' => 0,
                     'analyzed' => $result->analyzed,
                     'positivelySelected' => $result->positivelySelected,
+                    'experiment' => $experiment
                 ]);
             return $transcription;
         } else {
-            throw new FileException("File '" . $name . "' is not a valid file: " . $result->message);
+            throw new FileException("File '" . $name . "', experiment '".$result->experiment."'' is not a valid file: " . $result->message);
         }
     }
 
-    public static function createIfNotExists($projectId, $name)
+    public static function createIfNotExists($projectId, $name, $experiment)
     {
-        $transcription = Transcription::all($projectId, $name, '', 'exact' );
-        if($transcription->total() === 0){
-            Transcription::create($projectId, $name);
+        $transcriptions = Transcription::all($projectId, $name, '', 'exact' );
+
+        foreach ($transcriptions as $transcription){
+            if($transcription->experiment == $experiment){
+                return $transcription->id;
+            }
         }
-        else if($transcription->total() > 1){
-            throw new FileException("There are duplicated results, please delete them before uploading any more.");
-        }
-        else {
-            return $transcription[0]->id;
-        }
+        Transcription::create($projectId, $name, $experiment);
     }
 
     public static function delete($id){
@@ -364,7 +364,7 @@ class Transcription
 
     }
 
-    public static function validateFile($projectId, $name){
+    public static function validateFile($projectId, $name, $experiment){
         $result = new ValidationResult();
 
         try {
@@ -373,7 +373,7 @@ class Transcription
             $files['names'] = $name.'/names.txt';
             $files['project'] = $name.'/project.conf';
 
-            FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '.tar.gz', $files);
+            FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
 
             $result->valid = true;
         }
@@ -385,7 +385,7 @@ class Transcription
 
         try{
             $files = array();
-            $basePath = $name.'/ClustalW2/';
+            $basePath = $name.'/'.$experiment.'/';
             $files['notes'] = $basePath.'notes.txt';
             $files['log'] = $basePath.'output.log';
             $files['alnFile'] = $basePath.'aligned.prot.aln';
@@ -399,7 +399,7 @@ class Transcription
             $files['score'] = $basePath.'aligned.score_ascii';
             $files['confidencesSum'] = $basePath.'allfiles/codeml/input.fasta.fasta.out.sum';
 
-            FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '.tar.gz', $files);
+            FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
 
             $result->analyzed = true;
         }
@@ -411,8 +411,8 @@ class Transcription
 
 
         try{
-            $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name.'.tar.gz', $name.'/ClustalW2/aligned.prot.fasta'));
-            $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name.'.tar.gz', $name.'/ClustalW2/allfiles/codeml/input.fasta.fasta.out.sum'));
+            $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/aligned.prot.fasta'));
+            $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'));
             if($confidences->getNumModels() > 0){
                 $result->positivelySelected = true;
             }

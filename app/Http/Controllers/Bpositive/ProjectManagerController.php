@@ -134,12 +134,16 @@ class ProjectManagerController extends Controller
                             else{
                                 $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
                             }
-                            array_push($names, $name);
+                            $experiments = FileUtils::scanExperiments('files/' . $projectId . '/' . $name . '.tar.gz');
+
+                            foreach ($experiments as $experiment) {
+                                array_push($names, ['name' => $name, 'experiment' => $experiment]);
+                            }
                         }
                         $createdNames = array_merge($createdNames, $names);
                         foreach ($names as $transcriptionName){
                             try {
-                                Transcription::create($projectId, $transcriptionName);
+                                Transcription::create($projectId, $transcriptionName['name'], $transcriptionName['experiment']);
                             } catch (FileException $fe) {
                                 DB::rollBack();
                                 $request->flash();
@@ -442,11 +446,15 @@ class ProjectManagerController extends Controller
                         } else {
                             $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
                         }
-                        array_push($names, $name);
+                        $experiments = FileUtils::scanExperiments('files/' . $request->get('id') . '/' . $name . '.tar.gz');
+
+                        foreach ($experiments as $experiment) {
+                            array_push($names, ['name' => $name, 'experiment' => $experiment]);
+                        }
                     }
                     foreach ($names as $transcriptionName) {
                         try {
-                            Transcription::createIfNotExists($request->get('id'), $transcriptionName);
+                            Transcription::createIfNotExists($request->get('id'), $transcriptionName['name'], $transcriptionName['experiment']);
 
                         } catch (FileException $fe) {
                             DB::rollBack();
