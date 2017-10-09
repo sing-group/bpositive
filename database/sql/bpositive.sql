@@ -22,6 +22,7 @@ CREATE TABLE `project` (
 CREATE TABLE `transcription` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(25) NOT NULL,
+  `experiment` VARCHAR(25) NOT NULL DEFAULT 'ClustalW2',
   `description` text NOT NULL,
   `linkZip` varchar(100) NOT NULL,
   `linkPdf` varchar(100) NOT NULL,
