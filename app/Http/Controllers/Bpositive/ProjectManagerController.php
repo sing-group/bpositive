@@ -101,7 +101,13 @@ class ProjectManagerController extends Controller
                                     $fe->getMessage(),
                                 ]);
                             }
-                            $names = array_merge($names, $bundleNames);
+
+                            foreach ($bundleNames as $bundleName){
+                                $experiments = FileUtils::scanExperiments('files/' . $projectId . '/' . $bundleName . '.tar.gz');
+                                foreach ($experiments as $experiment) {
+                                    array_push($names, ['name' => $bundleName, 'experiment' => $experiment]);
+                                }
+                            }
 
                         } else {
                             try {
@@ -140,8 +146,8 @@ class ProjectManagerController extends Controller
                                 array_push($names, ['name' => $name, 'experiment' => $experiment]);
                             }
                         }
-                        $createdNames = array_merge($createdNames, $names);
                         foreach ($names as $transcriptionName){
+                            $createdNames[] = $transcriptionName['name'];
                             try {
                                 Transcription::create($projectId, $transcriptionName['name'], $transcriptionName['experiment']);
                             } catch (FileException $fe) {
@@ -408,7 +414,13 @@ class ProjectManagerController extends Controller
                                 ]
                             ]);
                         }
-                        $names = array_merge($names, $bundleNames);
+
+                        foreach ($bundleNames as $bundleName){
+                            $experiments = FileUtils::scanExperiments('files/' . $request->get('id') . '/' . $bundleName . '.tar.gz');
+                            foreach ($experiments as $experiment) {
+                                array_push($names, ['name' => $bundleName, 'experiment' => $experiment]);
+                            }
+                        }
 
                     } else {
                         try {

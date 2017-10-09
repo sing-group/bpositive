@@ -33,8 +33,8 @@ class FileUtils
     public static function readFileFromTgz($pathToTgz, $pathToFile) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
-            error_log('File does not exist' . $pathToTgz);
-            throw new \Exception('File does not exist.' . $pathToTgz);
+            error_log('[readFileFromTgz]: File does not exist: ' . $pathToTgz);
+            throw new \Exception('File does not exist: ' . $pathToTgz);
         }
 
         try {
@@ -57,8 +57,8 @@ class FileUtils
     public static function readFilesFromTgz($pathToTgz, $mapOfFiles) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
-            error_log('File does not exist');
-            throw new \Exception('File does not exist.');
+            error_log('[readFilesFromTgz]: File does not exist: ' . $pathToTgz);
+            throw new \Exception('File does not exist: ' . $pathToTgz);
         }
 
         try {
@@ -67,7 +67,7 @@ class FileUtils
             $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
             $phar->extractTo($dir); // extract all files
         } catch (\Exception $e) {
-            error_log($e->getMessage());
+            error_log('[readFilesFromTgz]: '.$e->getMessage());
             throw new \Exception($e->getMessage());
         }
 
@@ -75,7 +75,7 @@ class FileUtils
         foreach ($mapOfFiles as $name => $path) {
             $contents = file_get_contents($dir . '/' . $path);
             if($contents === FALSE){
-                error_log('File does not exist: ' . $dir . '/' . $path);
+                error_log('readFilesFromTgz File does not exist: ' . $dir . '/' . $path);
                 throw new \Exception('File does not exist: ' . $dir . '/' . $path);
             }
             $result[$name] = $contents;
@@ -89,8 +89,8 @@ class FileUtils
     public static function checkFilesFromTgz($pathToTgz, $mapOfFiles) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
-            error_log('File does not exist' . $pathToTgz);
-            throw new \Exception('File does not exist.' . $pathToTgz);
+            error_log('[checkFilesFromTgz]: File does not exist: ' . $pathToTgz);
+            throw new \Exception('File does not exist: ' . $pathToTgz);
         }
 
         try {
@@ -99,7 +99,7 @@ class FileUtils
             $phar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $pathToTgz);
             $phar->extractTo($dir); // extract all files
         } catch (\Exception $e) {
-            error_log($e->getMessage());
+            error_log('[checkFilesFromTgz]: ' . $e->getMessage());
             throw new FileException($e->getMessage());
         }
 
@@ -111,7 +111,7 @@ class FileUtils
 
         foreach ($mapOfFiles as $name => $path) {
             if(file_exists($dir . '/' . $path) === FALSE){
-                error_log('File does not exist: ' . $dir . '/' . $path);
+                error_log('[checkFilesFromTgz2]: File does not exist: ' . $dir . '/' . $path);
                 throw new FileException('File does not exist: ' . $dir . '/' . $path);
             }
         }
@@ -123,8 +123,8 @@ class FileUtils
     public static function scanExperiments($pathToTgz) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
-            error_log('File does not exist');
-            throw new \Exception('File does not exist.');
+            error_log('[scanExperiments]: File does not exist: ' . $pathToTgz);
+            throw new \Exception('File does not exist: ' . $pathToTgz);
         }
 
         $name = str_replace('.tar.gz', '', basename($pathToTgz));
@@ -135,7 +135,7 @@ class FileUtils
             $phar->extractTo($dir); // extract all files
             FileUtils::deleteFile($pathToTgz);
         } catch (\Exception $e) {
-            error_log($e->getMessage());
+            error_log('[scanExperiments]: '. $e->getMessage());
             throw new FileException($e->getMessage());
         }
 
@@ -148,7 +148,6 @@ class FileUtils
         }
 
         try {
-            error_log(print_r($experiments, true));
             foreach ($experiments as $experiment){
                 $tar = str_replace('.tar.gz', '-'.$experiment.'.tar', $pathToTgz);
 
@@ -169,9 +168,9 @@ class FileUtils
                 FileUtils::deleteFile($tar);
             }
         } catch (\Exception $e) {
-            error_log($e->getMessage());
+            error_log($e->getMessage()." : ".Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
             FileUtils::deleteFile($tar);
-            throw new FileException($e->getMessage()."@@".$dir."@@".$experiment."@@".$pathToTgz."@@".$tar."##".Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
+            throw new FileException($e->getMessage()." : ".Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
         }
 
         FileUtils::deleteDirectory($dir);
@@ -193,7 +192,7 @@ class FileUtils
 
         foreach ($mapOfFiles as $name => $path) {
             if(file_exists($dir . '/' . $path) === FALSE){
-                throw new FileException('File does not exist: ' . $dir . '/' . $path);
+                throw new FileException('[checkFilesFromPath]: File does not exist: ' . $dir . '/' . $path);
             }
         }
 
@@ -211,7 +210,7 @@ class FileUtils
             return Storage::disk('bpositive')->putFileAs($path, $file, $file->getClientOriginalName());
 
         } catch (\Exception $e) {
-            error_log($e->getMessage());
+            error_log('[storeAs]: ' . $e->getMessage());
             throw new \Exception($e->getMessage());
         }
     }
@@ -257,11 +256,7 @@ class FileUtils
                 $pharTranscription->compress(\Phar::GZ);
                 unset($pharTranscription);
                 \Phar::unlinkArchive($tar);
-
-                $experiments = FileUtils::scanExperiments($tar.'.gz');
-                foreach ($experiments as $experiment){
-                    $names[] = ['name' => $info['filename'], 'experiment' => $experiment];
-                }
+                $names[] = $info['filename'];
             }
 
 
@@ -274,8 +269,8 @@ class FileUtils
             FileUtils::deleteDirectory($dir);
             Storage::disk('bpositive')->deleteDirectory($dir);
             //Storage::disk('bpositive')->deleteDirectory($path.'/');
-            error_log($e->getMessage());
-            throw new FileException($e->getMessage());
+            error_log("Exception storing bundle: " . $e->getMessage());
+            throw new FileException("Exception storing bundle: " . $e->getMessage());
         }
     }
 
@@ -285,6 +280,7 @@ class FileUtils
         try {
 
             $bundlePath = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().Storage::disk('bpositive')->putFileAs($dir.'/bundle', $file, $file->getClientOriginalName());
+            error_log("path " . $bundlePath);
 
             if ($file->getMimeType() == 'application/zip' ) {
                 $zip = new \ZipArchive();
@@ -299,6 +295,7 @@ class FileUtils
                 $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
             }
 
+            error_log($name);
             try {
                 $files = array();
                 $files['input'] = $name.'/input.fasta';
@@ -308,6 +305,7 @@ class FileUtils
                 FileUtils::checkFilesFromPath($dir.'/extracted', $files);
                 FileUtils::deleteDirectory($dir);
                 Storage::disk('bpositive')->deleteDirectory($dir);
+                error_log("NOT BUNDLE");
                 return FALSE;
             }
             catch (FileException $fe){
@@ -319,6 +317,8 @@ class FileUtils
                 }
                 FileUtils::deleteDirectory($dir);
                 Storage::disk('bpositive')->deleteDirectory($dir);
+                error_log("BUNDLE");
+                error_log(print_r($names, true));
                 return $names;
             }
 
@@ -331,8 +331,8 @@ class FileUtils
     public static function zipToTgz($pathToReadZip) {
 
         if (!Storage::disk('bpositive')->exists($pathToReadZip)) {
-            error_log('File does not exist');
-            throw new FileException('File does not exist.'  . $pathToReadZip);
+            error_log('[zipToTgz]: File does not exist: ' . $pathToReadZip);
+            throw new FileException('File does not exist: '  . $pathToReadZip);
         }
 
 
@@ -367,7 +367,7 @@ class FileUtils
                 \Phar::unlinkArchive($p);
                 FileUtils::deleteDirectory($dir);
             }
-            error_log($e->getMessage());
+            error_log('[zipToTgz]: '. $e->getMessage());
             throw new FileException($e->getMessage());
         }
     }
