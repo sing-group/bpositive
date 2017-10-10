@@ -125,8 +125,6 @@ class FileUtils
         try {
             $dir = '/tmp/' . uniqid() ;
 
-            error_log("SOURCES".print_r($sources, true));
-
             foreach ($sources as $source) {
 
                 if (!file_exists($source)) {
