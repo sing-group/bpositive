@@ -150,6 +150,7 @@
                     </th>
                     <th>View</th>
                     <th>Download</th>
+                    <th>Select</th>
                 </tr>
                 </thead>
                 @foreach($transcriptions as $transcription)
@@ -168,7 +169,16 @@
                         @if($transcription->analyzed != 0)
                             <td><a href="transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a></td>
                             <td><a href="download/transcription?id={{$transcription->id}}"><i class="glyphicon glyphicon-cloud-download" aria-hidden="true"></i></a></td>
+                            <td class="col-md-2">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input chk-down chk-down{{$transcription->name}}" type="checkbox" value="{{$transcription->id}}" id="chk-down{{$transcription->id}}" onclick="checkSelected('{{$transcription->id}}', '{{$transcription->name}}')">
+                                        <button type="button" class="btn btn-primary btn-down btn-xs" style="display:none" id="btn-down{{$transcription->id}}" onclick="downloadSelected(event)">Download Selected</button>
+                                    </label>
+                                </div>
+                            </td>
                         @else
+                            <td></td>
                             <td></td>
                             <td></td>
                         @endif
@@ -205,6 +215,7 @@
                     </th>
                     <th>View</th>
                     <th>Download</th>
+                    <th>Select</th>
                 </tr>
                 </tfoot>
             </table>
@@ -222,6 +233,8 @@
     <script type="text/javascript">
         //TODO: Refactor
         $(window).on('load', function () {
+            $('.chk-down').prop('checked', false);
+
             $('#pagesize').on('change', function(e) {
                 $(this).closest('form').submit();
             });
@@ -252,7 +265,44 @@
                     $('#searchType').val('exact');
                     $('#queryForm').submit();
                 }
-            })
+            });
+
         });
+        function checkSelected(id, name){
+            if($('#chk-down' + id).is(':checked')) {
+                $('.btn-down').hide();
+                $('#btn-down' + id).show();
+                $('.table :checkbox').not('.chk-down' + name).prop('disabled', true);
+            }
+            else{
+                $('.btn-down').hide();
+                var oneChecked = false;
+                $('.chk-down:checkbox:checked').each(function(){
+                    if(this.checked){
+                        $('#btn-down' + $(this).val()).show();
+                        oneChecked = true;
+                        return false;
+                    }
+                });
+                if(!oneChecked){
+                    $('.table :checkbox').prop('disabled', false);
+                }
+            }
+        }
+        function downloadSelected(e){
+            e.preventDefault();
+            var selected = [];
+            $('.chk-down:checkbox:checked').each(function() {
+                selected.push($(this).val());
+            });
+
+            var params = {
+                projectId: {{$project->id}},
+                transcriptions: selected
+            };
+            var url = '{{URL::route('download_transcriptions')}}?' + $.param(params);
+
+            window.location.href = url;
+        }
     </script>
 @endsection('endscripts')

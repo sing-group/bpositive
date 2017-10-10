@@ -27,6 +27,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Transcription;
 use App\Providers\AuthServiceProvider;
+use App\Utils\FileUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -170,6 +171,53 @@ class TranscriptionController extends Controller
 
         }
         throw new PrivateException();
+    }
+
+    public function downloadMultiple(Request $request){
+
+        $this->validate($request, [
+            'transcriptions.*' => 'required|numeric'
+        ]);
+
+        $transcriptions = $request->get("transcriptions");
+
+        $results = [];
+        $paths = [];
+        try {
+            $baseName = '';
+            foreach ($transcriptions as $transcription) {
+
+                $project = Project::getByTranscription($transcription, '1');
+                if (!$project) {
+                    $project = Project::getByTranscription($transcription, '0');
+                    if ($request->session()->get('allowPrivateAccessToId') == $project->id || Gate::allows('access-private', $project->id)) {
+                        $results[] = Transcription::getByAdmin($transcription);
+                        $paths[] = Transcription::getTgzPath($transcription, '0');
+                    }
+                } else {
+                    $results[] = Transcription::get($transcription);
+                    $paths[] = Transcription::getTgzPath($transcription, '1');
+                }
+
+                foreach ($results as $result){
+                    if($baseName == ''){
+                        $baseName = $result->name;
+                    }
+                    else if($baseName != $result->name){
+                        throw new \Exception('Selected projects are not compatible');
+                    }
+
+                }
+
+            }
+
+            if(count($paths)) {
+                return response()->download(FileUtils::getTgz($paths, $baseName))->deleteFileAfterSend(true);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function findByName(Request $request) {

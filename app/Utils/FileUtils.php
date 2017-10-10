@@ -120,6 +120,50 @@ class FileUtils
         return TRUE;
     }
 
+    public static function getTgz($sources, $name) {
+
+        try {
+            $dir = '/tmp/' . uniqid() ;
+
+            error_log("SOURCES".print_r($sources, true));
+
+            foreach ($sources as $source) {
+
+                if (!file_exists($source)) {
+                    error_log('[getTgz]: File does not exist: ' . $source);
+                    throw new \Exception('File does not exist: ' . $source);
+                }
+
+                $phar = new \PharData($source);
+                $phar->extractTo($dir . '/extracted', null, true);
+                unset($phar);
+            }
+
+            $tar = $dir . '/' . $name . '.tar';
+            if(file_exists($tar)){
+                FileUtils::deleteDirectory($tar);
+            }
+            if(file_exists($tar . '.gz')){
+                FileUtils::deleteDirectory($tar . '.gz');
+            }
+
+            $result = new \PharData($tar);
+            $result->buildFromDirectory($dir . '/extracted');
+            $result->compress(\Phar::GZ);
+
+            unset($result);
+            \Phar::unlinkArchive($tar);
+            FileUtils::deleteDirectory($dir . '/extracted');
+
+            return $tar . '.gz';
+
+        } catch (\Exception $e) {
+            error_log('[getTgz]: ' . $e->getMessage());
+            throw new FileException($e->getMessage());
+        }
+
+    }
+
     public static function scanExperiments($pathToTgz) {
 
         if (!Storage::disk('bpositive')->exists($pathToTgz)) {
@@ -280,7 +324,6 @@ class FileUtils
         try {
 
             $bundlePath = Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix().Storage::disk('bpositive')->putFileAs($dir.'/bundle', $file, $file->getClientOriginalName());
-            error_log("path " . $bundlePath);
 
             if ($file->getMimeType() == 'application/zip' ) {
                 $zip = new \ZipArchive();
@@ -295,7 +338,6 @@ class FileUtils
                 $name = str_replace('.tar.gz', '', $file->getClientOriginalName());
             }
 
-            error_log($name);
             try {
                 $files = array();
                 $files['input'] = $name.'/input.fasta';
@@ -305,7 +347,6 @@ class FileUtils
                 FileUtils::checkFilesFromPath($dir.'/extracted', $files);
                 FileUtils::deleteDirectory($dir);
                 Storage::disk('bpositive')->deleteDirectory($dir);
-                error_log("NOT BUNDLE");
                 return FALSE;
             }
             catch (FileException $fe){
@@ -317,8 +358,6 @@ class FileUtils
                 }
                 FileUtils::deleteDirectory($dir);
                 Storage::disk('bpositive')->deleteDirectory($dir);
-                error_log("BUNDLE");
-                error_log(print_r($names, true));
                 return $names;
             }
 
