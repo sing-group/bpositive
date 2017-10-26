@@ -367,6 +367,19 @@ class Transcription
 
     }
 
+    public static function deleteByProject($id){
+
+        $transcriptions = Transcription::all($id, '', '', '');
+        $count = 0;
+        foreach ($transcriptions as $transcription) {
+            Transcription::delete($transcription->id);
+            $count++;
+        }
+
+        return $count;
+
+    }
+
     public static function validateFile($projectId, $name, $experiment){
         $result = new ValidationResult();
 

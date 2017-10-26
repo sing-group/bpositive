@@ -237,6 +237,15 @@
                     {{$transcriptions->appends(['id' => $project->id, 'query' => $query, 'pagesize' => $pagesize, 'orderBy' => $orderBy, 'orderType' => $orderType, 'filters' => $filters])->links()}}
                     <div class="alert alert-info">Showing {{$transcriptions->firstItem()}} to {{$transcriptions->lastItem()}} of {{$transcriptions->total()}} entries.</div>
 
+                    @if(!$project->public)
+                        <div class="pull-right">
+                            {{ Form::open(['action' => 'Bpositive\TranscriptionController@removeAll', 'method' => 'post', 'class' => 'frmDeleteAll']) }}
+                            {{ csrf_field() }}
+                            <input type="hidden" name="id" value="{{$project->id}}" />
+                            {{ Form::button('<span class="glyphicon glyphicon-remove"></span> Delete all projects', ['type' => 'submit', 'class' => 'btn btn-danger']) }}
+                            {{ Form::close() }}
+                        </div>
+                    @endif
                 </form>
             </div>
         </div>
@@ -280,7 +289,11 @@
             })
         });
         $('.frmDelete').submit(function () {
-            var res = confirm('Do you want to delete project?');
+            var res = confirm('Do you want to delete project? This action cannot be undone');
+            return res;
+        });
+        $('.frmDeleteAll').submit(function () {
+            var res = confirm('Do you want to delete all projects in this Dataset? This action cannot be undone');
             return res;
         });
     </script>

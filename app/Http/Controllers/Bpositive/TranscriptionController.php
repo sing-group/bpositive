@@ -275,4 +275,33 @@ class TranscriptionController extends Controller
             'id' => $projectId,
         ]);
     }
+
+    public function removeAll(Request $request){
+
+        $this->validate($request, [
+            'id' => 'required|numeric'
+        ]);
+
+        $project = Project::getByAdmin($request->get('id'));
+        if($project->public) {
+            return redirect()->route('project_edit_form', [
+                'id' => $project->id,
+                'results' => ["You are not allowed to delete this dataset because it is public"],
+            ]);
+        }
+
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE || Project::owns(Auth::user()->user_id, $project->id)) {
+
+            $count = Transcription::deleteByProject($project->id);
+            return redirect()->route('project_edit_form',[
+                'id' => $request->get('id'),
+                'results' => ['Deleted ' . $count . ' projects']
+            ]);
+        }
+
+        return redirect()->route('project_edit_form',[
+            'id' => $request->get('id'),
+            'results' => ["You are not allowed to delete this dataset"],
+        ]);
+    }
 }

@@ -51,6 +51,7 @@ Route::get('/transcription/name', 'Bpositive\TranscriptionController@findByName'
 Route::get('/download/transcription', 'Bpositive\TranscriptionController@download')->name('download_transcription');
 Route::get('/download/transcriptions', 'Bpositive\TranscriptionController@downloadMultiple')->name('download_transcriptions');
 Route::post('/transcription/remove', 'Bpositive\TranscriptionController@remove')->name('transcription_remove');
+Route::post('/transcription/removeAll', 'Bpositive\TranscriptionController@removeAll')->name('transcription_remove_all');
 
 Route::post('/login', 'Auth\LoginController@login')->name('login');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('logout');
