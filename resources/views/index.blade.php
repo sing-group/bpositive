@@ -33,10 +33,31 @@
 @endsection
 --}}
 @section('content')
+    <div class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-form navbar-right">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        {{ Form::label('search', 'Search Dataset') }}
+                    </span>
+                    {{ Form::input('search', 'query', '', ['class' => 'form-control', 'placeholder' => 'Type your query here', 'id' => 'querySearch']) }}
+
+                    <span class="input-group-btn">
+                        <span class="btn-group">
+                            {{ Form::button('<span class="glyphicon glyphicon-remove"></span>', ['type' => 'button', 'class' => 'btn btn-default btn-block', 'id' => 'resetSearch']) }}
+                        </span>
+                        <span class="btn-group">
+                            {{ Form::button('<span class="glyphicon glyphicon-search"></span>', ['type' => 'submit', 'class' => 'btn btn-primary btn-block', 'id' => 'search']) }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @foreach ($projects as $project)
 
-        <div class="project">
+        <div class="project" id="project-{{$project->id}}">
             <div class="project_name col-md-4">
                 <h1>{{$project->name}}</h1>
                 {!! (Auth::check() && \App\Models\Project::owns(Auth::user()->id, $project->id) ? '<p>(You are the owner)</p>': '') !!}
@@ -139,5 +160,49 @@
                 $('#btnShPass{{$project->id}}').show();
             });
         @endforeach
+
+        function search(query){
+            window.find(query);
+        }
+
+        $('#resetSearch').on('click', function(e) {
+            $('#querySearch').val('');
+        });
+        $('#querySearch').autocomplete({
+            source:function (request, response) {
+                var data = $.map({!!json_encode($projects)!!}, function (value, key) {
+                    if(value.name.toLowerCase().indexOf(request.term.toLowerCase()) >= 0
+                        || value.description.toLowerCase().indexOf(request.term.toLowerCase()) >= 0
+                        || value.code.toLowerCase().indexOf(request.term.toLowerCase()) >= 0) {
+                        return {
+                            label: value.name,
+                            id: value.id
+                        }
+                    }
+                });
+                response(data);
+
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                $('html, body').animate({
+                    scrollTop: $("#project-" + ui.item.id).offset().top
+                }, 500);
+            }
+        });
+        $('#querySearch').bind("enterKey",function(e){
+            var query = $('#querySearch').val();
+            search(query);
+        });
+        $('#querySearch').keyup(function(e){
+            if(e.keyCode == 13)
+            {
+                $(this).trigger("enterKey");
+            }
+        });
+        $('#search').on('click', function(e) {
+            var query = $('#querySearch').val();
+            search(query);
+        });
     </script>
 @endsection

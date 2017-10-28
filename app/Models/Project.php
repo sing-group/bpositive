@@ -32,7 +32,7 @@ class Project
 
     public static function all(){
 
-        $projects = DB::table('project')->select(DB::raw('project.*, users.email'))
+        $projects = DB::table('project')->select(DB::raw('project.id, project.name, project.description, project.deleted, project.creationDate, project.code, project.public, users.email'))
             ->leftJoin('users_projects', 'project.id', '=', 'users_projects.projectId')
             ->leftJoin('users', 'users.id', '=', 'users_projects.userId')
             ->where('deleted', '=', '0')
