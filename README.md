@@ -17,6 +17,18 @@ This project is an idea and is developed by:
 * Hugo López-Fernández [SING Group](http://www.sing-group.org)
 * Florentino Fdez-Riverola [SING Group](http://www.sing-group.org)
 
+If you use B+, please cite us:
+----
+
+N. Vázquez, C.P. Vieira, B.S.R. Amorin, A. Torres, H. López-Fernández, F. Fdez-Riverola, J.L.R. Sousa, M. Reboiro-Jato, J. Vieira (2018)
+Large Scale Analyses and Visualization of Adaptive Amino Acid Changes Projects.
+_Interdisciplinary Sciences: Computational Life Sciences_: [https://doi.org/10.1007/s12539-018-0282-7](https://doi.org/10.1007/s12539-018-0282-7)
+
+N. Vázquez, C.P. Vieira, B.S.R. Amorin, A. Torres, H. López-Fernández, F. Fdez-Riverola, J.L.R. Sousa, M. Reboiro-Jato, J. Vieira (2017)
+On the automated collection and sharing (B+ database) of data on adaptive amino acid changes.
+_11<sup>th</sup> International Conference on Practical Applications of Computational Biology & Bioinformatics_. Porto, Portugal
+
+
 ## Downloading and Installing B+
 ### 0. Prerequisites
 

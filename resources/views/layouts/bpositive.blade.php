@@ -157,6 +157,11 @@
             <div class="footer-right">
                 <p style="color: white; font-weight: bold; font-size: 1.2em"><strong>If you use B+, please cite us:</strong></p>
                 <p>
+                    N. V&aacute;zquez, C.P. Vieira, B.S.R. Amorin, A. Torres, H. L&oacute;pez-Fern&aacute;ndez, F. Fdez-Riverola, J.L.R. Sousa, M. Reboiro-Jato, J. Vieira (2018)
+                    Large Scale Analyses and Visualization of Adaptive Amino Acid Changes Projects.
+                    <em>Interdisciplinary Sciences: Computational Life Sciences</em>. <a href="https://doi.org/10.1007/s12539-018-0282-7">https://doi.org/10.1007/s12539-018-0282-7</a>
+                </p>
+                <p>
                     N. V&aacute;zquez, C.P. Vieira, B.S.R. Amorin, A. Torres, H. L&oacute;pez-Fern&aacute;ndez, F. Fdez-Riverola, J.L.R. Sousa, M. Reboiro-Jato, J. Vieira (2017)
                     On the automated collection and sharing (B+ database) of data on adaptive amino acid changes.
                     <em>11<sup>th</sup> International Conference on Practical Applications of Computational Biology &amp; Bioinformatics.</em> Porto, Portugal
