@@ -170,7 +170,7 @@
         });
         $('#querySearch').autocomplete({
             source:function (request, response) {
-                var data = $.map({!!json_encode($projects)!!}, function (value, key) {
+                var data = $.map({!!json_encode($safeProjects)!!}, function (value, key) {
                     if(value.name.toLowerCase().indexOf(request.term.toLowerCase()) >= 0
                         || value.description.toLowerCase().indexOf(request.term.toLowerCase()) >= 0
                         || value.code.toLowerCase().indexOf(request.term.toLowerCase()) >= 0) {

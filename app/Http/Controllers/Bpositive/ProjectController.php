@@ -52,7 +52,11 @@ class ProjectController extends Controller
     public function all(Request $request){
 
         $projects = Project::all();
-        $params = ['projects' => $projects];
+        $adminProjects = Project::allByAdmin();
+        $params = [
+            'projects' => $adminProjects,
+            'safeProjects' => $projects
+        ];
         if($request->has('errors')){
             array_push($params, new MessageBag([$request->get('errors')]));
         }

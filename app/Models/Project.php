@@ -41,6 +41,17 @@ class Project
         return $projects;
     }
 
+    public static function allByAdmin(){
+
+        $projects = DB::table('project')->select(DB::raw('project.id, project.name, project.description, project.deleted, project.creationDate, project.code, project.public, project.privatePassword, users.email'))
+            ->leftJoin('users_projects', 'project.id', '=', 'users_projects.projectId')
+            ->leftJoin('users', 'users.id', '=', 'users_projects.userId')
+            ->where('deleted', '=', '0')
+            ->get();
+
+        return $projects;
+    }
+
     public static function get($id){
 
         $project = DB::table('project')
