@@ -73,12 +73,17 @@ class FileUtils
 
         $result = array();
         foreach ($mapOfFiles as $name => $path) {
-            $contents = file_get_contents($dir . '/' . $path);
-            if($contents === FALSE){
-                error_log('readFilesFromTgz File does not exist: ' . $dir . '/' . $path);
-                throw new \Exception('File does not exist: ' . $dir . '/' . $path);
+            if(file_exists($dir . '/' . $path)) {
+                $contents = file_get_contents($dir . '/' . $path);
+                if ($contents === FALSE) {
+                    error_log('readFilesFromTgz File does not exist: ' . $dir . '/' . $path);
+                    throw new \Exception('File does not exist: ' . $dir . '/' . $path);
+                }
+                $result[$name] = $contents;
             }
-            $result[$name] = $contents;
+            else {
+                $result[$name] = "";
+            }
         }
         FileUtils::deleteDirectory($dir);
         //Storage::disk('bpositive')->deleteDirectory($dir); //TODO: not working

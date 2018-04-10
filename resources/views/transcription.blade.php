@@ -56,6 +56,9 @@
             <li role="presentation"><a href="#alnFile" aria-controls="alnFile" role="tab" data-toggle="tab">ALN File</a></li>
             <li role="presentation"><a href="#alnNucl" aria-controls="alnNucl" role="tab" data-toggle="tab">Aligned Nucl</a></li>
             <li role="presentation"><a href="#alnAmin" aria-controls="alnAmin" role="tab" data-toggle="tab">Aligned Amin</a></li>
+            @if($textFiles['phiPackLog'] !== "")
+                <li role="presentation"><a href="#phiPackLog" aria-controls="tree" role="tab" data-toggle="tab">PhiPack Log</a></li>
+            @endif
             <li role="presentation"><a href="#tree" aria-controls="tree" role="tab" data-toggle="tab">Tree</a></li>
             @if(isset($newicks))
                 <li role="presentation"><a href="#treeView" id="treeViewTab" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
@@ -95,6 +98,12 @@
                 @include('includes.download', ['name' => 'AlignedAmin', 'data' => base64_encode($textFiles['alnAmin'])])
                 <pre>{{$textFiles['alnAmin']}}</pre>
             </div>
+            @if($textFiles['phiPackLog'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="phiPackLog">
+                    @include('includes.download', ['name' => 'PhiPackLog', 'data' => base64_encode($textFiles['phiPackLog'])])
+                    <pre>{{$textFiles['phiPackLog']}}</pre>
+                </div>
+            @endif
             <div role="tabpanel" class="tab-pane fade" id="tree">
                 @include('includes.download', ['name' => 'Tree', 'data' => base64_encode($textFiles['tree'])])
                 <pre>{{$textFiles['tree']}}</pre>

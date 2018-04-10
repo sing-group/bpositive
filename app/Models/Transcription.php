@@ -292,6 +292,7 @@ class Transcription
         $files['codemlOutput'] = $basePath.'codeml.out';
         $files['codemlSummary'] = $basePath.'codeml.sum';
         $files['experiment'] = $basePath.'experiment.conf';
+        $files['phiPackLog'] = $basePath.'phipack.log';
 
         $files_contents = FileUtils::readFilesFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $files);
 
