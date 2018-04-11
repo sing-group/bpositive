@@ -293,6 +293,7 @@ class Transcription
         $files['codemlSummary'] = $basePath.'codeml.sum';
         $files['experiment'] = $basePath.'experiment.conf';
         $files['phiPackLog'] = $basePath.'phipack.log';
+        $files['omegaMapSummary'] = $basePath.'omegamap.sum';
 
         $files_contents = FileUtils::readFilesFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $files);
 

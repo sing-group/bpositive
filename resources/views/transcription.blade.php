@@ -66,6 +66,9 @@
             <li role="presentation"><a href="#psrf" aria-controls="psrf" role="tab" data-toggle="tab">PSRF</a></li>
             <li role="presentation"><a href="#codemlOutput" aria-controls="codemlOutput" role="tab" data-toggle="tab">Codeml Output</a></li>
             <li role="presentation"><a href="#codemlSummary" aria-controls="codemlSummary" role="tab" data-toggle="tab">Codeml Summary</a></li>
+            @if($textFiles['omegaMapSummary'] !== "")
+                <li role="presentation"><a href="#omegaMapSummary" aria-controls="tree" role="tab" data-toggle="tab">OmegaMap Summary</a></li>
+            @endif
             <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
         </ul>
 
@@ -128,6 +131,12 @@
                 @include('includes.download', ['name' => 'CodemlSummary', 'data' => base64_encode($textFiles['codemlSummary'])])
                 <pre>{{$textFiles['codemlSummary']}}</pre>
             </div>
+            @if($textFiles['omegaMapSummary'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="omegaMapSummary">
+                    @include('includes.download', ['name' => 'omegaMapSummary', 'data' => base64_encode($textFiles['omegaMapSummary'])])
+                    <pre>{{$textFiles['omegaMapSummary']}}</pre>
+                </div>
+            @endif
             <div role="tabpanel" class="tab-pane fade" id="notes">
                 @include('includes.download', ['name' => 'Notes', 'data' => base64_encode($textFiles['notes'])])
                 <pre>{{$textFiles['notes']}}</pre>
