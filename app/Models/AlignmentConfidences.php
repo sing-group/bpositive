@@ -29,7 +29,7 @@ class AlignmentConfidences
     private $models = array();
     private $movedIndexes = array();
 
-    function __construct($sequences, $analysis){
+    function __construct($sequences, $analysis, $omegaMap = ""){
 
         $this->sequences = $sequences;
         $this->movedIndexes = $this->getMovedIndexes($this->sequences);
@@ -62,6 +62,22 @@ class AlignmentConfidences
                 foreach($nebs as $k => $v) {
                     if(isset($bebs[$k])) {
                         $this->models[$key][$this->movedIndexes[$k]] = new Confidence($bebs[$k], $nebs[$k]);
+                    }
+                }
+            }
+        }
+
+        if($omegaMap !== "") {
+            $this->models['omegaMap'] = array();
+            foreach(preg_split("/((\r?\n)|(\r\n?))/", $omegaMap) as $line){
+                if(preg_match("/^[0-9]+.+[0-9]+$/", $line)) {
+                    preg_match_all("/([0-9]+\.?[0-9]*)/", $line, $values);
+                    $values = $values[0];
+                    if(count($values) > 4) {
+                        $this->models['omegaMap'][$values[0] + 1] = new Confidence($values[4], $values[4]);
+                    }
+                    else {
+                        error_log(print_r($values, true));
                     }
                 }
             }
