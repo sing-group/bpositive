@@ -466,7 +466,7 @@ class ProjectManagerController extends Controller
                     }
                     foreach ($names as $transcriptionName) {
                         try {
-                            Transcription::createIfNotExists($request->get('id'), $transcriptionName['name'], $transcriptionName['experiment']);
+                            Transcription::createOrUpdate($request->get('id'), $transcriptionName['name'], $transcriptionName['experiment']);
 
                         } catch (FileException $fe) {
                             DB::rollBack();

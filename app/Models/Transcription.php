@@ -339,12 +339,37 @@ class Transcription
         }
     }
 
-    public static function createIfNotExists($projectId, $name, $experiment)
+    public static function update($id, $projectId, $name, $experiment)
+    {
+        $result = Transcription::validateFile($projectId, $name, $experiment);
+
+        if ($result->valid) {
+            $transcription = DB::table('transcription')
+                ->where('id', $id)
+                ->update([
+                    'projectId' => $projectId,
+                    'name' => $name,
+                    'description' => '',
+                    'linkZip' => $name.'-'.$experiment,
+                    'linkPdf' => $name.'-'.$experiment,
+                    'deleted' => 0,
+                    'analyzed' => $result->analyzed,
+                    'positivelySelected' => $result->positivelySelected,
+                    'experiment' => $experiment
+                ]);
+            return $transcription;
+        } else {
+            throw new FileException("Exception updating '" . $name . "', experiment '".$experiment);
+        }
+    }
+
+    public static function createOrUpdate($projectId, $name, $experiment)
     {
         $transcriptions = Transcription::all($projectId, $name, '', 'exact' );
 
         foreach ($transcriptions as $transcription){
             if($transcription->experiment == $experiment){
+                Transcription::update($transcription->id, $projectId, $name, $experiment);
                 return $transcription->id;
             }
         }
