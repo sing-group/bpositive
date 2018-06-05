@@ -142,7 +142,7 @@
     </div>
 
     <div class="nav navbar-inverse navbar-static-bottom">
-        <div class="container">
+        <div class="container footer-flex">
             <div class="footer-left">
                 <p style="float: left">
                     <a href="http://www.i3s.up.pt"><img src="{{URL::asset('images/i3s.png')}}" alt="i3S"></a>

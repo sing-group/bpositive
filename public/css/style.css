@@ -28,7 +28,7 @@ body {
     line-height:1.6;
     position: relative;
     min-height: 100vh;
-    padding-bottom: 290px;
+    padding-bottom: 230px;
     box-sizing: border-box;
 }
 
@@ -87,13 +87,14 @@ body {
 }
 
 .footer-left{
-    float: left;
-    width: 60%;
+    flex-grow: 1;
+    min-width: 370px;
     padding-top: 10px;
+    padding-right: 30px;
 }
 .footer-right{
-    float:right;
-    width: 40%;
+    flex-grow: 2;
+    min-width: 300px;
     padding-top: 10px;
     text-align: right;
 }
@@ -151,40 +152,53 @@ body {
     }
 }
 
-@media (min-width: 1000px) and (max-width: 1400px) {
+@media (min-width: 1200px) and (max-width: 1400px) {
     body{
-        padding-bottom: 240px;
+        padding-bottom: 250px;
     }
 }
 
-@media (min-width: 680px) and (max-width: 1000px) {
+@media (min-width: 992px) and (max-width: 1199px) {
     body{
-        padding-bottom: 300px;
+        padding-bottom: 280px;
     }
 }
 
-@media (min-width: 530px) and (max-width: 680px) {
+@media (min-width: 767px) and (max-width: 991px) {
     body{
-        padding-bottom: 400px;
+        padding-bottom: 430px;
     }
 }
 
-@media (min-width: 430px) and (max-width: 530px) {
+@media (min-width: 695px) and (max-width: 766px) {
     body{
-        padding-bottom: 500px;
+        padding-bottom: 430px;
+    }
+    .footer-flex {
+        flex-wrap: wrap;
     }
 }
 
-@media (min-width: 330px) and (max-width: 430px) {
+@media (min-width: 400px) and (max-width: 694px) {
+    body{
+        padding-bottom: 550px;
+    }
+    .footer-flex {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 399px) {
     body{
         padding-bottom: 700px;
     }
+    .footer-flex {
+        flex-wrap: wrap;
+    }
 }
 
-@media (max-width: 330px) {
-    body{
-        padding-bottom: 800px;
-    }
+.footer-flex {
+    display: flex;
 }
 
 .width-50{
