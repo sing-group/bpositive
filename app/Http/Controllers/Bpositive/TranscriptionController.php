@@ -87,8 +87,22 @@ class TranscriptionController extends Controller
             $project = Project::getByCode($request->get('code'));
         }
 
-        if($project == null){
-            throw new PrivateException();
+        if ($project == null) {
+            $aux = null;
+            if ($request->has('id')) {
+                $aux = Project::getByAdmin($request->get('id'));
+            } else if ($request->has('code')) {
+                $aux = Project::getByCodeAdmin($request->get('code'));
+            }
+
+            if ($aux != null) {
+                return view('projectPrivate', [
+                    'project' => $aux,
+                    'state' => 'accessPrivate'
+                ]);
+            } else {
+                throw new PrivateException();
+            }
         }
 
         $transcriptions = Transcription::all($project->id, $query, $filters, $searchType, $pagesize, $orderBy, $orderType);

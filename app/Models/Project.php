@@ -72,6 +72,15 @@ class Project
         return $project;
     }
 
+    public static function getByCodeAdmin($code){
+
+        $project = DB::table('project')
+            ->where('code', '=', $code)
+            ->first();
+
+        return $project;
+    }
+
     public static function getByUser($userId, $projectId){
 
         $projects = DB::table('project')
