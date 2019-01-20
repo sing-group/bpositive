@@ -69,17 +69,25 @@ class AlignmentConfidences
 
         if($omegaMap !== "") {
             $this->models['omegaMap'] = array();
+            $anyPSS = false;
             foreach(preg_split("/((\r?\n)|(\r\n?))/", $omegaMap) as $line){
                 if(preg_match("/^[0-9]+.+[0-9]+$/", $line)) {
                     preg_match_all("/([0-9]+\.?[0-9]*)/", $line, $values);
                     $values = $values[0];
                     if(count($values) > 4) {
                         $this->models['omegaMap'][$values[0] + 1] = new Confidence($values[4], $values[4]);
+                        if ($values[4] >= 0.9) {
+                            $anyPSS = true;
+                        }
                     }
                     else {
                         error_log(print_r($values, true));
                     }
                 }
+            }
+            if (!$anyPSS) {
+                //If there is no values with greater or equal confidence than 0.9, there is no model to show
+                unset($this->models['omegaMap']);
             }
         }
     }

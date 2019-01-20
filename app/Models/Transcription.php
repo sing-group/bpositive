@@ -461,8 +461,13 @@ class Transcription
 
 
         try{
+            $omegaMapFile = "";
+            try{
+                $omegaMapFile = FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/omegamap.sum');
+            }
+            catch (\Exception $e) { }
             $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/aligned.prot.fasta'));
-            $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'));
+            $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'), $omegaMapFile);
             if($confidences->getNumModels() > 0){
                 $result->positivelySelected = true;
             }
