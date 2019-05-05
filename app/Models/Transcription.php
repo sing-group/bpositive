@@ -335,7 +335,7 @@ class Transcription
                 ]);
             return $transcription;
         } else {
-            throw new FileException("File '" . $name . "', experiment '".$result->experiment."'' is not a valid file: " . $result->message);
+            throw new FileException("File '" . $name . "', experiment '".$experiment."'' is not a valid file: " . $result->message);
         }
     }
 
