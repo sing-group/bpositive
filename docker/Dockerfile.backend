@@ -1,0 +1,64 @@
+#
+# B+
+#
+# Copyright (C) 2017 Jorge Vieira, José Sousa, Miguel Reboiro-Jato,
+# Noé Vázquez, Bárbara Amorim, Cristina P. Vieira, André Torres, Hugo
+# López-Fernández, and Florentino Fdez-Riverola
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+FROM php:5.6-apache
+
+#Install dependencies
+RUN apt-get update
+RUN apt-get install -y git unzip zlib1g-dev
+
+#Install PHP extensions
+RUN docker-php-ext-install pdo_mysql zip
+
+#Install composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+RUN php composer-setup.php
+RUN php -r "unlink('composer-setup.php');"
+RUN mv composer.phar /usr/local/bin/composer
+
+#Copy project
+COPY . /var/www/html/
+
+#Install composer dependencies
+RUN composer install
+
+#Configure apache
+RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/public/g' /etc/apache2/sites-enabled/000-default.conf
+RUN chown -R www-data:www-data /var/www/html/bootstrap/cache/
+RUN chown -R www-data:www-data /var/www/html/storage/*
+RUN a2enmod rewrite
+
+#Configure PHP
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 500M/g' $PHP_INI_DIR/php.ini
+RUN sed -i 's/post_max_size = 8M/post_max_size = 500M/g' $PHP_INI_DIR/php.ini
+RUN sed -i 's/memory_limit = 128M/memory_limit = 512M/g' $PHP_INI_DIR/php.ini
+RUN sed -i 's/max_execution_time = 30/max_execution_time = 120/g' $PHP_INI_DIR/php.ini
+
+#Configure laravel
+RUN cp .env.example .env
+RUN sed -i 's/DB_HOST=127.0.0.1/DB_HOST=bpositive-database/g' .env
+RUN sed -i 's/DB_DATABASE=homestead/DB_DATABASE=bpositive/g' .env
+RUN sed -i 's/DB_USERNAME=homestead/DB_USERNAME=bpositive/g' .env
+RUN sed -i 's/DB_PASSWORD=secret/DB_PASSWORD=bpositivepass/g' .env
+RUN php artisan key:generate
+
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]

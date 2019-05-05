@@ -85,3 +85,37 @@ Last but not least, directories within the *storage* and *bootstrap/cache* shoul
 
 If you followed all the previous steps, B+ should be accesible from your Web Server root URL using any Web Browser with
 JavaScript enabled.
+
+## Using Docker to run B+
+
+This project also enables the deployment of a B+ Environment in docker.
+
+### Requirements
+
+To run this project, first, you will need to install:
+* Docker: [https://www.docker.com/community-edition#/download](https://www.docker.com/community-edition#/download)
+* Docker Compose: [https://docs.docker.com/compose/install/](https://docs.docker.com/compose/install/)
+
+### Building images
+
+In order to build all the images use the following command inside the `docker` folder:
+
+```docker
+docker-compose build
+```
+
+### Running containers
+
+In order to run all the images use the following command inside the `docker` folder:
+
+```docker
+docker-compose up
+```
+
+### Using B+ containers
+
+Once all the containers are up and running, the B+ web page will be available in the host IP and port 80.
+If you are running it locally, it will be available in [http://localhost](http://localhost).
+
+You can use the default admin user to log in and start uploading projects or create more users.
+The default username is `admin@bpositive` and password `bpositive`.
