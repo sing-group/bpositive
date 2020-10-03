@@ -29,7 +29,7 @@ class AlignmentConfidences
     private $models = array();
     private $movedIndexes = array();
 
-    function __construct($sequences, $analysis, $omegaMap = ""){
+    function __construct($sequences, $analysis, $omegaMap = "", $fubar = ""){
 
         $this->sequences = $sequences;
         $this->movedIndexes = $this->getMovedIndexes($this->sequences);
@@ -88,6 +88,26 @@ class AlignmentConfidences
             if (!$anyPSS) {
                 //If there is no values with greater or equal confidence than 0.9, there is no model to show
                 unset($this->models['omegaMap']);
+            }
+        }
+
+        if($fubar !== "") {
+            $this->models['FUBAR'] = array();
+            $anyPSS = false;
+            foreach(preg_split("/((\r?\n)|(\r\n?))/", $fubar) as $line){
+                preg_match_all("/^(\|\s+([0-9]+)\s+)(\|\s+([0-9]+)\s+)(\|\s+([0-9]+(\.[0-9]+)?)\s+)(\|\s+([0-9]+(\.[0-9]+)?)\s+)(\|\s+Pos\.\sposterior\s\=\s([0-9]+(\.[0-9]+)?))\s+\|$/", $line, $values);
+                if ($values !== FALSE) {
+                    if (count($values) === 14 && isset($values[2][0]) && is_numeric($values[2][0]) && isset($values[12][0]) && is_numeric($values[12][0])) {
+                        $this->models['FUBAR'][$values[2][0] + 1] = new Confidence($values[12][0], $values[12][0]);
+                        if ($values[12][0] >= 0.9) {
+                            $anyPSS = true;
+                        }
+                    }
+                }
+            }
+            if (!$anyPSS) {
+                //If there is no values with greater or equal confidence than 0.9, there is no model to show
+                unset($this->models['FUBAR']);
             }
         }
     }

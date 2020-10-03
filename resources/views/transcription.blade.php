@@ -39,12 +39,12 @@
 @section('content')
     <div class="project-content">
         <div class="page-header">
-          <div class="btn-toolbar pull-right">
-            <div class="btn-group">
-              <a class="btn btn-default" href="{{URL::previous()}}">Back</a>
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="{{URL::previous()}}">Back</a>
+                </div>
             </div>
-          </div>
-          <h1>{{$transcription->name}} - {{$transcription->experiment}}</h1>
+            <h1>{{$transcription->name}} - {{$transcription->experiment}}</h1>
         </div>
 
         <ul class="nav nav-tabs" role="tablist" id="topTabs">
@@ -68,6 +68,9 @@
             <li role="presentation"><a href="#codemlSummary" aria-controls="codemlSummary" role="tab" data-toggle="tab">Codeml Summary</a></li>
             @if($textFiles['omegaMapSummary'] !== "")
                 <li role="presentation"><a href="#omegaMapSummary" aria-controls="tree" role="tab" data-toggle="tab">OmegaMap Summary</a></li>
+            @endif
+            @if($textFiles['fubarSummary'] !== "")
+                <li role="presentation"><a href="#fubarSummary" aria-controls="tree" role="tab" data-toggle="tab">FUBAR Summary</a></li>
             @endif
             <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
         </ul>
@@ -137,6 +140,12 @@
                     <pre>{{$textFiles['omegaMapSummary']}}</pre>
                 </div>
             @endif
+            @if($textFiles['fubarSummary'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="fubarSummary">
+                    @include('includes.download', ['name' => 'fubarSummary', 'data' => base64_encode($textFiles['fubarSummary'])])
+                    <pre>{{$textFiles['fubarSummary']}}</pre>
+                </div>
+            @endif
             <div role="tabpanel" class="tab-pane fade" id="notes">
                 @include('includes.download', ['name' => 'Notes', 'data' => base64_encode($textFiles['notes'])])
                 <pre>{{$textFiles['notes']}}</pre>
@@ -156,101 +165,101 @@
     <script type="text/javascript">
         //TODO: Refactor
         $(window).on('load', function () {
-            @if(isset($newicks))
-                var dataObjects = {!! $newicks !!};
+                    @if(isset($newicks))
+            var dataObjects = {!! $newicks !!};
 
-                for(var i=0; i < dataObjects.length; i++ ){
+            for(var i=0; i < dataObjects.length; i++ ){
 
-                    var divName = 'svgCanvas' + i;
-                    var data = dataObjects[i];
+                var divName = 'svgCanvas' + i;
+                var data = dataObjects[i];
 
-                    var svgCanvas = $("#svgCanvas");
+                var svgCanvas = $("#svgCanvas");
 
-                    $("#svgMenu").append('<li role="presentation"><a href="#tab' + divName + '" role="tab" data-toggle="tab" data-newick="' + data + '" data-divname="' + divName + '">Phylogeny ' + i + '</a></li>');
-                    svgCanvas.append('<div id="tab' + divName + '" class="tab-pane fade in">' +
-                        '<div class="navbar navbar-default"><div class="container-fluid" id="container' + divName + '">' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="alert alert-info">Use your mouse to drag and zoom. Tip: CTRL + wheel = scale Y, ALT + wheel = scale X</div>' +
+                $("#svgMenu").append('<li role="presentation"><a href="#tab' + divName + '" role="tab" data-toggle="tab" data-newick="' + data + '" data-divname="' + divName + '">Phylogeny ' + i + '</a></li>');
+                svgCanvas.append('<div id="tab' + divName + '" class="tab-pane fade in">' +
+                    '<div class="navbar navbar-default"><div class="container-fluid" id="container' + divName + '">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="alert alert-info">Use your mouse to drag and zoom. Tip: CTRL + wheel = scale Y, ALT + wheel = scale X</div>' +
 
-                        '<div id="' + divName + '"></div>' +
-                        '</div>');
+                    '<div id="' + divName + '"></div>' +
+                    '</div>');
 
 
 
+            }
+
+            $('#topTabs').on('shown.bs.tab', function(event){
+                if($(event.target).html() == $('#treeViewTab').html()) {
+                    $('#svgMenu a:first').tab('show');
                 }
-
-                $('#topTabs').on('shown.bs.tab', function(event){
-                    if($(event.target).html() == $('#treeViewTab').html()) {
-                        $('#svgMenu a:first').tab('show');
-                    }
-                });
-                $('#svgMenu').on('shown.bs.tab', function(event){
-                    $('#linkSVG').remove();
-                    $('#linkPNG').remove();
-                    $('#resetZoom').remove();
-                    $('#container' + $(event.target).data('divname')).append('<form class="navbar-form">' +
+            });
+            $('#svgMenu').on('shown.bs.tab', function(event){
+                $('#linkSVG').remove();
+                $('#linkPNG').remove();
+                $('#resetZoom').remove();
+                $('#container' + $(event.target).data('divname')).append('<form class="navbar-form">' +
                     '<a class="btn btn-info form-control" download="Phylogeny'+ i + '.svg" id="linkSVG">Download as SVG</a>' +
                     '<a class="btn btn-info form-control" download="Phylogeny'+ i + '.png" id="linkPNG">Download as PNG</a>' +
                     '<a class="btn btn-default form-control" id="resetZoom">Reset zoom</a>' +
                     //'<div class="checkbox"><label><input id="lengthValues" type="checkbox"><span class="checkbox-material"><span class="check"></span></span> Show length values</label></div>' +
                     '</form>');
 
-                    //Workaround for zoom problem when saving to file
-                    jQuery.fn.d3Click = function () {
-                        this.each(function (i, e) {
-                            var evt = new MouseEvent("click");
-                            e.dispatchEvent(evt);
-                        });
-                    };
-
-
-                    $('#linkSVG').click(function () {
-                        $('#resetZoom').d3Click();
+                //Workaround for zoom problem when saving to file
+                jQuery.fn.d3Click = function () {
+                    this.each(function (i, e) {
+                        var evt = new MouseEvent("click");
+                        e.dispatchEvent(evt);
                     });
-                    $('#linkPNG').click(function () {
-                        $("#resetZoom").d3Click();
-                    });
+                };
 
-                    var tree = phyd3.newick.parse($(event.target).data('newick'));
-                    phyd3.phylogram.build('#' + $(event.target).data('divname'), tree, {
 
-                        showSupportValues: true,
-                        showNodesType: 'all',
-                        nodeHeight: 10,
-                        lineupNodes: false
-                    });
-
-                    /*
-                    var phylocanvas = new Smits.PhyloCanvas(
-                        $(event.target).data('newick'),		// Newick or XML string
-                        $(event.target).data('divname'),	// Div Id where to render
-                        800, 800		// Height, Width in pixels
-
-                        //'circular'
-                    );
-                     //TODO: workaround for svg starting with an offset
-                     var svg = $('#' + $(event.target).data('divname') + ' svg');
-                     svg.height(svg.height() + 200);
-                     svg.addClass('center-block');
-
-                     //Gets SVG data and removes all non ASCII characters, because they are problematic for some viewers
-                     //$('#btn' + divName).attr('href', 'data:image/svg+xml;base64,' + btoa(phylocanvas.getSvgSource().replace(/[^\x00-\x7F]/g, "")));
-                    */
+                $('#linkSVG').click(function () {
+                    $('#resetZoom').d3Click();
                 });
-            @endif
+                $('#linkPNG').click(function () {
+                    $("#resetZoom").d3Click();
+                });
 
-            @if(isset($confidences))
-                var pss = new PSS(
+                var tree = phyd3.newick.parse($(event.target).data('newick'));
+                phyd3.phylogram.build('#' + $(event.target).data('divname'), tree, {
+
+                    showSupportValues: true,
+                    showNodesType: 'all',
+                    nodeHeight: 10,
+                    lineupNodes: false
+                });
+
+                /*
+                var phylocanvas = new Smits.PhyloCanvas(
+                    $(event.target).data('newick'),		// Newick or XML string
+                    $(event.target).data('divname'),	// Div Id where to render
+                    800, 800		// Height, Width in pixels
+
+                    //'circular'
+                );
+                 //TODO: workaround for svg starting with an offset
+                 var svg = $('#' + $(event.target).data('divname') + ' svg');
+                 svg.height(svg.height() + 200);
+                 svg.addClass('center-block');
+
+                 //Gets SVG data and removes all non ASCII characters, because they are problematic for some viewers
+                 //$('#btn' + divName).attr('href', 'data:image/svg+xml;base64,' + btoa(phylocanvas.getSvgSource().replace(/[^\x00-\x7F]/g, "")));
+                */
+            });
+                    @endif
+
+                    @if(isset($confidences))
+            var pss = new PSS(
                     {!!$transcription->getJSON()!!},
                     {!!$confidences->getJSONSequences()!!},
                     {!!$confidences->getJSONModels()!!},
                     {!!$confidences->getJSONMovedIndexes()!!},
                     {!!$scores!!},
-                    'pssCanvas',
-                    '{{URL::asset('images/bpositive.png')}}'
+                'pssCanvas',
+                '{{URL::asset('images/bpositive.png')}}'
                 );
-                pss.getPSS();
+            pss.getPSS();
             @endif
         });
     </script>
