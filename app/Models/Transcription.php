@@ -218,6 +218,7 @@ class Transcription
             $omegaMapFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/omegamap.sum');
         }
         catch (\Exception $e) { }
+        $fubarFile = "";
         try{
             $fubarFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/fubar.out');
         }

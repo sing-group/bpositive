@@ -98,7 +98,7 @@ class AlignmentConfidences
                 preg_match_all("/^(\|\s+([0-9]+)\s+)(\|\s+([0-9]+)\s+)(\|\s+([0-9]+(\.[0-9]+)?)\s+)(\|\s+([0-9]+(\.[0-9]+)?)\s+)(\|\s+Pos\.\sposterior\s\=\s([0-9]+(\.[0-9]+)?))\s+\|$/", $line, $values);
                 if ($values !== FALSE) {
                     if (count($values) === 14 && isset($values[2][0]) && is_numeric($values[2][0]) && isset($values[12][0]) && is_numeric($values[12][0])) {
-                        $this->models['FUBAR'][$values[2][0] + 1] = new Confidence($values[12][0], $values[12][0]);
+                        $this->models['FUBAR'][$values[2][0]] = new Confidence($values[12][0], $values[12][0]);
                         if ($values[12][0] >= 0.9) {
                             $anyPSS = true;
                         }
