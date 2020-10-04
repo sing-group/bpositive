@@ -72,6 +72,9 @@
             @if($textFiles['fubarSummary'] !== "")
                 <li role="presentation"><a href="#fubarSummary" aria-controls="tree" role="tab" data-toggle="tab">FUBAR Summary</a></li>
             @endif
+            @if($textFiles['globalSummary'] !== "")
+                <li role="presentation"><a href="#globalSummary" aria-controls="tree" role="tab" data-toggle="tab">Global Summary</a></li>
+            @endif
             <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
         </ul>
 
@@ -146,6 +149,25 @@
                     <pre>{{$textFiles['fubarSummary']}}</pre>
                 </div>
             @endif
+            @if($textFiles['globalSummary'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="globalSummary">
+                    <label for="globalSelect" class="control-label">Global file:</label>
+                    <select id="globalSelect" class="form-control">
+                        @foreach($textFiles['globalSummary'] as $name => $globalFile)
+                            <option value="{{$name}}">{{$name}}</option>
+                        @endforeach
+                    </select>
+                    @php
+                        $first = true
+                    @endphp
+                    @foreach($textFiles['globalSummary'] as $name => $globalFile)
+                        <div id="fglobal{{$name}}" class="{{ ($first ? $first = false : 'hidden') }}">
+                            @include('includes.download', ['name' => 'globalSummary-' . $name, 'data' => base64_encode($globalFile)])
+                            <pre>{{$globalFile}}</pre>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
             <div role="tabpanel" class="tab-pane fade" id="notes">
                 @include('includes.download', ['name' => 'Notes', 'data' => base64_encode($textFiles['notes'])])
                 <pre>{{$textFiles['notes']}}</pre>
@@ -165,6 +187,12 @@
     <script type="text/javascript">
         //TODO: Refactor
         $(window).on('load', function () {
+            $("#globalSelect").change(function () {
+                $( "#globalSelect option:selected" ).each(function () {
+                    $("#globalSummary [id^=fglobal]").addClass("hidden");
+                    $("#fglobal" + $(this).text()).removeClass("hidden");
+                });
+            });
                     @if(isset($newicks))
             var dataObjects = {!! $newicks !!};
 

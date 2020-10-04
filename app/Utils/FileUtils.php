@@ -73,7 +73,15 @@ class FileUtils
 
         $result = array();
         foreach ($mapOfFiles as $name => $path) {
-            if(file_exists($dir . '/' . $path)) {
+            if(substr($path, -1) === '*') {
+                $result[$name] = array();
+                $subfiles = glob($dir.'/'.$path);
+                foreach ($subfiles as $subfile){
+                    $info = pathinfo($subfile);
+                    $result[$name][$info['basename']] = file_get_contents($subfile);
+                }
+            }
+            else if(file_exists($dir . '/' . $path)) {
                 $contents = file_get_contents($dir . '/' . $path);
                 if ($contents === FALSE) {
                     error_log('readFilesFromTgz File does not exist: ' . $dir . '/' . $path);

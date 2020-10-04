@@ -29,7 +29,7 @@ class AlignmentConfidences
     private $models = array();
     private $movedIndexes = array();
 
-    function __construct($sequences, $analysis, $omegaMap = "", $fubar = ""){
+    function __construct($sequences, $analysis, $omegaMap = "", $fubar = "", $global = ""){
 
         $this->sequences = $sequences;
         $this->movedIndexes = $this->getMovedIndexes($this->sequences);
@@ -108,6 +108,25 @@ class AlignmentConfidences
             if (!$anyPSS) {
                 //If there is no values with greater or equal confidence than 0.9, there is no model to show
                 unset($this->models['FUBAR']);
+            }
+        }
+
+        if($global !== "" && is_array($global)) {
+            foreach($global as $mainName => $subfile) {
+                foreach ($subfile as $name => $globalFile) {
+                    $anyPSS = false;
+                    $this->models[$name] = array();
+                    foreach (preg_split("/((\r?\n)|(\r\n?))/", $globalFile) as $line) {
+                        if (is_numeric($line)) {
+                            $this->models[$name][$line] = new Confidence(1, 1);
+                            $anyPSS = true;
+                        }
+                    }
+                    if (!$anyPSS) {
+                        //If there is no values with greater or equal confidence than 0.9, there is no model to show
+                        unset($this->models[$name]);
+                    }
+                }
             }
         }
     }
