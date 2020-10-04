@@ -457,10 +457,7 @@ class Transcription
             $files['alnFile'] = $basePath.'aligned.prot.aln';
             $files['alnNucl'] = $basePath.'aligned.fasta';
             $files['alnAmin'] = $basePath.'aligned.prot.fasta';
-            $files['tree'] = $basePath.'tree.con';
             $files['psrf'] = $basePath.'mrbayes.log.psrf';
-            $files['codemlOutput'] = $basePath.'codeml.out';
-            $files['codemlSummary'] = $basePath.'codeml.sum';
             $files['experiment'] = $basePath.'experiment.conf';
             $files['score'] = $basePath.'aligned.score_ascii';
             $files['confidencesSum'] = $basePath.'allfiles/codeml/input.fasta.fasta.out.sum';

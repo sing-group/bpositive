@@ -59,13 +59,19 @@
             @if($textFiles['phiPackLog'] !== "")
                 <li role="presentation"><a href="#phiPackLog" aria-controls="tree" role="tab" data-toggle="tab">PhiPack Log</a></li>
             @endif
-            <li role="presentation"><a href="#tree" aria-controls="tree" role="tab" data-toggle="tab">Tree</a></li>
-            @if(isset($newicks))
+            @if($textFiles['tree'] !== "")
+                <li role="presentation"><a href="#tree" aria-controls="tree" role="tab" data-toggle="tab">Tree</a></li>
+            @endif
+            @if(isset($newicks) && $textFiles['tree'] !== "")
                 <li role="presentation"><a href="#treeView" id="treeViewTab" aria-controls="treeView" role="tab" data-toggle="tab">Tree View</a></li>
             @endif
             <li role="presentation"><a href="#psrf" aria-controls="psrf" role="tab" data-toggle="tab">PSRF</a></li>
-            <li role="presentation"><a href="#codemlOutput" aria-controls="codemlOutput" role="tab" data-toggle="tab">Codeml Output</a></li>
-            <li role="presentation"><a href="#codemlSummary" aria-controls="codemlSummary" role="tab" data-toggle="tab">Codeml Summary</a></li>
+            @if($textFiles['codemlOutput'] !== "")
+                <li role="presentation"><a href="#codemlOutput" aria-controls="codemlOutput" role="tab" data-toggle="tab">Codeml Output</a></li>
+            @endif
+            @if($textFiles['codemlSummary'] !== "")
+                <li role="presentation"><a href="#codemlSummary" aria-controls="codemlSummary" role="tab" data-toggle="tab">Codeml Summary</a></li>
+            @endif
             @if($textFiles['omegaMapSummary'] !== "")
                 <li role="presentation"><a href="#omegaMapSummary" aria-controls="tree" role="tab" data-toggle="tab">OmegaMap Summary</a></li>
             @endif
@@ -113,11 +119,13 @@
                     <pre>{{$textFiles['phiPackLog']}}</pre>
                 </div>
             @endif
-            <div role="tabpanel" class="tab-pane fade" id="tree">
-                @include('includes.download', ['name' => 'Tree', 'data' => base64_encode($textFiles['tree'])])
-                <pre>{{$textFiles['tree']}}</pre>
-            </div>
-            @if(isset($newicks))
+            @if($textFiles['tree'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="tree">
+                    @include('includes.download', ['name' => 'Tree', 'data' => base64_encode($textFiles['tree'])])
+                    <pre>{{$textFiles['tree']}}</pre>
+                </div>
+            @endif
+            @if(isset($newicks) && $textFiles['tree'] !== "")
                 <div role="tabpanel" class="tab-pane fade" id="treeView">
                     <ul id="svgMenu" class="nav nav-tabs" role="tablist">
                     </ul>
@@ -129,14 +137,18 @@
                 @include('includes.download', ['name' => 'PSRF', 'data' => base64_encode($textFiles['psrf'])])
                 <pre>{{$textFiles['psrf']}}</pre>
             </div>
-            <div role="tabpanel" class="tab-pane fade" id="codemlOutput">
-                @include('includes.download', ['name' => 'CodemlOutput', 'data' => base64_encode($textFiles['codemlOutput'])])
-                <pre>{{$textFiles['codemlOutput']}}</pre>
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="codemlSummary">
-                @include('includes.download', ['name' => 'CodemlSummary', 'data' => base64_encode($textFiles['codemlSummary'])])
-                <pre>{{$textFiles['codemlSummary']}}</pre>
-            </div>
+            @if($textFiles['codemlOutput'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="codemlOutput">
+                    @include('includes.download', ['name' => 'CodemlOutput', 'data' => base64_encode($textFiles['codemlOutput'])])
+                    <pre>{{$textFiles['codemlOutput']}}</pre>
+                </div>
+            @endif
+            @if($textFiles['codemlSummary'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="codemlSummary">
+                    @include('includes.download', ['name' => 'CodemlSummary', 'data' => base64_encode($textFiles['codemlSummary'])])
+                    <pre>{{$textFiles['codemlSummary']}}</pre>
+                </div>
+            @endif
             @if($textFiles['omegaMapSummary'] !== "")
                 <div role="tabpanel" class="tab-pane fade" id="omegaMapSummary">
                     @include('includes.download', ['name' => 'omegaMapSummary', 'data' => base64_encode($textFiles['omegaMapSummary'])])
