@@ -460,7 +460,6 @@ class Transcription
             $files['psrf'] = $basePath.'mrbayes.log.psrf';
             $files['experiment'] = $basePath.'experiment.conf';
             $files['score'] = $basePath.'aligned.score_ascii';
-            $files['confidencesSum'] = $basePath.'allfiles/codeml/input.fasta.fasta.out.sum';
 
             FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
 
