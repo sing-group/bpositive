@@ -452,13 +452,10 @@ class Transcription
         try{
             $files = array();
             $basePath = $name.'/'.$experiment.'/';
-            $files['notes'] = $basePath.'notes.txt';
-            $files['log'] = $basePath.'output.log';
             $files['alnFile'] = $basePath.'aligned.prot.aln';
             $files['alnNucl'] = $basePath.'aligned.fasta';
             $files['alnAmin'] = $basePath.'aligned.prot.fasta';
             $files['psrf'] = $basePath.'mrbayes.log.psrf';
-            $files['experiment'] = $basePath.'experiment.conf';
             $files['score'] = $basePath.'aligned.score_ascii';
 
             FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
