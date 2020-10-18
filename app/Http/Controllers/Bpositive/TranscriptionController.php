@@ -153,7 +153,8 @@ class TranscriptionController extends Controller
         catch(\Exception $e){
             return view('transcription', [
                 'transcription' => $transcription,
-                'errors' => new MessageBag([$e->getMessage()])
+                'errors' => new MessageBag([$e->getMessage()]),
+                'textFiles' => $transcription->getPlainTextFiles()
             ]);
 
         }
