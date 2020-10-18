@@ -53,9 +53,15 @@
             @endif
             <li role="presentation"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
             <li role="presentation"><a href="#log" aria-controls="log" role="tab" data-toggle="tab">Execution Log</a></li>
-            <li role="presentation"><a href="#alnFile" aria-controls="alnFile" role="tab" data-toggle="tab">ALN File</a></li>
-            <li role="presentation"><a href="#alnNucl" aria-controls="alnNucl" role="tab" data-toggle="tab">Aligned Nucl</a></li>
-            <li role="presentation"><a href="#alnAmin" aria-controls="alnAmin" role="tab" data-toggle="tab">Aligned Amin</a></li>
+            @if($textFiles['alnFile'] !== "")
+                <li role="presentation"><a href="#alnFile" aria-controls="alnFile" role="tab" data-toggle="tab">ALN File</a></li>
+            @endif
+            @if($textFiles['alnNucl'] !== "")
+                <li role="presentation"><a href="#alnNucl" aria-controls="alnNucl" role="tab" data-toggle="tab">Aligned Nucl</a></li>
+            @endif
+            @if($textFiles['alnAmin'] !== "")
+                <li role="presentation"><a href="#alnAmin" aria-controls="alnAmin" role="tab" data-toggle="tab">Aligned Amin</a></li>
+            @endif
             @if($textFiles['phiPackLog'] !== "")
                 <li role="presentation"><a href="#phiPackLog" aria-controls="tree" role="tab" data-toggle="tab">PhiPack Log</a></li>
             @endif
@@ -101,18 +107,24 @@
                 @include('includes.download', ['name' => 'ExecutionLog', 'data' => base64_encode($textFiles['log'])])
                 <pre>{{$textFiles['log']}}</pre>
             </div>
-            <div role="tabpanel" class="tab-pane fade" id="alnFile">
-                @include('includes.download', ['name' => 'ALNFile', 'data' => base64_encode($textFiles['alnFile'])])
-                <pre>{{$textFiles['alnFile']}}</pre>
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="alnNucl">
-                @include('includes.download', ['name' => 'AlignedNucl', 'data' => base64_encode($textFiles['alnNucl'])])
-                <pre>{{$textFiles['alnNucl']}}</pre>
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="alnAmin">
-                @include('includes.download', ['name' => 'AlignedAmin', 'data' => base64_encode($textFiles['alnAmin'])])
-                <pre>{{$textFiles['alnAmin']}}</pre>
-            </div>
+            @if($textFiles['alnFile'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="alnFile">
+                    @include('includes.download', ['name' => 'ALNFile', 'data' => base64_encode($textFiles['alnFile'])])
+                    <pre>{{$textFiles['alnFile']}}</pre>
+                </div>
+            @endif
+            @if($textFiles['alnNucl'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="alnNucl">
+                    @include('includes.download', ['name' => 'AlignedNucl', 'data' => base64_encode($textFiles['alnNucl'])])
+                    <pre>{{$textFiles['alnNucl']}}</pre>
+                </div>
+            @endif
+            @if($textFiles['alnAmin'] !== "")
+                <div role="tabpanel" class="tab-pane fade" id="alnAmin">
+                    @include('includes.download', ['name' => 'AlignedAmin', 'data' => base64_encode($textFiles['alnAmin'])])
+                    <pre>{{$textFiles['alnAmin']}}</pre>
+                </div>
+            @endif
             @if($textFiles['phiPackLog'] !== "")
                 <div role="tabpanel" class="tab-pane fade" id="phiPackLog">
                     @include('includes.download', ['name' => 'PhiPackLog', 'data' => base64_encode($textFiles['phiPackLog'])])
