@@ -488,6 +488,21 @@ class Transcription
             }
             catch (\Exception $e) { }
 
+            if ($omegaMapFile !== "" || $fubarFile !== "") {
+                try {
+                    $files = array();
+                    $basePath = $name.'/'.$experiment.'/';
+                    $files['tree'] = $basePath.'tree.con';
+
+                    FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
+                }
+                catch (FileException $fe){
+                    $result->message = 'The phylogenetic tree file (tree.con) must exist if there are experiments included.';
+                    $result->valid = false;
+                    return $result;
+                }
+            }
+
             $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/aligned.prot.fasta'));
             $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'), $omegaMapFile, $fubarFile, $globalFiles);
             if($confidences->getNumModels() > 0){
