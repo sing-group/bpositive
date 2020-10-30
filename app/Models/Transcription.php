@@ -213,6 +213,11 @@ class Transcription
     public function getConfidences(){
 
         $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/aligned.prot.fasta'));
+        $codeMLFile = "";
+        try {
+            $codeMLFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz',$this->name.'/'.$this->experiment.'/allfiles/codeml/input.fasta.fasta.out.sum');
+        }
+        catch (\Exception $e) { }
         $omegaMapFile = "";
         try{
             $omegaMapFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/omegamap.sum');
@@ -231,7 +236,7 @@ class Transcription
         }
         catch (\Exception $e) { }
         $confidences = new AlignmentConfidences($sequences,
-            FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz',$this->name.'/'.$this->experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'),
+            $codeMLFile,
             $omegaMapFile,
             $fubarFile,
             $globalFiles);
