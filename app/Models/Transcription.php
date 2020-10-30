@@ -435,9 +435,12 @@ class Transcription
 
         try {
             $files = array();
+            $basePath = $name.'/'.$experiment.'/';
             $files['input'] = $name.'/input.fasta';
-            $files['names'] = $name.'/names.txt';
-            $files['project'] = $name.'/project.conf';
+            $files['alnFile'] = $basePath.'aligned.prot.aln';
+            $files['alnNucl'] = $basePath.'aligned.fasta';
+            $files['alnAmin'] = $basePath.'aligned.prot.fasta';
+            $files['score'] = $basePath.'aligned.score_ascii';
 
             FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
 
@@ -449,27 +452,67 @@ class Transcription
             return $result;
         }
 
+        $result->analyzed = false;
+
         try{
             $files = array();
             $basePath = $name.'/'.$experiment.'/';
-            $files['alnFile'] = $basePath.'aligned.prot.aln';
-            $files['alnNucl'] = $basePath.'aligned.fasta';
-            $files['alnAmin'] = $basePath.'aligned.prot.fasta';
-            $files['psrf'] = $basePath.'mrbayes.log.psrf';
-            $files['score'] = $basePath.'aligned.score_ascii';
 
+            $files['file'] = $basePath.'/allfiles/codeml/input.fasta.fasta.out.sum';
             FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
 
             $result->analyzed = true;
         }
-        catch (FileException $fe){
-            $result->message = $fe->getMessage();
-            $result->analyzed = false;
-            return $result;
+        catch (FileException $fe){}
+
+        if (!$result->analyzed) {
+            try {
+                $files = array();
+                $basePath = $name . '/' . $experiment . '/';
+
+                $files['file'] = $basePath . '/omegamap.sum';
+                FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
+
+                $result->analyzed = true;
+            } catch (FileException $fe) {
+            }
+        }
+
+        if (!$result->analyzed) {
+            try {
+                $files = array();
+                $basePath = $name . '/' . $experiment . '/';
+
+                $files['file'] = $basePath.'/fubar.out';
+                FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
+
+                $result->analyzed = true;
+            } catch (FileException $fe) {
+            }
+        }
+
+        if (!$result->analyzed) {
+            try {
+                $files = array();
+                $basePath = $name . '/' . $experiment . '/';
+
+                $files['file'] = $basePath.'/global/*';
+                $tmpGlobalFiles = FileUtils::readFilesFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $files);
+
+                if (count($tmpGlobalFiles) > 0) {
+                    $result->analyzed = true;
+                }
+            } catch (FileException $fe) {
+            }
         }
 
 
         try{
+            $codeMLFile = "";
+            try {
+                $codeMLFile = FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum');
+            }
+            catch (\Exception $e) { }
             $omegaMapFile = "";
             try{
                 $omegaMapFile = FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/omegamap.sum');
@@ -488,7 +531,7 @@ class Transcription
             }
             catch (\Exception $e) { }
 
-            if ($omegaMapFile !== "" || $fubarFile !== "") {
+            if ($codeMLFile !== "" || $fubarFile !== "") {
                 try {
                     $files = array();
                     $basePath = $name.'/'.$experiment.'/';
@@ -504,7 +547,7 @@ class Transcription
             }
 
             $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/aligned.prot.fasta'));
-            $confidences = new AlignmentConfidences($sequences, FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum'), $omegaMapFile, $fubarFile, $globalFiles);
+            $confidences = new AlignmentConfidences($sequences, $codeMLFile, $omegaMapFile, $fubarFile, $globalFiles);
             if($confidences->getNumModels() > 0){
                 $result->positivelySelected = true;
             }
