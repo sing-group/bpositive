@@ -84,7 +84,7 @@
             @if($textFiles['fubarSummary'] !== "")
                 <li role="presentation"><a href="#fubarSummary" aria-controls="tree" role="tab" data-toggle="tab">FUBAR Summary</a></li>
             @endif
-            @if($textFiles['globalSummary'] !== "")
+            @if(count($textFiles['globalSummary']) > 0)
                 <li role="presentation"><a href="#globalSummary" aria-controls="tree" role="tab" data-toggle="tab">Global Summary</a></li>
             @endif
             <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a></li>
@@ -173,7 +173,7 @@
                     <pre>{{$textFiles['fubarSummary']}}</pre>
                 </div>
             @endif
-            @if($textFiles['globalSummary'] !== "")
+            @if(count($textFiles['globalSummary']) > 0)
                 <div role="tabpanel" class="tab-pane fade" id="globalSummary">
                     <label for="globalSelect" class="control-label">Global file:</label>
                     <select id="globalSelect" class="form-control">
