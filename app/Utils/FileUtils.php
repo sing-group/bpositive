@@ -25,6 +25,7 @@ namespace App\Utils;
 
 use App\Exceptions\FileException;
 use Illuminate\Support\Facades\Storage;
+use Mockery\Exception;
 
 class FileUtils
 {
@@ -215,17 +216,28 @@ class FileUtils
 
                 $ePhar = new \PharData(Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
                 $ePhar->buildFromDirectory($dir, '/'.$name.'\/'.$experiment.'.*/');
-                $ePhar->addFile($dir.'/'.$name.'/input.fasta', $name.'/input.fasta');
-                $ePhar->addFile($dir.'/'.$name.'/names.txt', $name.'/names.txt');
-                $ePhar->addFile($dir.'/'.$name.'/project.conf', $name.'/project.conf');
+                try {
+                    $ePhar->addFile($dir . '/' . $name . '/input.fasta', $name . '/input.fasta');
+                } catch (\Exception $e) {
+                    throw new FileException("The 'input.fasta' file is required.");
+                }
+                try {
+                    $ePhar->addFile($dir.'/'.$name.'/names.txt', $name.'/names.txt');
+                } catch (\Exception $e) {
+                    throw new FileException("The 'names.txt' file is required.");
+                }
+                try {
+                    $ePhar->addFile($dir.'/'.$name.'/project.conf', $name.'/project.conf');
+                } catch (\Exception $e) {
+                    throw new FileException("The 'project.conf' file is required.");
+                }
                 $ePhar->compress(\Phar::GZ);
                 unset($ePhar);
                 FileUtils::deleteFile($tar);
             }
         } catch (\Exception $e) {
-            error_log($e->getMessage()." : ".Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
             FileUtils::deleteFile($tar);
-            throw new FileException($e->getMessage()." : ".Storage::disk('bpositive')->getDriver()->getAdapter()->getPathPrefix(). $tar);
+            throw new FileException($e->getMessage());
         }
 
         FileUtils::deleteDirectory($dir);

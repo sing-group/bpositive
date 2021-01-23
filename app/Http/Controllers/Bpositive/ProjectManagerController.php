@@ -416,9 +416,21 @@ class ProjectManagerController extends Controller
                         }
 
                         foreach ($bundleNames as $bundleName){
-                            $experiments = FileUtils::scanExperiments('files/' . $request->get('id') . '/' . $bundleName . '.tar.gz');
-                            foreach ($experiments as $experiment) {
-                                array_push($names, ['name' => $bundleName, 'experiment' => $experiment]);
+                            try{
+                                $experiments = FileUtils::scanExperiments('files/' . $request->get('id') . '/' . $bundleName . '.tar.gz');
+                                foreach ($experiments as $experiment) {
+                                    array_push($names, ['name' => $bundleName, 'experiment' => $experiment]);
+                                }
+                            } catch (FileException $fe) {
+                                DB::rollBack();
+                                $request->flash();
+                                return redirect()->route('project_edit_form', [
+                                    'id' => $request->get('id'),
+                                    'uploadErrors' => [
+                                        'Error saving transcription: ' . $file->getClientOriginalName(),
+                                        $fe->getMessage(),
+                                    ]
+                                ]);
                             }
                         }
 
