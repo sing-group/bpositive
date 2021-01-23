@@ -504,7 +504,7 @@ class Transcription
                 $files['file'] = $basePath.'/global/*';
                 $tmpGlobalFiles = FileUtils::readFilesFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $files);
 
-                if (count($tmpGlobalFiles) > 0) {
+                if (isset($tmpGlobalFiles['file']) > 0 && count($tmpGlobalFiles['file']) > 0) {
                     $result->analyzed = true;
                 }
             } catch (FileException $fe) {
