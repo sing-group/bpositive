@@ -215,7 +215,7 @@ class Transcription
         $sequences = Transcription::fastaToSequences(FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz', $this->name.'/'.$this->experiment.'/aligned.prot.fasta'));
         $codeMLFile = "";
         try {
-            $codeMLFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz',$this->name.'/'.$this->experiment.'/allfiles/codeml/input.fasta.fasta.out.sum');
+            $codeMLFile = FileUtils::readFileFromTgz('files/'.$this->projectId.'/'.$this->linkZip.'.tar.gz',$this->name.'/'.$this->experiment.'/codeml.sum');
         }
         catch (\Exception $e) { }
         $omegaMapFile = "";
@@ -466,7 +466,7 @@ class Transcription
             $files = array();
             $basePath = $name.'/'.$experiment.'/';
 
-            $files['file'] = $basePath.'/allfiles/codeml/input.fasta.fasta.out.sum';
+            $files['file'] = $basePath.'/codeml.sum';
             FileUtils::checkFilesFromTgz('files/' . $projectId . '/' . $name . '-' . $experiment . '.tar.gz', $files);
 
             $result->analyzed = true;
@@ -518,7 +518,7 @@ class Transcription
         try{
             $codeMLFile = "";
             try {
-                $codeMLFile = FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/allfiles/codeml/input.fasta.fasta.out.sum');
+                $codeMLFile = FileUtils::readFileFromTgz('files/'.$projectId.'/'.$name. '-' . $experiment.'.tar.gz', $name.'/'.$experiment.'/codeml.sum');
             }
             catch (\Exception $e) { }
             $omegaMapFile = "";
