@@ -305,7 +305,7 @@ class TranscriptionController extends Controller
             ]);
         }
 
-        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE || Project::owns(Auth::user()->user_id, $project->id)) {
+        if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE || Project::owns(Auth::user()->id, $project->id)) {
 
             $count = Transcription::deleteByProject($project->id);
             return redirect()->route('project_edit_form',[

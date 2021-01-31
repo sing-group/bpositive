@@ -376,7 +376,7 @@ class ProjectManagerController extends Controller
         DB::beginTransaction();
 
         if(Auth::user()->role_id == AuthServiceProvider::ADMIN_ROLE
-                || (!$project->public && Project::owns(Auth::user()->user_id, $request->get('id')))) {
+                || (!$project->public && Project::owns(Auth::user()->id, $request->get('id')))) {
             Project::save($request->get('id'), $request->get('name'), $request->get('description'));
         }
 
