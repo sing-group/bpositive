@@ -49,8 +49,6 @@ services:
     privileged: true
     depends_on:
       - database
-    volumes:
-      - ./backend:/var/www/html
     networks:
       bpositive-network:
         ipv4_address: 172.20.1.20
