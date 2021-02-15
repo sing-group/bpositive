@@ -44,6 +44,7 @@ class AlignmentConfidences
         $modelsString['Model 8: beta&w>1'] = substr($analysis, $posModel87);
 
         foreach($modelsString as $key=>$model){
+            $anyPSS = false;
             $nebs = array();
             $bebs = array();
             $posNEB = strpos($model, 'Naive Empirical Bayes (NEB)');
@@ -63,7 +64,14 @@ class AlignmentConfidences
                     if(isset($bebs[$k])) {
                         $this->models[$key][$this->movedIndexes[$k]] = new Confidence($bebs[$k], $nebs[$k]);
                     }
+                    if ($bebs[$k] >= 0.9 || $nebs[$k] >= 0.9) {
+                        $anyPSS = true;
+                    }
                 }
+            }
+            if (!$anyPSS) {
+                //If there is no values with greater or equal confidence than 0.9, there is no model to show
+                unset($this->models[$key]);
             }
         }
 
