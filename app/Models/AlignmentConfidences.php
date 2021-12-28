@@ -64,7 +64,7 @@ class AlignmentConfidences
                     if(isset($bebs[$k])) {
                         $this->models[$key][$this->movedIndexes[$k]] = new Confidence($bebs[$k], $nebs[$k]);
                     }
-                    if ($bebs[$k] >= 0.9 || $nebs[$k] >= 0.9) {
+                    if ((isset($bebs[$k]) && $bebs[$k] >= 0.9) || (isset($nebs[$k]) && $nebs[$k] >= 0.9)) {
                         $anyPSS = true;
                     }
                 }
