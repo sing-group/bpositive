@@ -73,7 +73,7 @@ function PSS (transcription, sequences, models, movedIndexes, scores, canvasName
 
         var canvas = $('#' + parent.canvas);
         if(parent.models.length == 0){
-            canvas.html('<div class="alert alert-warning">No Possitively Selected Sites</div>');
+            canvas.html('<div class="alert alert-warning">No Positively Selected Sites</div>');
         }
         else{
             var form = $('<form class="navbar-form" />');
